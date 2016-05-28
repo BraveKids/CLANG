@@ -1,0 +1,56 @@
+# =============== #
+# Unity generated #
+# =============== #
+Temp/
+Obj/
+UnityGenerated/
+Library/
+Assets/AssetStoreTools*
+Assets/Scenes
+*.unity
+*.wav
+*.wav.meta
+*.mp3
+*.mp3.meta
+*.mp4
+*.mp4.meta
+*.ogg
+*.ogg.meta
+*.ogv
+*.ogv.meta
+*.mov
+*.mov.meta
+*.apk
+*.apk.meta
+FacebookSDK/
+GooglePlayGames/
+Plugins/
+PlayService*
+
+# ===================================== #
+# Visual Studio / MonoDevelop generated #
+# ===================================== #
+ExportedObj/
+*.svd
+*.userprefs
+*.csproj
+*.pidb
+*.suo
+*.sln
+*.user
+*.unityproj
+*.booproj
+
+# ============ #
+# OS generated #
+# ============ #
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+
+.waw
