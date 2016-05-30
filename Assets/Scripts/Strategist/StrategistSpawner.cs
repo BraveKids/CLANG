@@ -5,7 +5,7 @@ using UnityStandardAssets.CrossPlatformInput;
 
 public class StrategistSpawner : NetworkBehaviour {
 
-
+    public Camera strategistCamera;
     public int m_PlayerNumber = 1;            // Used to identify the different players.
     //public Rigidbody m_Shell;                 // Prefab of the shell.
     //public Transform m_FireTransform;         // A child of the tank where the shells are spawned.
@@ -38,8 +38,12 @@ public class StrategistSpawner : NetworkBehaviour {
     {
         // Set up the references.
         m_Rigidbody = GetComponent<Rigidbody>();
+        
     }
-
+    public override void OnStartLocalPlayer()
+    {
+        GameObject.FindGameObjectWithTag("Canvas").transform.FindChild("StrategistCanvas").gameObject.SetActive(true);
+    }
 
 
     void Start () {

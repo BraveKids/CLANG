@@ -62,7 +62,8 @@ public class GladiatorMovement : NetworkBehaviour
         //GameElements.getGladiatorCanvas().transform.FindChild("VirtualJoypad").gameObject.SetActive(true);
         //camera = gameObject.transform.FindChild("Camera").GetComponent<Camera>();
         //cameraTransform = camera.gameObject.transform;
-        buttons = GameObject.FindGameObjectWithTag("GladiatorCanvas").transform.FindChild("VirtualJoypad/Buttons");
+        GameObject.FindGameObjectWithTag("Canvas").transform.FindChild("GladiatorCanvas").gameObject.SetActive(true);
+        buttons = GameObject.FindGameObjectWithTag("Canvas").transform.FindChild("GladiatorCanvas/VirtualJoypad/Buttons");
         buttons.gameObject.SetActive(true);
         //camera = transform.FindChild("Camera").gameObject.GetComponent<Camera>();
         cameraTransform = gladiatorCamera.transform;

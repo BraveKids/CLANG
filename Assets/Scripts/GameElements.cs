@@ -18,7 +18,7 @@ public class GameElements : MonoBehaviour {
         //setCurrentCamera( Camera.main.gameObject);
       
         //menuCanvas = GameObject.FindGameObjectWithTag("MenuCanvas");
-        gladiatorCanvas = GameObject.FindGameObjectWithTag("GladiatorCanvas");
+        gladiatorCanvas = GameObject.FindGameObjectWithTag("Canvas").transform.FindChild("GladiatorCanvas").gameObject;
         //strategistCanvas = GameObject.FindGameObjectWithTag("StrategistCanvas");
         //Debug.Log(strategistCanvas);
         virtualJoystick = gladiatorCanvas.transform.FindChild("VirtualJoypad/TapArea/BackgroundImage").gameObject;
