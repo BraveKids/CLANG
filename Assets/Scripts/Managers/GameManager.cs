@@ -10,14 +10,14 @@ public class GameManager : NetworkBehaviour
     static public GameManager s_Instance;
 
     //this is static so tank can be added even withotu the scene loaded (i.e. from lobby)
-    static public List<PlayerManager> m_Players = new List<PlayerManager>();             // A collection of managers for enabling and disabling different aspects of the tanks.
+    static public List<Manager> m_Players = new List<Manager>();             // A collection of managers for enabling and disabling different aspects of the tanks.
 
     public int m_NumRoundsToWin = 5;          // The number of rounds a single player has to win to win the game.
     public float m_StartDelay = 3f;           // The delay between the start of RoundStarting and RoundPlaying phases.
     public float m_EndDelay = 3f;             // The delay between the end of RoundPlaying and RoundEnding phases.
     //public CameraControl m_CameraControl;     // Reference to the CameraControl script for control during different phases.
     public Text m_MessageText;                // Reference to the overlay Text to display winning text, etc.
-    public GameObject m_GladiatorPrefab;
+    public static GameObject m_GladiatorPrefab;
     public GameObject m_StrategistPrefab;// Reference to the prefab the players will control.
 
     public Transform[] m_SpawnPoint;
@@ -35,8 +35,8 @@ public class GameManager : NetworkBehaviour
     private int m_RoundNumber;                  // Which round the game is currently on.
     private WaitForSeconds m_StartWait;         // Used to have a delay whilst the round starts.
     private WaitForSeconds m_EndWait;           // Used to have a delay whilst the round or game ends.
-    private PlayerManager m_RoundWinner;          // Reference to the winner of the current round.  Used to make an announcement of who won.
-    private PlayerManager m_GameWinner;           // Reference to the winner of the game.  Used to make an announcement of who won.
+    private Manager m_RoundWinner;          // Reference to the winner of the current round.  Used to make an announcement of who won.
+    private Manager m_GameWinner;           // Reference to the winner of the game.  Used to make an announcement of who won.
 
     void Awake()
     {
@@ -64,20 +64,37 @@ public class GameManager : NetworkBehaviour
     /// <param name="localID">The localID. e.g. if 2 player are on the same machine this will be 1 & 2</param>
     static public void AddPlayer(GameObject player, int playerNum, Color c, string name, int localID)
     {
-        PlayerManager tmp = new PlayerManager();
-        tmp.m_Instance = player;
-        tmp.m_PlayerNumber = playerNum;
-        tmp.m_PlayerColor = c;
-        tmp.m_PlayerName = name;
-        tmp.m_LocalPlayerID = localID;
-        tmp.Setup();
+        if (playerNum == 0)
+        {
+            
+            StrategistManager tmp = new StrategistManager();
+            tmp.m_Instance = player;
+            tmp.m_PlayerNumber = playerNum;
+            tmp.m_PlayerColor = c;
+            tmp.m_PlayerName = name;
+            tmp.m_LocalPlayerID = localID;
+            tmp.Setup();
+            GameElements.setStrategist(player);
+            m_Players.Add(tmp);
+        }
+        else if (playerNum == 1)
+        {
+            GladiatorManager tmp = new GladiatorManager();
+            tmp.m_Instance = player;
+            tmp.m_PlayerNumber = playerNum;
 
-        m_Players.Add(tmp);
+            tmp.m_PlayerColor = c;
+            tmp.m_PlayerName = name;
+            tmp.m_LocalPlayerID = localID;
+            tmp.Setup();
+            GameElements.setGladiator(player);
+            m_Players.Add(tmp);
+        }
     }
 
     public void RemovePlayer(GameObject tank)
     {
-        PlayerManager toRemove = null;
+        Manager toRemove = null;
         foreach (var tmp in m_Players)
         {
             if (tmp.m_Instance == tank)
@@ -296,7 +313,7 @@ public class GameManager : NetworkBehaviour
     // This function is to find out if there is a winner of the round.
     // This function is called with the assumption that 1 or fewer tanks are currently active.
     
-    private PlayerManager GetRoundWinner()
+    private Manager GetRoundWinner()
     {
         // Go through all the tanks...
         for (int i = 0; i < m_Players.Count; i++)
@@ -312,7 +329,7 @@ public class GameManager : NetworkBehaviour
     
 
     // This function is to find out if there is a winner of the game.
-    private PlayerManager GetGameWinner()
+    private Manager GetGameWinner()
     {
         int maxScore = 0;
 

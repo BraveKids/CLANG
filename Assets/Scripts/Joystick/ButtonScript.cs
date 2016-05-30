@@ -13,7 +13,7 @@ public class ButtonScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandle
     public Color triggerColor;
     private void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player");
+        player = GameElements.getGladiator();
         bgImg = GetComponent<Image>();
   
         trigger.SetActive(false);
@@ -27,7 +27,7 @@ public class ButtonScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandle
         {
             trigger.SetActive(true);
             Debug.Log("ButtonPressed");
-            //player.GetComponent<PlayerController>().CommandInterpreter(command);
+            player.GetComponent<GladiatorShooting>().CommandInterpreter(command);
 
         }
     }

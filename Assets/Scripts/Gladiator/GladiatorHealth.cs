@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 using UnityEngine.Networking;
 
-public class PlayerHealth : NetworkBehaviour
+public class GladiatorHealth : NetworkBehaviour
 {
     public float m_StartingHealth = 100f;             // The amount of health each tank starts with.
     public Slider m_Slider;                           // The slider to represent how much health the tank currently has.
@@ -16,8 +16,8 @@ public class PlayerHealth : NetworkBehaviour
     //public GameObject m_AimCanvas;
     //public GameObject m_LeftDustTrail;
     //public GameObject m_RightDustTrail;
-    public PlayerSetup m_Setup;
-    public PlayerManager m_Manager;                   //Associated manager, to disable control when dying.
+    public GladiatorSetup m_Setup;
+    public GladiatorManager m_Manager;                   //Associated manager, to disable control when dying.
 
     [SyncVar(hook = "OnCurrentHealthChanged")]
     private float m_CurrentHealth;                  // How much health the tank currently has.*

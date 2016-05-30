@@ -2,14 +2,14 @@
 using UnityEngine.UI;
 using UnityEngine.Networking;
 
-//Purpose of that class is syncing data between server - client
-public class PlayerSetup : NetworkBehaviour 
-{
+
+public class PlayerSetup : NetworkBehaviour {
+
     /*
-    [Header("UI")]
-    public Text m_NameText;
-    public GameObject m_Crown;
-    */
+[Header("UI")]
+public Text m_NameText;
+public GameObject m_Crown;
+*/
     [Header("Network")]
     [Space]
     [SyncVar]
@@ -30,7 +30,9 @@ public class PlayerSetup : NetworkBehaviour
     public bool m_IsReady = false;
 
     //This allow to know if the crown must be displayed or not
-    //protected bool m_isLeader = false;
+    protected bool m_isLeader = false;
+    // Use this for initialization
+
 
     public override void OnStartClient()
     {
@@ -50,10 +52,10 @@ public class PlayerSetup : NetworkBehaviour
             // ... set their material color to the color specific to this tank.
             renderers[i].material.color = m_Color;
         }
-        
+
         if (m_PlayerRenderers)
             m_PlayerRenderers.SetActive(false);
-        
+
         //m_NameText.text = "<color=#" + ColorUtility.ToHtmlStringRGB(m_Color) + ">"+m_PlayerName+"</color>";
         /*m_Crown.SetActive(false);
         */
@@ -62,30 +64,30 @@ public class PlayerSetup : NetworkBehaviour
     [ClientCallback]
     public void Update()
     {
-        if(!isLocalPlayer)
+        if (!isLocalPlayer)
         {
             return;
         }
 
         if (GameManager.s_Instance.m_GameIsFinished && !m_IsReady)
         {
-            if(Input.GetButtonDown("Fire"+(m_LocalID + 1)))
+            if (Input.GetButtonDown("Fire" + (m_LocalID + 1)))
             {
                 CmdSetReady();
             }
         }
     }
-/*
+
     public void SetLeader(bool leader)
     {
         RpcSetLeader(leader);
-    }*/
-    /*
+    }
+
     [ClientRpc]
     public void RpcSetLeader(bool leader)
     {
         m_isLeader = leader;
-    }*/
+    }
 
     [Command]
     public void CmdSetReady()

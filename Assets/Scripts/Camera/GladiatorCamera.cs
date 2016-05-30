@@ -6,7 +6,7 @@ using UnityEngine.Networking;
 public class GladiatorCamera : MonoBehaviour {
 
     public int cameraType;
-    public float cameraDistance = 4;
+    public float cameraDistance;
     public float cameraAngle = 45;
     GameObject player;
     float playerX;
@@ -18,9 +18,10 @@ public class GladiatorCamera : MonoBehaviour {
     GameObject menuCamera;
     // Use this for initialization
     void Start() {
-        menuCamera = GameElements.getCurrentCameraObj();
-        GameElements.setCurrentCamera(gameObject);
-        menuCamera.SetActive(false);
+        //menuCamera = Camera.main.gameObject;
+        //menuCamera = GameElements.getCurrentCameraObj();
+        //GameElements.setCurrentCamera(gameObject);
+        //menuCamera.SetActive(false);
         player = transform.parent.gameObject;
 
     }

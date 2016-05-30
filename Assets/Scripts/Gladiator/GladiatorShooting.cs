@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
+using UnityStandardAssets.CrossPlatformInput;
 
-public class PlayerShooting : NetworkBehaviour
+public class GladiatorShooting : NetworkBehaviour
 {
     public int m_PlayerNumber = 1;            // Used to identify the different players.
     public Rigidbody m_Shell;                 // Prefab of the shell.
@@ -84,9 +85,19 @@ public class PlayerShooting : NetworkBehaviour
             // ... launch the shell.
             Fire();
         }
-       
     }
 
+    public void CommandInterpreter(string command)
+    {
+        if (!isLocalPlayer)
+        {
+            return;
+        }
+        if (command.Equals("fire"))
+        {
+            Fire();
+        }
+    }
     private void Fire()
     {
         // Set the fired flag so only Fire is only called once.

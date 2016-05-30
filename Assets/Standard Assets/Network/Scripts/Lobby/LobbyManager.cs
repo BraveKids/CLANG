@@ -5,12 +5,17 @@ using UnityEngine.Networking;
 using UnityEngine.Networking.Types;
 using UnityEngine.Networking.Match;
 using System.Collections;
+using System.Collections.Generic;
 
 
 namespace UnityStandardAssets.Network
 {
     public class LobbyManager : NetworkLobbyManager 
     {
+
+        Dictionary<int, int> currentPlayers;
+        const int STRATEGIST = 0;
+        const int GLADIATOR = 1;
         static public LobbyManager s_Singleton;
 
         [Tooltip("The minimum number of players in the lobby before player can be ready")]
@@ -29,7 +34,7 @@ namespace UnityStandardAssets.Network
 
         public Text statusInfo;
         public Text hostInfo;
-
+       
         //used to disconnect a client properly when exiting the matchmaker
         public bool isMatchmaking = false;
         protected bool _disconnectServer = false;
@@ -46,7 +51,9 @@ namespace UnityStandardAssets.Network
 
         void Start()
         {
+
             s_Singleton = this;
+
             _lobbyHooks = GetComponent<UnityStandardAssets.Network.LobbyHook>();
             currentPanel = mainMenuPanel;
 
@@ -54,7 +61,7 @@ namespace UnityStandardAssets.Network
             GetComponent<Canvas>().enabled = true;
 
             DontDestroyOnLoad(gameObject);
-
+            currentPlayers = new Dictionary<int, int>();
             SetServerInfo("Offline", "None");
         }
 
@@ -249,11 +256,24 @@ namespace UnityStandardAssets.Network
 
         //we want to disable the button JOIN if we don't have enough player
         //But OnLobbyClientConnect isn't called on hosting player. So we override the lobbyPlayer creation
+        
+
         public override GameObject OnLobbyServerCreateLobbyPlayer(NetworkConnection conn, short playerControllerId)
         {
+       
+
             GameObject obj = Instantiate(lobbyPlayerPrefab.gameObject) as GameObject;
 
             LobbyPlayer newPlayer = obj.GetComponent<LobbyPlayer>();
+
+
+            if (!currentPlayers.ContainsKey(conn.connectionId))
+            {
+                currentPlayers.Add(conn.connectionId, numPlayers);
+            }
+            
+
+
             newPlayer.RpcToggleJoinButton(numPlayers + 1 >= minPlayer); ;
 
             for (int i = 0; i < numPlayers; ++i)
@@ -267,6 +287,14 @@ namespace UnityStandardAssets.Network
             }
 
             return obj;
+        }
+
+        public override GameObject OnLobbyServerCreateGamePlayer(NetworkConnection conn, short playerControllerId)
+        {
+            int index = currentPlayers[conn.connectionId];
+            GameObject _temp = Instantiate(spawnPrefabs[index], startPositions[conn.connectionId].position, Quaternion.identity) as GameObject;
+
+            return _temp;
         }
 
         public override void OnLobbyServerDisconnect(NetworkConnection conn)

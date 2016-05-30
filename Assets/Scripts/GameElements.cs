@@ -14,13 +14,13 @@ public class GameElements : MonoBehaviour {
     // Use this for initialization
 	void Start () {
 
-        strategist = null;
-        setCurrentCamera( Camera.main.gameObject);
+        //strategist = null;
+        //setCurrentCamera( Camera.main.gameObject);
       
         //menuCanvas = GameObject.FindGameObjectWithTag("MenuCanvas");
         gladiatorCanvas = GameObject.FindGameObjectWithTag("GladiatorCanvas");
         //strategistCanvas = GameObject.FindGameObjectWithTag("StrategistCanvas");
-        Debug.Log(strategistCanvas);
+        //Debug.Log(strategistCanvas);
         virtualJoystick = gladiatorCanvas.transform.FindChild("VirtualJoypad/TapArea/BackgroundImage").gameObject;
        
        

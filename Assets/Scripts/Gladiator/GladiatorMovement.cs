@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
-
-public class PlayerMovement : NetworkBehaviour
+using UnityStandardAssets.CrossPlatformInput;
+public class GladiatorMovement : NetworkBehaviour
 {
     public int m_PlayerNumber = 1;                // Used to identify which tank belongs to which player.  This is set by this tank's manager.
     public int m_LocalID = 1;
@@ -24,6 +24,7 @@ public class PlayerMovement : NetworkBehaviour
     public float turnSmoothing = 1f;
     public float speedDampTime = 0.1f;
     private float speed;
+    //public float rotationSpeed;
     VirtualJoystick joystickScript;
     private Vector3 lastDirection;
    
@@ -35,7 +36,7 @@ public class PlayerMovement : NetworkBehaviour
     GameObject model;
     private float h;
     private float v;
-    public Camera camera;
+    public Camera gladiatorCamera;
     private bool isMoving;
     public Transform handPosition;
     public Transform elbowPosition;
@@ -44,7 +45,7 @@ public class PlayerMovement : NetworkBehaviour
     public Transform shootPosition;
     private bool fly = false;
     private float distToGround;
-
+    public bool attacking = false;
     //VARIABILI UI
     Transform buttons;
     //AGGIUNTE END
@@ -61,26 +62,34 @@ public class PlayerMovement : NetworkBehaviour
         //GameElements.getGladiatorCanvas().transform.FindChild("VirtualJoypad").gameObject.SetActive(true);
         //camera = gameObject.transform.FindChild("Camera").GetComponent<Camera>();
         //cameraTransform = camera.gameObject.transform;
-        //buttons = GameObject.FindGameObjectWithTag("GladiatorCanvas").transform.FindChild("VirtualJoypad/Buttons");
-        //buttons.gameObject.SetActive(true);
+        buttons = GameObject.FindGameObjectWithTag("GladiatorCanvas").transform.FindChild("VirtualJoypad/Buttons");
+        buttons.gameObject.SetActive(true);
+        //camera = transform.FindChild("Camera").gameObject.GetComponent<Camera>();
+        cameraTransform = gladiatorCamera.transform;
         hFloat = Animator.StringToHash("H");
         vFloat = Animator.StringToHash("V");
         speed = runSpeed;
         speedFloat = Animator.StringToHash("Speed");
         groundedBool = Animator.StringToHash("Grounded");
         distToGround = GetComponent<Collider>().bounds.extents.y;
-        joystickScript = GameElements.getVirtualJoystick().GetComponent<VirtualJoystick>();
+        joystickScript = GameObject.FindGameObjectWithTag("VirtualJoystick").GetComponent<VirtualJoystick>(); ;
     }
     //AGGIUNTE END
 
 
     private void Start()
     {
+        if (!this.isLocalPlayer)
+        {
+            gladiatorCamera.GetComponent<GladiatorCamera>().enabled = false;
+            GameObject.Destroy(gladiatorCamera.gameObject);
+        }
+        m_Rigidbody.freezeRotation = true;
         anim = GetComponent<Animator>();
         // The axes are based on player number.
-        m_MovementAxis = "Vertical" + (m_LocalID + 1);
-        m_TurnAxis = "Horizontal" + (m_LocalID + 1);
-
+        //m_MovementAxis = "Vertical" + (m_LocalID + 1);
+        //m_TurnAxis = "Horizontal" + (m_LocalID + 1);
+       
         // Store the original pitch of the audio source.
 
     }
@@ -88,15 +97,20 @@ public class PlayerMovement : NetworkBehaviour
     private void Update()
     {
         if (!isLocalPlayer)
+        {
             return;
+        }
         //AGGIUNTE
-        h = Input.GetAxis("Horizontal");
-        v = Input.GetAxis("Vertical");
+
+        h = joystickScript.Horizontal();
+        //CrossPlatformInputManager.GetAxis("Horizontal");
+        v = joystickScript.Vertical();
+            //CrossPlatformInputManager.GetAxis("Vertical");
         isMoving = Mathf.Abs(h) > 0.1 || Mathf.Abs(v) > 0.1;
         //AGGIUNTE END
         // Store the value of both input axes.
-        m_MovementInput = Input.GetAxis(m_MovementAxis);
-        m_TurnInput = Input.GetAxis(m_TurnAxis);
+        //m_MovementInput = Input.GetAxis(m_MovementAxis);
+        //m_TurnInput = Input.GetAxis(m_TurnAxis);
 
      
     }
@@ -108,8 +122,9 @@ public class PlayerMovement : NetworkBehaviour
     private void FixedUpdate()
     {
         if (!isLocalPlayer)
+        {
             return;
-
+        }
         // Adjust the rigidbodies position and orientation in FixedUpdate.
         //Move();
         //Turn();
@@ -131,7 +146,8 @@ public class PlayerMovement : NetworkBehaviour
     void MovementManagement(float horizontal, float vertical)
     {
 
-       
+        if (!attacking)
+        {
             Rotating(horizontal, vertical);
             if (isMoving)
             {
@@ -146,12 +162,12 @@ public class PlayerMovement : NetworkBehaviour
             }
             transform.Translate(Vector3.forward * speed);
             //GetComponent<Rigidbody>().AddForce(Vector3.forward*speed);
-        
+        }
     }
 
     Vector3 Rotating(float horizontal, float vertical)
     {
-        Vector3 forward = gameObject.transform.TransformDirection(Vector3.forward);
+        Vector3 forward = cameraTransform.TransformDirection(Vector3.forward);
         if (!fly)
             forward.y = 0.0f;
         forward = forward.normalized;
@@ -165,7 +181,7 @@ public class PlayerMovement : NetworkBehaviour
 
 
         targetDirection = forward * vertical + right * horizontal;
-        finalTurnSmoothing = 1.0f;
+        finalTurnSmoothing = 20.0f;
 
 
         if ((isMoving && targetDirection != Vector3.zero))
@@ -197,19 +213,6 @@ public class PlayerMovement : NetworkBehaviour
         }
     }
     //AGGIUNTE END
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     private void Move()
