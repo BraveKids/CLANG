@@ -38,18 +38,13 @@ public class GladiatorMovement : NetworkBehaviour
     private float v;
     public Camera gladiatorCamera;
     private bool isMoving;
-    public Transform handPosition;
-    public Transform elbowPosition;
-    // fly
-    public GameObject bulletPrefab;
-    public Transform shootPosition;
     private bool fly = false;
     private float distToGround;
     public bool attacking = false;
     //VARIABILI UI
     Transform buttons;
     //AGGIUNTE END
-
+    public bool isAttacking;
     private void Awake()
     {
         m_Rigidbody = GetComponent<Rigidbody>();
@@ -102,17 +97,18 @@ public class GladiatorMovement : NetworkBehaviour
             return;
         }
         //AGGIUNTE
-
-        h = joystickScript.Horizontal();
-        //CrossPlatformInputManager.GetAxis("Horizontal");
-        v = joystickScript.Vertical();
+        if (!isAttacking)
+        {
+            h = joystickScript.Horizontal();
+            //CrossPlatformInputManager.GetAxis("Horizontal");
+            v = joystickScript.Vertical();
             //CrossPlatformInputManager.GetAxis("Vertical");
-        isMoving = Mathf.Abs(h) > 0.1 || Mathf.Abs(v) > 0.1;
-        //AGGIUNTE END
-        // Store the value of both input axes.
-        //m_MovementInput = Input.GetAxis(m_MovementAxis);
-        //m_TurnInput = Input.GetAxis(m_TurnAxis);
-
+            isMoving = Mathf.Abs(h) > 0.1 || Mathf.Abs(v) > 0.1;
+            //AGGIUNTE END
+            // Store the value of both input axes.
+            //m_MovementInput = Input.GetAxis(m_MovementAxis);
+            //m_TurnInput = Input.GetAxis(m_TurnAxis);
+        }
      
     }
 
