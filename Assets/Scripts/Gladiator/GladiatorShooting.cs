@@ -41,6 +41,7 @@ public class GladiatorShooting : NetworkBehaviour
         // Set up the references.
         m_Rigidbody = GetComponent<Rigidbody>();
         m_animator = GetComponent<Animator>();
+        fireWeapon = null;
     }
 
 
@@ -70,6 +71,10 @@ public class GladiatorShooting : NetworkBehaviour
             {
                 ThrowWeapon();
             }
+        }
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            m_animator.SetTrigger("Dash");
         }
        
     }
@@ -123,6 +128,7 @@ public class GladiatorShooting : NetworkBehaviour
         if (!basicAttack)
         {
             basicAttack = true;
+            GetComponent<GladiatorMovement>().setAttacking(true);
             if (fireWeapon != null)
             {
                 ToggleWeapon("hand");
@@ -142,16 +148,20 @@ public class GladiatorShooting : NetworkBehaviour
             ToggleWeapon("fire");
         }
         basicAttack = false;
+        GetComponent<GladiatorMovement>().setAttacking(false);
     }
 
     private void SpecialAttack()
     {
         if (fireWeapon != null)
         {
+
             if (!specialAttack)
             {
+                m_Rigidbody.velocity = Vector3.zero;
+                m_Rigidbody.isKinematic = true;
                 specialAttack = true;
-                GetComponent<GladiatorMovement>().isAttacking = true;
+                GetComponent<GladiatorMovement>().setAttacking(true);
                 m_animator.SetBool("Shoot", true);
                 Invoke("Fire", 0.8f);
             }
@@ -165,7 +175,7 @@ public class GladiatorShooting : NetworkBehaviour
         if (fireWeapon != null)
         {
             CmdFire();
-            Invoke("FireDown", 0.2f); 
+            Invoke("FireDown", fireWeapon.GetComponent<FireWeapon>().rateOfAttack); 
         }
         
     }
@@ -189,6 +199,7 @@ public class GladiatorShooting : NetworkBehaviour
     [Command]
     private void CmdToggleWeapon(string weapon)
     {
+
         if (weapon.Equals("hand"))
         {
             fireWeapon.transform.FindChild("Model").gameObject.SetActive(false);
@@ -225,17 +236,18 @@ public class GladiatorShooting : NetworkBehaviour
     {
         if (fireWeapon != null)
         {
-            GetComponent<GladiatorMovement>().isAttacking = false;
+            
             specialAttack = false;
             m_animator.SetBool("Shoot", false);
             fireWeapon.GetComponent<FireWeapon>().integrity -= 1;
+            GetComponent<GladiatorMovement>().setAttacking(false);
+            m_Rigidbody.isKinematic = false;
         }
     }
     private void ThrowWeapon()
     {
-    
-        fireWeapon = null;
         ToggleWeapon("hand");
+        fireWeapon = null;
         CmdThrowWeapon();
     }
  

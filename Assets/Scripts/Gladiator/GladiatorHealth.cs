@@ -4,7 +4,9 @@ using UnityEngine.Networking;
 
 public class GladiatorHealth : NetworkBehaviour
 {
-    public float m_StartingHealth = 100f;             // The amount of health each tank starts with.
+    public float m_StartingHealth = 100f;
+    // The amount of health each tank starts with.
+    public float m_StartingArmor = 0f;
     public Slider m_Slider;                           // The slider to represent how much health the tank currently has.
     public Image m_FillImage;                         // The image component of the slider.
     public Color m_FullHealthColor = Color.green;     // The color the health bar will be when on full health.
@@ -22,6 +24,8 @@ public class GladiatorHealth : NetworkBehaviour
     [SyncVar(hook = "OnCurrentHealthChanged")]
     private float m_CurrentHealth;                  // How much health the tank currently has.*
     [SyncVar]
+    private float m_Armor;
+    [SyncVar]
     private bool m_ZeroHealthHappened;              // Has the tank been reduced beyond zero health yet?
     private BoxCollider m_Collider;                 // Used so that the tank doesn't collide with anything when it's dead.
 
@@ -35,6 +39,22 @@ public class GladiatorHealth : NetworkBehaviour
     // This is called whenever the tank takes damage.
     public void Damage(float amount)
     {
+        
+        if (m_Armor > 0)
+        {
+            
+            if (m_Armor >= amount)
+            {
+                m_Armor -= amount;
+
+            }
+            else
+            {
+                m_CurrentHealth -= (amount - m_Armor);
+                SetArmor(0f);
+            }          
+        }
+
         // Reduce current health by the amount of damage done.
         m_CurrentHealth -= amount;
 
@@ -45,6 +65,16 @@ public class GladiatorHealth : NetworkBehaviour
         }
     }
 
+
+    public void SetArmor(float value)
+    {
+        this.m_Armor = value;
+    }
+
+    public float GetArmor()
+    {
+        return m_Armor;
+    }
     
     private void SetHealthUI()
     {

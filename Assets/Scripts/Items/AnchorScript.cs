@@ -9,18 +9,19 @@ public class AnchorScript : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        
+        gameObject.transform.parent = anchorPosHand;
         //gladiator = GameElements.getGladiator();
         //gladiator.GetComponent<GladiatorShooting>().handWeapon = this.gameObject;
         //anchorPosHand = gladiator.GetComponent<GladiatorShooting>().handPosition;
         //anchorPosElbow = gladiator.GetComponent<GladiatorShooting>().elbowPosition;
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        gameObject.transform.position = new Vector3(anchorPosHand.position.x, anchorPosHand.position.y, anchorPosHand.position.z);
+        
+        //gameObject.transform.position = new Vector3(anchorPosHand.position.x, anchorPosHand.position.y, anchorPosHand.position.z);
         gameObject.transform.rotation = new Quaternion(Quaternion.LookRotation(anchorPosHand.position - anchorPosElbow.position).x,
                                                        Quaternion.LookRotation(anchorPosHand.position - anchorPosElbow.position).y,
                                                        Quaternion.LookRotation(anchorPosHand.position - anchorPosElbow.position).z,

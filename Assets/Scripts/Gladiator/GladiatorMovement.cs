@@ -97,8 +97,8 @@ public class GladiatorMovement : NetworkBehaviour
             return;
         }
         //AGGIUNTE
-        if (!isAttacking)
-        {
+        
+        
             h = joystickScript.Horizontal();
             //CrossPlatformInputManager.GetAxis("Horizontal");
             v = joystickScript.Vertical();
@@ -108,7 +108,7 @@ public class GladiatorMovement : NetworkBehaviour
             // Store the value of both input axes.
             //m_MovementInput = Input.GetAxis(m_MovementAxis);
             //m_TurnInput = Input.GetAxis(m_TurnAxis);
-        }
+        
      
     }
 
@@ -143,7 +143,7 @@ public class GladiatorMovement : NetworkBehaviour
     void MovementManagement(float horizontal, float vertical)
     {
 
-        if (!attacking)
+        if (!isAttacking)
         {
             Rotating(horizontal, vertical);
             if (isMoving)
@@ -259,5 +259,10 @@ public class GladiatorMovement : NetworkBehaviour
     void OnEnable()
     {
         m_Rigidbody.constraints = m_OriginalConstrains;
+    }
+
+    public void setAttacking(bool attacking)
+    {
+        this.isAttacking = attacking;
     }
 }

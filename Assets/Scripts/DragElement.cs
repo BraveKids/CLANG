@@ -9,10 +9,12 @@ using UnityEngine.Networking;
 
 public class DragElement : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointerDownHandler {
     public GameObject prefabObject;
+    float pulsePrice;
     public GameObject dragObject;
     public float heightFloat;
     Vector3 spawnPoint;
     GameObject strategist;
+    StrategistPulse strategistPulse;
     private Plane plane = new Plane(Vector3.up, Vector3.zero);
     Camera strategistCamera;
     public void Toggle() {
@@ -22,6 +24,8 @@ public class DragElement : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoin
     void Start () {
         strategist = GameElements.getStrategist();
         strategistCamera = strategist.GetComponent<StrategistSpawner>().strategistCamera;
+        strategistPulse = strategist.GetComponent<StrategistPulse>();
+        pulsePrice = prefabObject.GetComponent<PulsePrice>().pulsePrice;
         //gameObject.GetComponent<RawImage>().texture = AssetPreview.GetAssetPreview(prefabObject);
     }
 
@@ -42,8 +46,13 @@ public class DragElement : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoin
     }
 
     public virtual void OnPointerUp (PointerEventData ped) {
-        spawnPoint = ped.position;
-        strategist.GetComponent<StrategistSpawner>().Spawn(prefabObject,GetWorldPositionOnPlane(spawnPoint));
+        if (strategistPulse.GetPulse() >= pulsePrice)
+        {
+            strategistPulse.SpawnPrice(pulsePrice);
+            spawnPoint = ped.position;
+            strategist.GetComponent<StrategistSpawner>().Spawn(prefabObject, GetWorldPositionOnPlane(spawnPoint));
+            
+        }
         dragObject.transform.position = new Vector3(1000f, 1000f, 1000f);
     }
     /*
