@@ -8,6 +8,7 @@ Library/
 Assets/AssetStoreTools*
 Assets/Scenes
 *.unity
+*.unity.meta
 *.wav
 *.wav.meta
 *.mp3
