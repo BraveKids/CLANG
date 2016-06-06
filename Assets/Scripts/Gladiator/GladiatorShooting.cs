@@ -199,16 +199,18 @@ public class GladiatorShooting : NetworkBehaviour
     [Command]
     private void CmdToggleWeapon(string weapon)
     {
-
-        if (weapon.Equals("hand"))
+        if (fireWeapon != null)
         {
-            fireWeapon.transform.FindChild("Model").gameObject.SetActive(false);
-            handWeapon.transform.FindChild("Model").gameObject.SetActive(true);
-        }
-        else if (weapon.Equals("fire"))
-        {
-            fireWeapon.transform.FindChild("Model").gameObject.SetActive(true);
-            handWeapon.transform.FindChild("Model").gameObject.SetActive(false);
+            if (weapon.Equals("hand"))
+            {
+                fireWeapon.transform.FindChild("Model").gameObject.SetActive(false);
+                handWeapon.transform.FindChild("Model").gameObject.SetActive(true);
+            }
+            else if (weapon.Equals("fire"))
+            {
+                fireWeapon.transform.FindChild("Model").gameObject.SetActive(true);
+                handWeapon.transform.FindChild("Model").gameObject.SetActive(false);
+            }
         }
     }
 
