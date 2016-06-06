@@ -63,6 +63,7 @@ public class StrategistSpawner : NetworkBehaviour {
         GameObject instance = Instantiate(spawnObj, position, Quaternion.identity) as GameObject;
         NetworkServer.Spawn(instance);
     }
+
 	
 
     [ClientCallback]

@@ -17,11 +17,16 @@ public class DragElement : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoin
     StrategistPulse strategistPulse;
     private Plane plane = new Plane(Vector3.up, Vector3.zero);
     Camera strategistCamera;
+    public float cooldownTimer;
+    bool cooldown;
+    public float timer;
+
     public void Toggle() {
         enabled = !enabled;
     }
 
     void Start () {
+        cooldown = false;
         strategist = GameElements.getStrategist();
         strategistCamera = strategist.GetComponent<StrategistSpawner>().strategistCamera;
         strategistPulse = strategist.GetComponent<StrategistPulse>();
@@ -33,9 +38,19 @@ public class DragElement : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoin
         //dragObject = Instantiate(gameObject, eventData.position, Quaternion.identity) as GameObject;
     }
 
-    /*void Update() {
-        dragObject.transform.position = GetWorldPositionOnPlane(Input.mousePosition);
-    }*/
+    void Update() {
+        if (cooldown)
+        {
+            GetComponent<RawImage>().color = Color.blue;
+            timer += Time.deltaTime;
+            if(timer>= cooldownTimer)
+            {
+                GetComponent<RawImage>().color = Color.white;
+                timer = 0.0f;
+                cooldown = false;
+            }
+        }
+    }
 
     public virtual void OnDrag (PointerEventData ped) {
         dragObject.transform.position = GetWorldPositionOnPlane(ped.position);
@@ -46,12 +61,15 @@ public class DragElement : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoin
     }
 
     public virtual void OnPointerUp (PointerEventData ped) {
-        if (strategistPulse.GetPulse() >= pulsePrice)
+        if (!cooldown)
         {
-            strategistPulse.SpawnPrice(pulsePrice);
-            spawnPoint = ped.position;
-            strategist.GetComponent<StrategistSpawner>().Spawn(prefabObject, GetWorldPositionOnPlane(spawnPoint));
-            
+            if (strategistPulse.GetPulse() >= pulsePrice)
+            {
+                strategistPulse.SpawnPrice(pulsePrice);
+                spawnPoint = ped.position;
+                strategist.GetComponent<StrategistSpawner>().Spawn(prefabObject, GetWorldPositionOnPlane(spawnPoint));
+                cooldown = true;
+            }
         }
         dragObject.transform.position = new Vector3(1000f, 1000f, 1000f);
     }

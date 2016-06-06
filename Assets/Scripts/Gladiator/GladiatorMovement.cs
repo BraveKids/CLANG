@@ -97,7 +97,12 @@ public class GladiatorMovement : NetworkBehaviour
             return;
         }
         //AGGIUNTE
-        
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+
+            anim.SetTrigger("Dash");
+            transform.Translate(Vector3.back * 1f);
+        }
         
             h = joystickScript.Horizontal();
             //CrossPlatformInputManager.GetAxis("Horizontal");

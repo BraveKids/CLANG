@@ -1,0 +1,161 @@
+fileFormatVersion: 2
+guid: 6357f24e602e4914a8965454f113f4f8
+timeCreated: 1465055518
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: box
+    100002: Box001
+    100004: Box002
+    100006: mixamorig:Head
+    100008: mixamorig:HeadTop_End
+    100010: mixamorig:Hips
+    100012: mixamorig:LeftArm
+    100014: mixamorig:LeftFoot
+    100016: mixamorig:LeftForeArm
+    100018: mixamorig:LeftHand
+    100020: mixamorig:LeftLeg
+    100022: mixamorig:LeftShoulder
+    100024: mixamorig:LeftToe_End
+    100026: mixamorig:LeftToeBase
+    100028: mixamorig:LeftUpLeg
+    100030: mixamorig:Neck
+    100032: mixamorig:RightArm
+    100034: mixamorig:RightFoot
+    100036: mixamorig:RightForeArm
+    100038: mixamorig:RightHand
+    100040: mixamorig:RightLeg
+    100042: mixamorig:RightShoulder
+    100044: mixamorig:RightToe_End
+    100046: mixamorig:RightToeBase
+    100048: mixamorig:RightUpLeg
+    100050: mixamorig:Spine
+    100052: mixamorig:Spine1
+    100054: mixamorig:Spine2
+    100056: Object001
+    100058: Sphere001
+    100060: //RootNode
+    100062: Torus001
+    100064: Torus002
+    100066: Torus003
+    100068: Torus006
+    400000: box
+    400002: Box001
+    400004: Box002
+    400006: mixamorig:Head
+    400008: mixamorig:HeadTop_End
+    400010: mixamorig:Hips
+    400012: mixamorig:LeftArm
+    400014: mixamorig:LeftFoot
+    400016: mixamorig:LeftForeArm
+    400018: mixamorig:LeftHand
+    400020: mixamorig:LeftLeg
+    400022: mixamorig:LeftShoulder
+    400024: mixamorig:LeftToe_End
+    400026: mixamorig:LeftToeBase
+    400028: mixamorig:LeftUpLeg
+    400030: mixamorig:Neck
+    400032: mixamorig:RightArm
+    400034: mixamorig:RightFoot
+    400036: mixamorig:RightForeArm
+    400038: mixamorig:RightHand
+    400040: mixamorig:RightLeg
+    400042: mixamorig:RightShoulder
+    400044: mixamorig:RightToe_End
+    400046: mixamorig:RightToeBase
+    400048: mixamorig:RightUpLeg
+    400050: mixamorig:Spine
+    400052: mixamorig:Spine1
+    400054: mixamorig:Spine2
+    400056: Object001
+    400058: Sphere001
+    400060: //RootNode
+    400062: Torus001
+    400064: Torus002
+    400066: Torus003
+    400068: Torus006
+    4300000: box
+    4300002: Torus002
+    4300004: Torus003
+    4300006: Torus001
+    4300008: Sphere001
+    4300010: Box001
+    4300012: Torus006
+    4300014: Box002
+    4300016: Object001
+    7400000: mixamo.com
+    9500000: //RootNode
+    13700000: box
+    13700002: Box001
+    13700004: Box002
+    13700006: Object001
+    13700008: Sphere001
+    13700010: Torus001
+    13700012: Torus002
+    13700014: Torus003
+    13700016: Torus006
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleRotations: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
