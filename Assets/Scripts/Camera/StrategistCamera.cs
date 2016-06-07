@@ -5,8 +5,8 @@ using UnityEngine.EventSystems;
 public class StrategistCamera : MonoBehaviour {
 
 
-    public float perspectiveZoomSpeed = 0.05f;        // The rate of change of the field of view in perspective mode.
-    public float panningSpeed = 0.05f;
+    public float perspectiveZoomSpeed = 0.15f;        // The rate of change of the field of view in perspective mode.
+    public float panningSpeed = 0.025f;
     Camera camera;
     float pointX;
     float pointY;
@@ -15,8 +15,8 @@ public class StrategistCamera : MonoBehaviour {
     GameObject arena;
     float minY;
     float maxY;
-    public float distanceFromGround = 10f;
-    public float distanceToGround = 8f;
+    public float distanceFromGround;
+    public float distanceToGround;
     GameObject leftBorder;
     Plane[] planes;
 
@@ -26,7 +26,7 @@ public class StrategistCamera : MonoBehaviour {
     float fieldOfViewMid;
 
     //indicano i limiti dell'arena
-    public float arenaBorderLR = 40f;
+    public float arenaBorderLR = 30f;
     public float arenaBorderUD = 25f;
     float arenaBorderL;
     float arenaBorderR;
@@ -77,16 +77,26 @@ public class StrategistCamera : MonoBehaviour {
         adiacente = distanceView * Mathf.Cos(DegreeToRadian(cameraAngle));
         cameraBorderU = transform.position.z + adiacente + (cameraBorder / aspectRatio);
         cameraBorderD = transform.position.z + adiacente - (cameraBorder / aspectRatio);
+        /*
+        #if UNITY_EDITOR
 
+        arenaBorderL = arena.transform.position.x - arenaBorderLR;
+        arenaBorderR = arena.transform.position.x + arenaBorderLR;
+        arenaBorderU = arena.transform.position.z + arenaBorderUD;
+        arenaBorderD = arena.transform.position.z - arenaBorderUD;
+        minY = arena.transform.position.y + distanceFromGround;
+        maxY = minY + distanceToGround;
         DebugLine();
 
+        #endif
+        */
         checkBorder();
 
 
         if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) {
             if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)) {
                 onUi = true;
-                Debug.Log("Sei sulla UI");
+                //Debug.Log("Sei sulla UI");
             }
         }
 
@@ -119,19 +129,19 @@ public class StrategistCamera : MonoBehaviour {
         float moveZ = (pointY - Input.GetTouch(0).position.y) * panningSpeed;
 
         if (checkLeft() && moveX <= 0) {
-            Debug.Log("You cannot pass!");
+            //Debug.Log("You cannot pass!");
             moveX = 0;
         }
         else if (checkRight() && moveX >= 0) {
-            Debug.Log("You cannot pass!");
+            //Debug.Log("You cannot pass!");
             moveX = 0;
         }
         if (checkUp() && moveZ > 0) {
-            Debug.Log("You cannot pass!");
+            //Debug.Log("You cannot pass!");
             moveZ = 0;
         }
         else if (checkDown() && moveZ < 0) {
-            Debug.Log("You cannot pass!");
+            //Debug.Log("You cannot pass!");
             moveZ = 0; ;
         }
 
@@ -170,7 +180,7 @@ public class StrategistCamera : MonoBehaviour {
         //camera.fieldOfView = Mathf.Clamp(camera.fieldOfView, 0.1f, 179.9f);
 
         if (transform.position.y < minY && deltaMagnitudeDiff <= 0) {
-            Debug.Log("min limit");
+            //Debug.Log("min limit");
             return;
         }
         /*
@@ -181,7 +191,7 @@ public class StrategistCamera : MonoBehaviour {
         float moveY = 0;
 
         if (checkBorder() && deltaMagnitudeDiff > 0) {
-            Debug.Log("Border touched while zooming");
+            //Debug.Log("Border touched while zooming");
             if (checkLeft() && !checkRight()) {
                 moveX = 1;
             }
@@ -205,7 +215,7 @@ public class StrategistCamera : MonoBehaviour {
     }
 
     void FingersUp() {
-        Debug.Log("Fingers UP");
+        //Debug.Log("Fingers UP");
         pressing = false;
         onUi = false;
         pointX = 0;
@@ -257,19 +267,19 @@ public class StrategistCamera : MonoBehaviour {
 
     bool checkBorder() {
         if (cameraBorderL < arenaBorderL) {
-            Debug.Log("Limite sinistro");
+            //Debug.Log("Limite sinistro");
             return true;
         }
         else if (cameraBorderR > arenaBorderR) {
-            Debug.Log("Limite destro");
+            //Debug.Log("Limite destro");
             return true;
         }
         else if (cameraBorderU > arenaBorderU) {
-            Debug.Log("Limite superiore");
+            //Debug.Log("Limite superiore");
             return true;
         }
         else if (cameraBorderD < arenaBorderD) {
-            Debug.Log("Limite inferiore");
+            //Debug.Log("Limite inferiore");
             return true;
         }
         else return false;

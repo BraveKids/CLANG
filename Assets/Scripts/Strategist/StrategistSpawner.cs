@@ -43,12 +43,19 @@ public class StrategistSpawner : NetworkBehaviour {
     public override void OnStartLocalPlayer()
     {
         GameObject.FindGameObjectWithTag("Canvas").transform.FindChild("StrategistCanvas").gameObject.SetActive(true);
+        GetComponent<GameTimer>().enabled = true;
+        GetComponent<StrategistPulse>().enabled = true;
     }
 
 
     void Start () {
-	    
-	}
+        if (!this.isLocalPlayer)
+        {
+            strategistCamera.GetComponent<StrategistCamera>().enabled = false;
+            GameObject.Destroy(strategistCamera.gameObject);
+        }
+
+    }
 
     public void Spawn(GameObject spawnObj, Vector3 position)
     {

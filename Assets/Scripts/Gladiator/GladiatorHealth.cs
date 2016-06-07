@@ -100,12 +100,15 @@ public class GladiatorHealth : NetworkBehaviour
     {
         // Set the flag so that this function is only called once.
         m_ZeroHealthHappened = true;
-
+        GameManager.s_Instance.winner = "STRATEGIST";
+        GameManager.s_Instance.SetGameWinner(GameElements.getStrategist());
+        GameManager.s_Instance.endGame = true;
         RpcOnZeroHealth();
     }
 
     private void InternalOnZeroHealth()
     {
+
         // Disable the collider and all the appropriate child gameobjects so the tank doesn't interact or show up when it's dead.
         SetPlayerActive(false);
     }
@@ -134,7 +137,7 @@ public class GladiatorHealth : NetworkBehaviour
 
         if (active) m_Manager.EnableControl();
         else m_Manager.DisableControl();
-
+        //gameObject.SetActive(false);
         //m_Setup.ActivateCrown(active);
     }
 

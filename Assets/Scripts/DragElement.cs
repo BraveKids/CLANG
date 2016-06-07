@@ -65,10 +65,18 @@ public class DragElement : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoin
         {
             if (strategistPulse.GetPulse() >= pulsePrice)
             {
-                strategistPulse.SpawnPrice(pulsePrice);
                 spawnPoint = ped.position;
-                strategist.GetComponent<StrategistSpawner>().Spawn(prefabObject, GetWorldPositionOnPlane(spawnPoint));
-                cooldown = true;
+                Vector3 worldPosition = GetWorldPositionOnPlane(spawnPoint);
+                if (Physics.Raycast(worldPosition,Vector3.up,3.0f)!=true) { 
+                    strategistPulse.SpawnPrice(pulsePrice);
+                    
+                    strategist.GetComponent<StrategistSpawner>().Spawn(prefabObject, worldPosition);
+                    cooldown = true;
+                }
+                else
+                {
+                    
+                }
             }
         }
         dragObject.transform.position = new Vector3(1000f, 1000f, 1000f);
@@ -85,6 +93,7 @@ public class DragElement : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoin
         float distance;
        
         Ray ray = strategistCamera.ScreenPointToRay(pointerPosition); 
+        
             //Camera.main.ScreenPointToRay(pointerPosition);
         if (plane.Raycast(ray, out distance)) {
             Vector3 hitPoint = ray.GetPoint(distance);

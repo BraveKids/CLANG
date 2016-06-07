@@ -19,13 +19,15 @@ public class GameManager : NetworkBehaviour
     public Text m_MessageText;                // Reference to the overlay Text to display winning text, etc.
     public static GameObject m_GladiatorPrefab;
     public GameObject m_StrategistPrefab;// Reference to the prefab the players will control.
-
+    public bool endGame = false;
+    //public bool gladiatorIsDead = false;
+    public string winner = "none";
     public Transform[] m_SpawnPoint;
 
     [HideInInspector]
     [SyncVar]
     public bool m_GameIsFinished = false;
-
+    //public bool timeUp;
     //Various UI references to hide the screen between rounds.
     [Space]
     [Header("UI")]
@@ -36,8 +38,10 @@ public class GameManager : NetworkBehaviour
     private WaitForSeconds m_StartWait;         // Used to have a delay whilst the round starts.
     private WaitForSeconds m_EndWait;           // Used to have a delay whilst the round or game ends.
     private Manager m_RoundWinner;          // Reference to the winner of the current round.  Used to make an announcement of who won.
-    private Manager m_GameWinner;           // Reference to the winner of the game.  Used to make an announcement of who won.
+    private Manager m_GameWinner;
+    // Reference to the winner of the game.  Used to make an announcement of who won.
 
+    private GameObject GameWinner;
     void Awake()
     {
         s_Instance = this;
@@ -54,6 +58,7 @@ public class GameManager : NetworkBehaviour
         StartCoroutine(GameLoop());
     }
 
+ 
     /// <summary>
     /// Add a tank from the lobby hook
     /// </summary>
@@ -111,6 +116,7 @@ public class GameManager : NetworkBehaviour
     // This is called from start and will run each phase of the game one after another. ONLY ON SERVER (as Start is only called on server)
     private IEnumerator GameLoop()
     {
+      
         while (m_Players.Count < 2)
             yield return null;
 
@@ -127,7 +133,7 @@ public class GameManager : NetworkBehaviour
         yield return StartCoroutine(RoundEnding());
 
         // This code is not run until 'RoundEnding' has finished.  At which point, check if there is a winner of the game.
-        if (m_GameWinner != null)
+        if (GameWinner != null)
         {// If there is a game winner, wait for certain amount or all player confirmed to start a game again
             m_GameIsFinished = true;
             float leftWaitTime = 15.0f;
@@ -179,6 +185,7 @@ public class GameManager : NetworkBehaviour
     [ClientRpc]
     void RpcRoundStarting()
     {
+        
         // As soon as the round starts reset the tanks and make sure they can't move.
         ResetAllPlayers();
         DisablePlayerControl();
@@ -224,11 +231,13 @@ public class GameManager : NetworkBehaviour
         RpcRoundPlaying();
 
         // While there is not one tank left...
-        while (!OnePlayerLeft())
+        while (!GameIsFinished())
         {
             // ... return on the next frame.
             yield return null;
         }
+      
+
     }
 
     [ClientRpc]
@@ -243,18 +252,7 @@ public class GameManager : NetworkBehaviour
 
     private IEnumerator RoundEnding()
     {
-        // Clear the winner from the previous round.
-        m_RoundWinner = null;
-
-        // See if there is a winner now the round is over.
-        m_RoundWinner = GetRoundWinner();
-
-        // If there is a winner, increment their score.
-        if (m_RoundWinner != null)
-            m_RoundWinner.m_Wins++;
-
-        // Now the winner's score has been incremented, see if someone has one the game.
-        m_GameWinner = GetGameWinner();
+        
 
         RpcUpdateMessage(EndMessage(0));
 
@@ -290,7 +288,7 @@ public class GameManager : NetworkBehaviour
             yield return null;
         }
     }
-
+    /*
     // This is used to check if there is one or fewer tanks remaining and thus the round should end.
     private bool OnePlayerLeft()
     {
@@ -306,8 +304,17 @@ public class GameManager : NetworkBehaviour
         }
 
         // If there are one or fewer tanks remaining return true, otherwise return false.
-        return numPlayersLeft <= 1;
+        //return numPlayersLeft <= 1;
+        return timeUp;
+    }*/
+
+    private bool GameIsFinished()
+    {
+       
+        return endGame;
     }
+
+   
 
 
     // This function is to find out if there is a winner of the round.
@@ -329,32 +336,14 @@ public class GameManager : NetworkBehaviour
     
 
     // This function is to find out if there is a winner of the game.
-    private Manager GetGameWinner()
+    private GameObject GetGameWinner()
     {
-        int maxScore = 0;
+        return GameWinner;
+    }
 
-        // Go through all the tanks...
-        for (int i = 0; i < m_Players.Count; i++)
-        {
-            if(m_Players[i].m_Wins > maxScore)
-            {
-                maxScore = m_Players[i].m_Wins;
-            }
-
-            // ... and if one of them has enough rounds to win the game, return it.
-            if (m_Players[i].m_Wins == m_NumRoundsToWin)
-                return m_Players[i];
-        }
-
-        //go throught a second time to enable/disable the crown on tanks
-        //(note : we don't enter it if the maxScore is 0, as no one is current leader yet!)
-        for (int i = 0; i < m_Players.Count && maxScore > 0; i++)
-        {
-            //m_Players[i].SetLeader(maxScore == m_Players[i].m_Wins);
-        }
-
-        // If no tanks have enough rounds to win, return null.
-        return null;
+    public void SetGameWinner(GameObject obj)
+    {
+        GameWinner = obj;
     }
 
 
@@ -366,24 +355,16 @@ public class GameManager : NetworkBehaviour
 
 
         // If there is a game winner set the message to say which player has won the game.
-        if (m_GameWinner != null)
-            message = "<color=#" + ColorUtility.ToHtmlStringRGB(m_GameWinner.m_PlayerColor) + ">"+ m_GameWinner.m_PlayerName + "</color> WINS THE GAME!";
-        // If there is a winner, change the message to display 'PLAYER #' in their color and a winning message.
-        else if (m_RoundWinner != null)
-            message = "<color=#" + ColorUtility.ToHtmlStringRGB(m_RoundWinner.m_PlayerColor) + ">" + m_RoundWinner.m_PlayerName + "</color> WINS THE ROUND!";
-
+        if (GameWinner != null)
+            message = winner + " WINS THE GAME!";
+     
         // After either the message of a draw or a winner, add some space before the leader board.
         message += "\n\n";
 
-        // Go through all the tanks and display their scores with their 'PLAYER #' in their color.
-        for (int i = 0; i < m_Players.Count; i++)
-        {
-            message += "<color=#" + ColorUtility.ToHtmlStringRGB(m_Players[i].m_PlayerColor) + ">" + m_Players[i].m_PlayerName + "</color>: " + m_Players[i].m_Wins + " WINS " 
-                + (m_Players[i].IsReady()? "<size=15>READY</size>" : "") + " \n";
-        }
+      
 
-        if (m_GameWinner != null)
-            message += "\n\n<size=20 > Return to lobby in " + waitTime + "\nPress Fire to get ready</size>";
+        if (GameWinner != null)
+            message += "\n\nReturn to lobby in " + waitTime;
 
         return message;
     }

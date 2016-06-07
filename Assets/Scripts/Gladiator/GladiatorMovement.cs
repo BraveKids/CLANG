@@ -20,7 +20,7 @@ public class GladiatorMovement : NetworkBehaviour
 
     //AGGIUNTE
     //MOVIMENTO
-    public float runSpeed = 0.1f;
+    public float runSpeed = 0.01f;
     public float turnSmoothing = 1f;
     public float speedDampTime = 0.1f;
     private float speed;
@@ -58,6 +58,7 @@ public class GladiatorMovement : NetworkBehaviour
         //camera = gameObject.transform.FindChild("Camera").GetComponent<Camera>();
         //cameraTransform = camera.gameObject.transform;
         GameObject.FindGameObjectWithTag("Canvas").transform.FindChild("GladiatorCanvas").gameObject.SetActive(true);
+        GetComponent<GameTimer>().enabled = true;
         buttons = GameObject.FindGameObjectWithTag("Canvas").transform.FindChild("GladiatorCanvas/VirtualJoypad/Buttons");
         buttons.gameObject.SetActive(true);
         //camera = transform.FindChild("Camera").gameObject.GetComponent<Camera>();
@@ -80,7 +81,7 @@ public class GladiatorMovement : NetworkBehaviour
             gladiatorCamera.GetComponent<GladiatorCamera>().enabled = false;
             GameObject.Destroy(gladiatorCamera.gameObject);
         }
-        m_Rigidbody.freezeRotation = true;
+        //m_Rigidbody.freezeRotation = true;
         anim = GetComponent<Animator>();
         // The axes are based on player number.
         //m_MovementAxis = "Vertical" + (m_LocalID + 1);
@@ -109,12 +110,14 @@ public class GladiatorMovement : NetworkBehaviour
             v = joystickScript.Vertical();
             //CrossPlatformInputManager.GetAxis("Vertical");
             isMoving = Mathf.Abs(h) > 0.1 || Mathf.Abs(v) > 0.1;
-            //AGGIUNTE END
-            // Store the value of both input axes.
-            //m_MovementInput = Input.GetAxis(m_MovementAxis);
-            //m_TurnInput = Input.GetAxis(m_TurnAxis);
-        
-     
+        //AGGIUNTE END
+        // Store the value of both input axes.
+        //m_MovementInput = Input.GetAxis(m_MovementAxis);
+        //m_TurnInput = Input.GetAxis(m_TurnAxis);
+
+   
+
+
     }
 
 
@@ -127,15 +130,18 @@ public class GladiatorMovement : NetworkBehaviour
         {
             return;
         }
+
+
+        anim.SetFloat(hFloat, h);
+        anim.SetFloat(vFloat, v);
+        anim.SetBool(groundedBool, IsGrounded());
+        MovementManagement(h, v);
         // Adjust the rigidbodies position and orientation in FixedUpdate.
         //Move();
         //Turn();
 
         //AGGIUNTE
-        anim.SetFloat(hFloat, h);
-        anim.SetFloat(vFloat, v);
-        anim.SetBool(groundedBool, IsGrounded());
-        MovementManagement(h, v);
+
         //AGGIUNTE END
     }
     //AGGIUNTE
@@ -190,15 +196,17 @@ public class GladiatorMovement : NetworkBehaviour
         {
             Quaternion targetRotation = Quaternion.LookRotation(targetDirection, Vector3.up);
 
-            Quaternion newRotation = Quaternion.Slerp(GetComponent<Rigidbody>().rotation, targetRotation, finalTurnSmoothing * Time.deltaTime);
-            GetComponent<Rigidbody>().MoveRotation(newRotation);
+            Quaternion newRotation = Quaternion.Slerp(transform.rotation, targetRotation, finalTurnSmoothing * Time.deltaTime);
+            //GetComponent<Rigidbody>().MoveRotation(newRotation);
+            transform.rotation = newRotation;
             lastDirection = targetDirection;
         }
+        /*
         //idle - fly or grounded
         if (!(Mathf.Abs(h) > 0.9 || Mathf.Abs(v) > 0.9))
         {
             Repositioning();
-        }
+        }*/
 
         return targetDirection;
     }
@@ -210,42 +218,18 @@ public class GladiatorMovement : NetworkBehaviour
         {
             repositioning.y = 0;
             Quaternion targetRotation = Quaternion.LookRotation(repositioning, Vector3.up);
-            Quaternion newRotation = Quaternion.Slerp(GetComponent<Rigidbody>().rotation, targetRotation, turnSmoothing * Time.deltaTime);
-            GetComponent<Rigidbody>().MoveRotation(newRotation);
+            Quaternion newRotation = Quaternion.Slerp(transform.rotation, targetRotation, turnSmoothing * Time.deltaTime);
+            transform.rotation = newRotation;
         }
     }
-    //AGGIUNTE END
-
-
-    private void Move()
-    {
-        // Create a movement vector based on the input, speed and the time between frames, in the direction the tank is facing.
-        anim.SetFloat("Speed", m_MovementInput);
-        Vector3 movement = transform.forward * m_MovementInput * m_Speed * Time.deltaTime;
-
-        // Apply this movement to the rigidbody's position.
-        m_Rigidbody.MovePosition(m_Rigidbody.position + movement);
-    }
-
-
-    private void Turn()
-    {
-        // Determine the number of degrees to be turned based on the input, speed and time between frames.
-        float turn = m_TurnInput * m_TurnSpeed * Time.deltaTime;
-
-        // Make this into a rotation in the y axis.
-        Quaternion inputRotation = Quaternion.Euler(0f, turn, 0f);
-
-        // Apply this rotation to the rigidbody's rotation.
-        m_Rigidbody.MoveRotation(m_Rigidbody.rotation * inputRotation);
-    }
+  
 
 
     // This function is called at the start of each round to make sure each tank is set up correctly.
     public void SetDefaults()
     {
-        m_Rigidbody.velocity = Vector3.zero;
-        m_Rigidbody.angularVelocity = Vector3.zero;
+        //m_Rigidbody.velocity = Vector3.zero;
+        //m_Rigidbody.angularVelocity = Vector3.zero;
 
         m_MovementInput = 0f;
         m_TurnInput = 0f;
