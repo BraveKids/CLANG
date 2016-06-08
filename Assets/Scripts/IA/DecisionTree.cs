@@ -6,27 +6,27 @@ using UnityEngine;
 
 
 
-public delegate void DTActionCall();
+public delegate void DTCall();
 public delegate object DTDecisionCall();
 
-public abstract class DTNode {
-
+public interface DTNode {
+    void walk(ref DTNode currentNode);
 }
-
-
 
 
 public class DTAction : DTNode {
 
-    DTActionCall action;
+    DTCall Action;
 
-    public DTAction(DTActionCall action) {
-        this.action = action;
+    public DTAction(DTCall action) {
+        Action = action;
     }
 
-    public void ExecuteAction() {
-        action();
+    public void walk(ref DTNode currentNode) {
+        Action();
+        currentNode = null;
     }
+
 }
 
 public class DTDecision : DTNode {
@@ -40,9 +40,9 @@ public class DTDecision : DTNode {
     public void AddNode(object arc, DTNode node) {
         Arcs.Add(arc, node);
     }
-    public void takeDecision(ref DTNode node) {
+    public void walk(ref DTNode currentNode) {
         object decision = Selector();
-        node = Arcs.ContainsKey(decision) ? Arcs[decision] : null;
+        currentNode = Arcs.ContainsKey(decision) ? Arcs[decision] : null;
     }
 }
 
@@ -56,22 +56,9 @@ public class DecisionTree {
 
     public void Walk() {
         currentNode = startNode;
-
         while (currentNode != null) {
-            if (currentNode is DTAction) {
-                //new DTAction(currentNode).ExecuteAction();
-                DTAction actionNode = currentNode as DTAction;
-                actionNode.ExecuteAction();
-                Debug.Log("Azione eseguita");
-                currentNode = null;
-                return;
-            }
-            else if (currentNode is DTDecision) {
-                DTDecision decisionNode = currentNode as DTDecision;
-                decisionNode.takeDecision(ref currentNode);
-            }
+            currentNode.walk(ref currentNode);           
         }
-        Debug.Log("Nessuna azione trovata");
     }
 
 }

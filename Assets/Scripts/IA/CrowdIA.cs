@@ -4,17 +4,20 @@ using System.Collections;
 public class CrowdIA : MonoBehaviour {
 
     DecisionTree CrowdTree;
+    public float helpFrequency = 3f;
     // Use this for initialization
     void Start() {
         DTDecision d1 = new DTDecision(randomNumber);
 
 
-        CrowdTree = new DecisionTree(d1);
         DTAction a1 = new DTAction(trueOption);
         DTAction a2 = new DTAction(falseOption);
         d1.AddNode(true, a1);
         d1.AddNode(false, a2);
-        StartCoroutine(Patrol(CrowdTree));
+
+
+        CrowdTree = new DecisionTree(d1);
+        StartCoroutine(Patrol());
 
     }
 
@@ -35,10 +38,10 @@ public class CrowdIA : MonoBehaviour {
         Debug.Log("Opzione false");
     }
 
-    IEnumerator Patrol(DecisionTree tree) {
+    IEnumerator Patrol() {
         while (true) {
-            tree.Walk();
-            yield return new WaitForSeconds(2f);
+            CrowdTree.Walk();
+            yield return new WaitForSeconds(helpFrequency);
         }
     }
 
