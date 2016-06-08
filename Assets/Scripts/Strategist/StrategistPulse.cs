@@ -4,8 +4,11 @@ using UnityEngine.Networking;
 using System.Collections;
 
 public class StrategistPulse : NetworkBehaviour {
-    public float m_StartingPulse = 10f;             // The amount of health each tank starts with.
-    //public Slider m_Slider;                           // The slider to represent how much health the tank currently has.
+    public float m_StartingPulse = 5.0f;
+
+    // The amount of health each tank starts with.
+    public float m_MaxPulse = 30.0f;
+        //public Slider m_Slider;                           // The slider to represent how much health the tank currently has.
     //public Image m_FillImage;                         // The image component of the slider.
     //public Color m_FullHealthColor = Color.green;     // The color the health bar will be when on full health.
     //public Color m_ZeroHealthColor = Color.red;       // The color the health bar will be when on no health.
@@ -13,7 +16,7 @@ public class StrategistPulse : NetworkBehaviour {
     //public ParticleSystem m_ExplosionParticles;       // The particle system the will play when the tank is destroyed.
     public GameObject m_PlayerRenderers;
     public GameObject strategistCanvas;
-    public GameObject pulseBar;
+    public RectTransform pulseBar;
     // References to all the gameobjects that need to be disabled when the tank is dead.
     //public GameObject m_HealthCanvas;
     //public GameObject m_AimCanvas;
@@ -41,7 +44,7 @@ public class StrategistPulse : NetworkBehaviour {
     {
         m_CurrentPulse = m_StartingPulse;
         strategistCanvas = GameObject.FindGameObjectWithTag("StrategistCanvas");
-        pulseBar = GameObject.FindGameObjectWithTag("Pulse");
+        pulseBar = GameObject.FindGameObjectWithTag("Pulse").GetComponent<RectTransform>();
         SetHealthUI(m_CurrentPulse);
         StartCoroutine(addPulse());
     }
@@ -51,11 +54,11 @@ public class StrategistPulse : NetworkBehaviour {
     {
         while (true)
         { // loops forever...
-            if (m_CurrentPulse < m_StartingPulse)
+            if (m_CurrentPulse < m_MaxPulse)
             { // if health < 100...
                 m_CurrentPulse += 1; // increase health and wait the specified time
                 SetHealthUI(m_CurrentPulse);
-                yield return new WaitForSeconds(2);
+                yield return new WaitForSeconds(3);
             }
             else
             { // if health >= 100, just yield 
@@ -86,8 +89,8 @@ public class StrategistPulse : NetworkBehaviour {
 
     private void SetHealthUI(float currentPulse)
     {
-        float value = currentPulse / m_StartingPulse;
-        pulseBar.transform.localScale = new Vector3(value, transform.localScale.y, transform.localScale.z);
+        float value = currentPulse / m_MaxPulse;
+        pulseBar.localScale = new Vector3(value, transform.localScale.y, transform.localScale.z);
         // Set the slider's value appropriately.
         //m_Slider.value = m_CurrentHealth;
 

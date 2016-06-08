@@ -21,7 +21,7 @@ public class GladiatorShooting : NetworkBehaviour
     public int m_localID;
     Animator m_animator;
     private string m_FireButton;            // The input axis that is used for launching shells.
-    private Rigidbody m_Rigidbody;          // Reference to the rigidbody component.
+    //private Rigidbody m_Rigidbody;          // Reference to the rigidbody component.
     [SyncVar]
     private float m_CurrentLaunchForce;     // The force that will be given to the shell when the fire button is released.
     //[SyncVar]
@@ -39,7 +39,7 @@ public class GladiatorShooting : NetworkBehaviour
     {
 
         // Set up the references.
-        m_Rigidbody = GetComponent<Rigidbody>();
+        //m_Rigidbody = GetComponent<Rigidbody>();
         m_animator = GetComponent<Animator>();
         fireWeapon = null;
     }
@@ -158,12 +158,12 @@ public class GladiatorShooting : NetworkBehaviour
 
             if (!specialAttack)
             {
-                m_Rigidbody.velocity = Vector3.zero;
-                m_Rigidbody.isKinematic = true;
+                //m_Rigidbody.velocity = Vector3.zero;
+                //m_Rigidbody.isKinematic = true;
                 specialAttack = true;
                 GetComponent<GladiatorMovement>().setAttacking(true);
                 m_animator.SetBool("Shoot", true);
-                Invoke("Fire", 0.8f);
+                Invoke("Fire", 0.5f);
             }
         }
           
@@ -199,16 +199,18 @@ public class GladiatorShooting : NetworkBehaviour
     [Command]
     private void CmdToggleWeapon(string weapon)
     {
-
-        if (weapon.Equals("hand"))
+        if (fireWeapon != null)
         {
-            fireWeapon.transform.FindChild("Model").gameObject.SetActive(false);
-            handWeapon.transform.FindChild("Model").gameObject.SetActive(true);
-        }
-        else if (weapon.Equals("fire"))
-        {
-            fireWeapon.transform.FindChild("Model").gameObject.SetActive(true);
-            handWeapon.transform.FindChild("Model").gameObject.SetActive(false);
+            if (weapon.Equals("hand"))
+            {
+                fireWeapon.transform.FindChild("Model").gameObject.SetActive(false);
+                handWeapon.transform.FindChild("Model").gameObject.SetActive(true);
+            }
+            else if (weapon.Equals("fire"))
+            {
+                fireWeapon.transform.FindChild("Model").gameObject.SetActive(true);
+                handWeapon.transform.FindChild("Model").gameObject.SetActive(false);
+            }
         }
     }
 
@@ -221,7 +223,7 @@ public class GladiatorShooting : NetworkBehaviour
              Instantiate(m_Shell, m_FireTransform.position, m_FireTransform.rotation) as Rigidbody;
 
         // Create a velocity that is the tank's velocity and the launch force in the fire position's forward direction.
-        Vector3 velocity = m_Rigidbody.velocity + m_CurrentLaunchForce * m_FireTransform.forward;
+        Vector3 velocity =  m_CurrentLaunchForce * m_FireTransform.forward;
 
         // Set the shell's velocity to this velocity.
         shellInstance.velocity = velocity;
@@ -241,7 +243,7 @@ public class GladiatorShooting : NetworkBehaviour
             m_animator.SetBool("Shoot", false);
             fireWeapon.GetComponent<FireWeapon>().integrity -= 1;
             GetComponent<GladiatorMovement>().setAttacking(false);
-            m_Rigidbody.isKinematic = false;
+            //m_Rigidbody.isKinematic = false;
         }
     }
     private void ThrowWeapon()
@@ -257,6 +259,12 @@ public class GladiatorShooting : NetworkBehaviour
 
         Destroy(this.fireWeapon);
         
+    }
+
+    [Command]
+    public void CmdDestroyEnemy(GameObject obj)
+    {
+        Destroy(obj);
     }
 
     // This is used by the game manager to reset the tank.

@@ -10,6 +10,7 @@ public class AnchorScript : MonoBehaviour
     void Start()
     {
         gameObject.transform.parent = anchorPosHand;
+        gameObject.transform.position = anchorPosHand.position;
         //gladiator = GameElements.getGladiator();
         //gladiator.GetComponent<GladiatorShooting>().handWeapon = this.gameObject;
         //anchorPosHand = gladiator.GetComponent<GladiatorShooting>().handPosition;

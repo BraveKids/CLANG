@@ -6,7 +6,8 @@ public class Trap : NetworkBehaviour
 {
     //public Collider actionArea;
     public int damage;
-    public float timeOfLife;
+    public float timeOfLife = 5f;
+    public float timer = 0.0f;
     Animator anim;
     
 
@@ -14,6 +15,7 @@ public class Trap : NetworkBehaviour
     // Use this for initialization
     void Start()
     {
+        timeOfLife = 5.0f;
         anim = GetComponent<Animator>();
         anim.SetBool("snap", false);
     }
@@ -21,7 +23,13 @@ public class Trap : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        
+        timer += Time.deltaTime;
+        if(timer >= timeOfLife)
+        {
+            Deactivate();
+        }
+        
     }
 
     public void makeDamage(GameObject player)
@@ -32,8 +40,12 @@ public class Trap : NetworkBehaviour
 
     public void Deactivate()
     {
-        gameObject.SetActive(false);
+        //gameObject.SetActive(false);
+        //Destroy(gameObject);
+        GameElements.getGladiator().GetComponent<GladiatorShooting>().CmdDestroyEnemy(gameObject);
     }
+
+ 
 
     public void OnTriggerEnter(Collider col)
     {

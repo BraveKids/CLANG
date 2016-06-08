@@ -4,7 +4,8 @@ using UnityEngine.Networking;
 
 public class GladiatorHealth : NetworkBehaviour
 {
-    public float m_StartingHealth = 100f;
+    public float m_StartingHealth = 32f;
+    public float m_Resistance = 14f;
     // The amount of health each tank starts with.
     public float m_StartingArmor = 0f;
     public Slider m_Slider;                           // The slider to represent how much health the tank currently has.
@@ -39,18 +40,19 @@ public class GladiatorHealth : NetworkBehaviour
     // This is called whenever the tank takes damage.
     public void Damage(float amount)
     {
+        float calculatedDamage = amount - (m_Resistance * 0.15f);
         
         if (m_Armor > 0)
         {
             
-            if (m_Armor >= amount)
+            if (m_Armor >= calculatedDamage)
             {
-                m_Armor -= amount;
+                m_Armor -= calculatedDamage;
 
             }
             else
             {
-                m_CurrentHealth -= (amount - m_Armor);
+                m_CurrentHealth -= (calculatedDamage- m_Armor);
                 SetArmor(0f);
             }          
         }
@@ -98,12 +100,15 @@ public class GladiatorHealth : NetworkBehaviour
     {
         // Set the flag so that this function is only called once.
         m_ZeroHealthHappened = true;
-
+        GameManager.s_Instance.winner = "STRATEGIST";
+        GameManager.s_Instance.SetGameWinner(GameElements.getStrategist());
+        GameManager.s_Instance.endGame = true;
         RpcOnZeroHealth();
     }
 
     private void InternalOnZeroHealth()
     {
+
         // Disable the collider and all the appropriate child gameobjects so the tank doesn't interact or show up when it's dead.
         SetPlayerActive(false);
     }
@@ -132,7 +137,7 @@ public class GladiatorHealth : NetworkBehaviour
 
         if (active) m_Manager.EnableControl();
         else m_Manager.DisableControl();
-
+        //gameObject.SetActive(false);
         //m_Setup.ActivateCrown(active);
     }
 

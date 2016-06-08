@@ -50,7 +50,7 @@ public GameObject m_Crown;
         for (int i = 0; i < renderers.Length; i++)
         {
             // ... set their material color to the color specific to this tank.
-            renderers[i].material.color = m_Color;
+            //renderers[i].material.color = m_Color;
         }
 
         if (m_PlayerRenderers)
