@@ -93,6 +93,7 @@ public class GameManager : NetworkBehaviour
             tmp.m_LocalPlayerID = localID;
             tmp.Setup();
             GameElements.setGladiator(player);
+            GameElements.setGladiatorHealth(player.GetComponent<GladiatorHealth>());
             m_Players.Add(tmp);
         }
     }
