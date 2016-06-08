@@ -26,6 +26,8 @@ public class InteractableObject : MonoBehaviour
                 anchorPosHand = other.gameObject.GetComponent<GladiatorShooting>().handPosition;
                 anchorPosElbow = other.gameObject.GetComponent<GladiatorShooting>().elbowPosition;
                 taken = true;
+                gameObject.transform.parent = anchorPosHand;
+                gameObject.transform.position = anchorPosHand.position;
             }
             else if (id == "weapon")
             {
@@ -46,7 +48,7 @@ public class InteractableObject : MonoBehaviour
     {
         if (taken)
         {
-            gameObject.transform.position = new Vector3(anchorPosHand.position.x, anchorPosHand.position.y, anchorPosHand.position.z);
+            //gameObject.transform.position = new Vector3(anchorPosHand.position.x, anchorPosHand.position.y, anchorPosHand.position.z);
             gameObject.transform.rotation = new Quaternion(Quaternion.LookRotation(anchorPosHand.position - anchorPosElbow.position).x,
                                                            Quaternion.LookRotation(anchorPosHand.position - anchorPosElbow.position).y,
                                                            Quaternion.LookRotation(anchorPosHand.position - anchorPosElbow.position).z,

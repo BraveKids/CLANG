@@ -147,8 +147,13 @@ public class GladiatorShooting : NetworkBehaviour
         {
             ToggleWeapon("fire");
         }
-        basicAttack = false;
+        Invoke("CanAttack", 0.5f);
         GetComponent<GladiatorMovement>().setAttacking(false);
+    }
+
+    private void CanAttack()
+    {
+        basicAttack = false;
     }
 
     private void SpecialAttack()

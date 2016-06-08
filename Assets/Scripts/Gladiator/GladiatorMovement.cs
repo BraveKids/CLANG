@@ -17,10 +17,10 @@ public class GladiatorMovement : NetworkBehaviour
     private float m_TurnInput;                  // The current value of the turn input.
     private float m_OriginalPitch;              // The pitch of the audio source at the start of the scene.
     private Animator anim;
-
+    public Transform movingTranform;
     //AGGIUNTE
     //MOVIMENTO
-    public float runSpeed = 0.01f;
+    public float runSpeed = 0.3f;
     public float turnSmoothing = 1f;
     public float speedDampTime = 0.1f;
     private float speed;
@@ -48,21 +48,25 @@ public class GladiatorMovement : NetworkBehaviour
     private void Awake()
     {
         m_Rigidbody = GetComponent<Rigidbody>();
+        gladiatorCamera = GameObject.FindGameObjectWithTag("GladiatorCamera").GetComponent<Camera>();
     }
 
 
     //AGGIUNTE TOMMASO
     public override void OnStartLocalPlayer()
     {
+        gladiatorCamera.gameObject.GetComponent<GladiatorCamera>().enabled = true;
+        cameraTransform = gladiatorCamera.transform;
         //GameElements.getGladiatorCanvas().transform.FindChild("VirtualJoypad").gameObject.SetActive(true);
         //camera = gameObject.transform.FindChild("Camera").GetComponent<Camera>();
+
         //cameraTransform = camera.gameObject.transform;
         GameObject.FindGameObjectWithTag("Canvas").transform.FindChild("GladiatorCanvas").gameObject.SetActive(true);
         GetComponent<GameTimer>().enabled = true;
         buttons = GameObject.FindGameObjectWithTag("Canvas").transform.FindChild("GladiatorCanvas/VirtualJoypad/Buttons");
         buttons.gameObject.SetActive(true);
         //camera = transform.FindChild("Camera").gameObject.GetComponent<Camera>();
-        cameraTransform = gladiatorCamera.transform;
+        
         hFloat = Animator.StringToHash("H");
         vFloat = Animator.StringToHash("V");
         speed = runSpeed;
@@ -76,12 +80,15 @@ public class GladiatorMovement : NetworkBehaviour
 
     private void Start()
     {
+        
+        
         if (!this.isLocalPlayer)
         {
+            
             gladiatorCamera.GetComponent<GladiatorCamera>().enabled = false;
             GameObject.Destroy(gladiatorCamera.gameObject);
         }
-        //m_Rigidbody.freezeRotation = true;
+        m_Rigidbody.freezeRotation = true;
         anim = GetComponent<Animator>();
         // The axes are based on player number.
         //m_MovementAxis = "Vertical" + (m_LocalID + 1);
@@ -115,7 +122,10 @@ public class GladiatorMovement : NetworkBehaviour
         //m_MovementInput = Input.GetAxis(m_MovementAxis);
         //m_TurnInput = Input.GetAxis(m_TurnAxis);
 
-   
+        anim.SetFloat(hFloat, h);
+        anim.SetFloat(vFloat, v);
+        anim.SetBool(groundedBool, IsGrounded());
+        MovementManagement(h, v);
 
 
     }
@@ -132,10 +142,7 @@ public class GladiatorMovement : NetworkBehaviour
         }
 
 
-        anim.SetFloat(hFloat, h);
-        anim.SetFloat(vFloat, v);
-        anim.SetBool(groundedBool, IsGrounded());
-        MovementManagement(h, v);
+       
         // Adjust the rigidbodies position and orientation in FixedUpdate.
         //Move();
         //Turn();
@@ -150,7 +157,7 @@ public class GladiatorMovement : NetworkBehaviour
         return Physics.Raycast(transform.position, -Vector3.up, distToGround + 0.1f);
     }
 
-
+    
     void MovementManagement(float horizontal, float vertical)
     {
 
@@ -168,7 +175,14 @@ public class GladiatorMovement : NetworkBehaviour
                 speed = 0f;
                 anim.SetFloat(speedFloat, 0f);
             }
-            transform.Translate(Vector3.forward * speed);
+            //if(Physics.Raycast(movingTranform.position, transform.forward, 0.2f))
+            //if(movingTranform.gameObject.GetComponent<CollisionDetector>().colliding)
+            //{
+              //  speed = 0f;
+                
+            //}
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(movingTranform.position.x, transform.position.y, movingTranform.position.z),speed * Time.deltaTime);
+            //transform.Translate(Vector3.forward * speed * Time.deltaTime);
             //GetComponent<Rigidbody>().AddForce(Vector3.forward*speed);
         }
     }
@@ -196,17 +210,12 @@ public class GladiatorMovement : NetworkBehaviour
         {
             Quaternion targetRotation = Quaternion.LookRotation(targetDirection, Vector3.up);
 
-            Quaternion newRotation = Quaternion.Slerp(transform.rotation, targetRotation, finalTurnSmoothing * Time.deltaTime);
+            Quaternion newRotation = Quaternion.Lerp(transform.rotation, targetRotation, finalTurnSmoothing * Time.deltaTime);
             //GetComponent<Rigidbody>().MoveRotation(newRotation);
-            transform.rotation = newRotation;
+            gameObject.transform.rotation = newRotation;
             lastDirection = targetDirection;
         }
-        /*
-        //idle - fly or grounded
-        if (!(Mathf.Abs(h) > 0.9 || Mathf.Abs(v) > 0.9))
-        {
-            Repositioning();
-        }*/
+     
 
         return targetDirection;
     }

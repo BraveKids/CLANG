@@ -7,7 +7,7 @@ public class StrategistPulse : NetworkBehaviour {
     public float m_StartingPulse = 5.0f;
 
     // The amount of health each tank starts with.
-    public float m_MaxPulse = 30.0f;
+    public float m_MaxPulse = 10.0f;
         //public Slider m_Slider;                           // The slider to represent how much health the tank currently has.
     //public Image m_FillImage;                         // The image component of the slider.
     //public Color m_FullHealthColor = Color.green;     // The color the health bar will be when on full health.

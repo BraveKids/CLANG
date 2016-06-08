@@ -31,6 +31,7 @@ public class DragElement : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoin
         strategistCamera = strategist.GetComponent<StrategistSpawner>().strategistCamera;
         strategistPulse = strategist.GetComponent<StrategistPulse>();
         pulsePrice = prefabObject.GetComponent<PulsePrice>().pulsePrice;
+        
         //gameObject.GetComponent<RawImage>().texture = AssetPreview.GetAssetPreview(prefabObject);
     }
 

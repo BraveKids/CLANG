@@ -4,7 +4,7 @@ using UnityEngine.Networking;
 
 
 public class GladiatorCamera : MonoBehaviour {
-
+    Quaternion initRot;
     public int cameraType;
     public float cameraDistance;
     public float cameraAngle = 45;
@@ -18,11 +18,12 @@ public class GladiatorCamera : MonoBehaviour {
     GameObject menuCamera;
     // Use this for initialization
     void Start() {
+        initRot = transform.rotation;
         //menuCamera = Camera.main.gameObject;
         //menuCamera = GameElements.getCurrentCameraObj();
         //GameElements.setCurrentCamera(gameObject);
         //menuCamera.SetActive(false);
-        player = transform.parent.gameObject;
+        player = GameObject.FindGameObjectWithTag("Gladiator");
 
     }
 
@@ -51,7 +52,8 @@ public class GladiatorCamera : MonoBehaviour {
 
         transform.position = new Vector3(cameraX, cameraY, cameraZ);
         transform.LookAt(player.transform);
+        transform.rotation = initRot;
 
-        
+
     }
 }

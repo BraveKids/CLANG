@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 
@@ -8,7 +9,10 @@ public class GladiatorHealth : NetworkBehaviour
     public float m_Resistance = 14f;
     // The amount of health each tank starts with.
     public float m_StartingArmor = 0f;
-    public Slider m_Slider;                           // The slider to represent how much health the tank currently has.
+    public Slider m_Slider;
+    public GameObject model;
+    Color curColor;
+    // The slider to represent how much health the tank currently has.
     public Image m_FillImage;                         // The image component of the slider.
     public Color m_FullHealthColor = Color.green;     // The color the health bar will be when on full health.
     public Color m_ZeroHealthColor = Color.red;       // The color the health bar will be when on no health.
@@ -23,7 +27,7 @@ public class GladiatorHealth : NetworkBehaviour
     public GladiatorManager m_Manager;                   //Associated manager, to disable control when dying.
 
     [SyncVar(hook = "OnCurrentHealthChanged")]
-    private float m_CurrentHealth;                  // How much health the tank currently has.*
+    public float m_CurrentHealth;                  // How much health the tank currently has.*
     [SyncVar]
     private float m_Armor;
     [SyncVar]
@@ -33,6 +37,7 @@ public class GladiatorHealth : NetworkBehaviour
 
     private void Awake()
     {
+        curColor = model.GetComponent<SkinnedMeshRenderer>().material.color;
         m_Collider = GetComponent<BoxCollider>();
     }
 
@@ -58,14 +63,28 @@ public class GladiatorHealth : NetworkBehaviour
         }
 
         // Reduce current health by the amount of damage done.
-        m_CurrentHealth -= amount;
-
+        m_CurrentHealth -= calculatedDamage;
+        DamageColor();
         // If the current health is at or below zero and it has not yet been registered, call OnZeroHealth.
         if (m_CurrentHealth <= 0f && !m_ZeroHealthHappened)
         {
             OnZeroHealth();
         }
     }
+    private void DamageColor()
+    {
+        
+        model.GetComponent<SkinnedMeshRenderer>().material.color = Color.red;
+        Invoke("DamageColorBack", 0.5f);
+       
+    }
+
+    private void DamageColorBack()
+    {
+        model.GetComponent<SkinnedMeshRenderer>().material.color = curColor;
+    }
+
+    
 
 
     public void SetArmor(float value)
@@ -103,7 +122,8 @@ public class GladiatorHealth : NetworkBehaviour
         GameManager.s_Instance.winner = "STRATEGIST";
         GameManager.s_Instance.SetGameWinner(GameElements.getStrategist());
         GameManager.s_Instance.endGame = true;
-        RpcOnZeroHealth();
+        InternalOnZeroHealth();
+        //RpcOnZeroHealth();
     }
 
     private void InternalOnZeroHealth()

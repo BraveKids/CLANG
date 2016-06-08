@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.Networking;
 
-public class Weapon : NetworkBehaviour
+public class Weapon : MonoBehaviour
 {
     public int damage;
     public int integrity;

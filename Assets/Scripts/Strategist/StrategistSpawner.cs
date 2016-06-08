@@ -59,6 +59,7 @@ public class StrategistSpawner : NetworkBehaviour {
 
     public void Spawn(GameObject spawnObj, Vector3 position)
     {
+        
         // Set the fired flag so only Fire is only called once.
         m_Fired = true;
         CmdSpawn(spawnObj, position);
