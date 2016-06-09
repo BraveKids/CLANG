@@ -3,24 +3,37 @@ using System.Collections;
 
 public class CrowdIA : MonoBehaviour {
 
-    public float kingMaker;             //higher means more probability to help the gladiator
     DecisionTree CrowdTree;
     public float helpFrequency = 3f;
     public float armorProbability = 0.3f;
     public float maxMedpackProbability = 0.5f;
+    public float maxArmorProbability = 0.4f;
     public float weaponProbability = 0.4f;
+    public int monsterTrheshold;
     // Use this for initialization
     void Start() {
-        DTDecision d1 = new DTDecision(randomNumber);
+        DTDecision kingMaker = new DTDecision(StrategistDice);
+        DTDecision miteNode = new DTDecision(MiteDice);
+        DTDecision weaponNode = new DTDecision(WeaponDice);
+        DTDecision armorNode = new DTDecision(ArmorDice);
+        DTDecision medpackNode = new DTDecision(MedpackDice);
+
+        DTAction miteAction = new DTAction(DropMite);
+        DTAction medpackAction = new DTAction(DropMedpack);
+        DTAction armorAction = new DTAction(DropArmor);
+        DTAction weaponAction = new DTAction(DropWeapon);
+
+        kingMaker.AddNode("strategist", miteNode);
+        miteNode.AddNode(true, miteAction);
+        kingMaker.AddNode("gladiator", weaponNode);
+        weaponNode.AddNode(true, weaponAction);
+        weaponNode.AddNode(false, armorNode);
+        armorNode.AddNode(true, armorAction);
+        armorNode.AddNode(false, medpackNode);
+        medpackNode.AddNode(true, medpackAction);
 
 
-        DTAction a1 = new DTAction(trueOption);
-        DTAction a2 = new DTAction(falseOption);
-        d1.AddNode(true, a1);
-        d1.AddNode(false, a2);
-
-
-        CrowdTree = new DecisionTree(d1);
+        CrowdTree = new DecisionTree(kingMaker);
         StartCoroutine(Patrol());
 
     }
@@ -46,7 +59,7 @@ public class CrowdIA : MonoBehaviour {
     *   the more the life is full the highest the probability to help the strategist
     *   Linear distribution
     */
-    object strategistDice() {
+    object StrategistDice() {
         float maxLife = GameElements.getMaxLife();
         float currentLife = GameElements.getGladiatorLife();
         float normalizedLife = currentLife / maxLife;   //this goes from 0 to 1
@@ -60,7 +73,8 @@ public class CrowdIA : MonoBehaviour {
         return Random.value < armorProbability ? true : false;
     }
 
-    object LifeDice() {
+    //it goes to a minimum of 0% to a maximum of maxMedpackProbability
+    object MedpackDice() {
         if (GameElements.getMedDropped())
             return false;
         float maxLife = GameElements.getMaxLife();
@@ -69,14 +83,39 @@ public class CrowdIA : MonoBehaviour {
         return Random.value > currentProbability ? true : false;
     }
 
-    object weaponDice() {
+    //fixed probability
+    object WeaponDice() {
         float halfMaxIntegrity = GameElements.getMaxIntegrity() / 2;
         if ((GameElements.getIntegrity() >= halfMaxIntegrity) || GameElements.getWeaponDropped())
             return false;
-
         return Random.value < weaponProbability ? true : false;
+    }
+    //not a real dice but...
+    object MiteDice() {
+        if (GameElements.getEnemyCount() >= monsterTrheshold)
+            return true;
+        return false;
+    }
 
+    /*
+    *
+    *               ACTION
+    */
 
+    void DropWeapon() {
+        Debug.Log("WEAPON");
+    }
+
+    void DropMite() {
+        Debug.Log("MITE");
+    }
+
+    void DropMedpack() {
+        Debug.Log("MEDPACK");
+    }
+
+    void DropArmor() {
+        Debug.Log("ARMOR");
     }
 
     IEnumerator Patrol() {
@@ -85,6 +124,5 @@ public class CrowdIA : MonoBehaviour {
             yield return new WaitForSeconds(helpFrequency);
         }
     }
-
 
 }

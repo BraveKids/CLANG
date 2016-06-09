@@ -265,6 +265,7 @@ public class GladiatorShooting : NetworkBehaviour
     public void CmdDestroyEnemy(GameObject obj)
     {
         Destroy(obj);
+        GameElements.decreaseEnemy();
     }
 
     // This is used by the game manager to reset the tank.

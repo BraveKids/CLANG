@@ -11,10 +11,10 @@ public class GameElements : MonoBehaviour {
     static GameObject strategist;
     static GameObject gladiator;
     static GladiatorHealth gladiatorHealth;
-    static bool armorDropped;
-    static bool medDropped;
-    static bool weaponDropped;
-    static int monster;
+    static bool armorDropped = false;
+    static bool medDropped = false;
+    static bool weaponDropped = false;
+    static int enemy = 0;
     static int intWeapon;
 
     // Use this for initialization
@@ -124,25 +124,32 @@ public class GameElements : MonoBehaviour {
         medDropped = dropped;
     }
 
-    public static void setIntegrity(int dropped) {
-        intWeapon = dropped;
-    }
-
     public static int getIntegrity() {
-        return intWeapon;
+        return gladiator.GetComponent<GladiatorShooting>().fireWeapon.GetComponent<FireWeapon>().getIntegrity(); ;
     }
 
     public static int getMaxIntegrity() {
-        //TODO
-        return 10;
+        return gladiator.GetComponent<GladiatorShooting>().fireWeapon.GetComponent<FireWeapon>().getMaxIntegrity();
     }
 
     public static void setWeaponDropped(bool dropped) {
         weaponDropped = dropped;
     }
 
-    public static void getWeaponDropped() {
+    public static bool getWeaponDropped() {
         return weaponDropped;
+    }
+
+    public static void decreaseEnemy() {
+        enemy--;
+    }
+
+    public static void increaseEnemy() {
+        enemy++;
+    }
+
+    public static int getEnemyCount() {
+        return enemy;
     }
 
 
