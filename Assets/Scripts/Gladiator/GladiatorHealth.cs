@@ -171,4 +171,20 @@ public class GladiatorHealth : NetworkBehaviour
         m_ZeroHealthHappened = false;
         SetPlayerActive(true);
     }
+
+    public float getLife() {
+        return m_CurrentHealth;
+    }
+
+    public float getArmor() {
+        return m_Armor;
+    }
+
+    public float getMaxLife() {
+        return m_StartingHealth;
+    }
+
+    public float getMaxArmor() {
+        return m_StartingArmor;
+    }
 }

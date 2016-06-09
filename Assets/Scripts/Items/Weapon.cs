@@ -6,6 +6,7 @@ public class Weapon : MonoBehaviour
 {
     public int damage;
     public int integrity;
+    public int maxIntegrity;
     public float rateOfAttack;
     // Use this for initialization
 
@@ -34,5 +35,13 @@ public class Weapon : MonoBehaviour
     public int ReturnDamage()
     {
         return damage;
+    }
+
+    public int getIntegrity() {
+        return integrity;
+    }
+
+    public int getMaxIntegrity() {
+        return maxIntegrity;
     }
 }
