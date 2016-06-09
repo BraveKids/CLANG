@@ -10,8 +10,20 @@ public class CrowdIA : MonoBehaviour {
     public float maxArmorProbability = 0.4f;
     public float weaponProbability = 0.4f;
     public int monsterTrheshold;
+    public float arenaLR = 18f;
+    public float arenaU = 5f;
+    public float arenaD = 20f;
+    private float arenaBorderL;
+    private float arenaBorderR;
+    private float arenaBorderU;
+    private float arenaBorderD;
+    private GameObject arena;
+
+    public GameObject medPackPrefab;
+    public GameObject weaponPrefab;
     // Use this for initialization
     void Start() {
+        arena = GameObject.FindGameObjectWithTag("Arena");
         DTDecision kingMaker = new DTDecision(StrategistDice);
         DTDecision miteNode = new DTDecision(MiteDice);
         DTDecision weaponNode = new DTDecision(WeaponDice);
@@ -35,25 +47,17 @@ public class CrowdIA : MonoBehaviour {
 
         CrowdTree = new DecisionTree(kingMaker);
         StartCoroutine(Patrol());
+        DebugLine();
 
     }
 
     // Update is called once per frame
     void Update() {
+       
 
     }
 
-    object randomNumber() {
-        return Random.value > 0.5 ? true : false;
-    }
-
-    void trueOption() {
-        Debug.Log("Opzione true");
-    }
-
-    void falseOption() {
-        Debug.Log("Opzione false");
-    }
+  
 
     /*
     *   the more the life is full the highest the probability to help the strategist
@@ -90,6 +94,7 @@ public class CrowdIA : MonoBehaviour {
             return false;
         return Random.value < weaponProbability ? true : false;
     }
+
     //not a real dice but...
     object MiteDice() {
         if (GameElements.getEnemyCount() >= monsterTrheshold)
@@ -100,9 +105,11 @@ public class CrowdIA : MonoBehaviour {
     /*
     *
     *               ACTION
+    *
     */
 
     void DropWeapon() {
+        gameObject.GetComponent<StrategistSpawner>().Spawn(weaponPrefab, itemSpawnPoint());
         Debug.Log("WEAPON");
     }
 
@@ -110,12 +117,34 @@ public class CrowdIA : MonoBehaviour {
         Debug.Log("MITE");
     }
 
-    void DropMedpack() {
+    void DropMedpack() {       
+        
+        gameObject.GetComponent<StrategistSpawner>().Spawn(medPackPrefab, itemSpawnPoint());
         Debug.Log("MEDPACK");
     }
 
     void DropArmor() {
         Debug.Log("ARMOR");
+    }
+
+    Vector3 itemSpawnPoint() {
+        float spawnX = Random.Range(arenaBorderL, arenaBorderR);
+        float spawnZ = Random.Range(arenaBorderU, arenaBorderD);
+        return new Vector3(spawnX, arena.transform.position.y + 1f, spawnZ);
+    }
+    void DebugLine() {
+        arenaBorderL = arena.transform.position.x - arenaLR;
+        arenaBorderR = arena.transform.position.x + arenaLR;
+        arenaBorderD = arena.transform.position.z + arenaU;
+        arenaBorderU = arena.transform.position.z - arenaD;
+        float arenaY = arena.transform.position.y;
+        float arenaZ = arena.transform.position.z;
+        float arenaX = arena.transform.position.x;
+
+        Debug.DrawLine(new Vector3(arenaBorderL, arenaY, arenaZ - 30f), new Vector3(arenaBorderL, arenaY, arenaZ + 30f), Color.magenta, 2f, false);
+        Debug.DrawLine(new Vector3(arenaBorderR, arenaY, arenaZ - 30f), new Vector3(arenaBorderR, arenaY, arenaZ + 30f), Color.magenta, 2f, false);
+        Debug.DrawLine(new Vector3(arenaX - 30f, arenaY, arenaBorderU), new Vector3(arenaX + 30f, arenaY, arenaBorderU), Color.magenta, 2f, false);
+        Debug.DrawLine(new Vector3(arenaX - 30f, arenaY, arenaBorderD), new Vector3(arenaX + 30f, arenaY, arenaBorderD), Color.magenta, 2f, false);
     }
 
     IEnumerator Patrol() {
