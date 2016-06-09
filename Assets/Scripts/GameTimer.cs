@@ -24,7 +24,7 @@ public class GameTimer : NetworkBehaviour
 
     void Start()
     {
-
+        
 
 
 
@@ -51,6 +51,10 @@ public class GameTimer : NetworkBehaviour
     }
     void Update()
     {
+        if(GameElements.getGladiator() == null || GameElements.getStrategist() == null)
+        {
+            return;
+        }
         if (masterTimer)
         { //Only the MASTER timer controls the time
             if (timer >= gameTime)

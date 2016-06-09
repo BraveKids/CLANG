@@ -7,6 +7,8 @@ public class MutantScriptTest : MonoBehaviour {
     GameObject target;
     NavMeshAgent agent;
     public float distance;
+    public float angle;
+    Vector3 direction;
     Vector3 velocity;
     public bool attack;
     public int numOfAttack =0;
@@ -26,32 +28,63 @@ public class MutantScriptTest : MonoBehaviour {
         agent = GetComponent<NavMeshAgent>();
         stoppedBefore = false;
         attack = false;
+        agent.updateRotation = false;
+
     }
 	
 	// Update is called once per frame
 	void Update () {
         distance = Vector3.Distance(transform.position, target.transform.position);
+        angle = Vector3.Angle(transform.forward, (target.transform.position - transform.position));
+    
 
-        
-        if (distance <=2f)
+
+        if (distance <= 2.5f)
         {
-           
+
             agent.velocity = Vector3.zero;
             agent.Stop();
-            m_animator.SetFloat("Speed", 0f);
+            //m_animator.SetFloat("Speed", 0f);
+            m_animator.SetBool("Run", false);
             transform.LookAt(target.transform);
             stoppedBefore = true;
             attack = true;
         }
-        else {
-            if (stoppedBefore)
+        else
+        {
+            if (angle > 45 && distance > 2.5f)
             {
-                agent.ResetPath();
+                stoppedBefore = true;
+                attack = false;
+                agent.velocity = Vector3.zero;
+                agent.Stop();
+                m_animator.SetBool("Run", false);
+                m_animator.SetBool("Attack", false);
+                //m_animator.SetFloat("Speed", 0f);
+                Quaternion targetRotation = Quaternion.LookRotation((target.transform.position - transform.position), Vector3.up);
+
+                Quaternion newRotation = Quaternion.Slerp(transform.rotation, targetRotation, 5f * Time.deltaTime);
+                //GetComponent<Rigidbody>().MoveRotation(newRotation);
+                gameObject.transform.rotation = newRotation;
+                //transform.LookAt(target.transform);
+                
             }
-            attack = false;
-            agent.SetDestination(target.transform.position);
-            //agent.Resume();
-            m_animator.SetFloat("Speed", agent.speed);
+            else
+            {
+                //transform.LookAt(target.transform);
+                //transform.LookAt(target.transform);
+                if (stoppedBefore)
+                {
+                    agent.Resume();
+                    agent.ResetPath();
+                }
+                stoppedBefore = false;
+                attack = false;
+                agent.SetDestination(target.transform.position);
+                //agent.Resume();
+                //m_animator.SetFloat("Speed", agent.speed);
+                m_animator.SetBool("Run", true);
+            }
         }
 
         
@@ -70,7 +103,7 @@ public class MutantScriptTest : MonoBehaviour {
             if (attack)
             {
 
-                m_animator.SetTrigger("Attack");
+                m_animator.SetBool("Attack",true);
                 Invoke("AttackUp", 0.6f);
                 Invoke("AttackDown", 1f);
                 yield return new WaitForSeconds(3);
@@ -90,6 +123,7 @@ public class MutantScriptTest : MonoBehaviour {
 
     private void AttackDown()
     {
+        m_animator.SetBool("Attack", false);
         attackTrigger.SetActive(false);
     }
     /*
