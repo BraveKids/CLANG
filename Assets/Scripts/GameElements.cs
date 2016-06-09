@@ -10,6 +10,7 @@ public class GameElements : MonoBehaviour {
     static GameObject virtualJoystick;
     static GameObject strategist;
     static GameObject gladiator;
+    static GameObject arena;
     static GladiatorHealth gladiatorHealth;
     static bool armorDropped = false;
     static bool medDropped = false;
@@ -38,7 +39,13 @@ public class GameElements : MonoBehaviour {
     }
 
 
+    public static GameObject getArena() {
+        return arena;
+    }
 
+    public static void setArena(GameObject _arena) {
+        arena = _arena;
+    }
 
     public static void setCurrentCamera(GameObject camera) {
         currentCamera = camera;

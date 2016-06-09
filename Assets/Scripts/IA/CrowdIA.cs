@@ -23,7 +23,7 @@ public class CrowdIA : MonoBehaviour {
     public GameObject weaponPrefab;
     // Use this for initialization
     void Start() {
-        arena = GameObject.FindGameObjectWithTag("Arena");
+        arena = GameElements.getArena();
         DTDecision kingMaker = new DTDecision(StrategistDice);
         DTDecision miteNode = new DTDecision(MiteDice);
         DTDecision weaponNode = new DTDecision(WeaponDice);
@@ -118,7 +118,6 @@ public class CrowdIA : MonoBehaviour {
     }
 
     void DropMedpack() {       
-        
         gameObject.GetComponent<StrategistSpawner>().Spawn(medPackPrefab, itemSpawnPoint());
         Debug.Log("MEDPACK");
     }
