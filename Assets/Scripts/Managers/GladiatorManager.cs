@@ -9,11 +9,13 @@ public class GladiatorManager : Manager
     public GladiatorMovement m_Movement;        // References to various objects for control during the different game phases.
     public GladiatorShooting m_Shooting;
     public GladiatorHealth m_Health;
+  
    
 
     public override void Setup()
     {
         // Get references to the components.
+        
         m_Movement = m_Instance.GetComponent<GladiatorMovement>();
         m_Shooting = m_Instance.GetComponent<GladiatorShooting>();
         m_Health = m_Instance.GetComponent<GladiatorHealth>();
@@ -43,6 +45,7 @@ public class GladiatorManager : Manager
     // Used during the phases of the game where the player shouldn't be able to control their tank.
     public override void DisableControl()
     {
+        
         m_Movement.enabled = false;
         m_Shooting.enabled = false;
     }
@@ -51,6 +54,7 @@ public class GladiatorManager : Manager
     // Used during the phases of the game where the player should be able to control their tank.
     public override void EnableControl()
     {
+     
         m_Movement.enabled = true;
         m_Shooting.enabled = true;
 

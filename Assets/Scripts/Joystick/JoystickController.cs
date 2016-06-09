@@ -22,7 +22,7 @@ public class JoystickController : MonoBehaviour, IPointerDownHandler, IDragHandl
             joystick.gameObject.GetComponent<Image>().enabled = true;
             joystick.gameObject.transform.GetChild(0).GetComponent<Image>().enabled = true;
             joystick.gameObject.SetActive(true);
-            joystick.rectTransform.anchoredPosition = ped.position;
+            joystick.rectTransform.position = ped.position;
             
         }
 

@@ -227,6 +227,7 @@ public class GameManager : NetworkBehaviour
 
     private IEnumerator RoundPlaying()
     {
+        GameElements.getStrategist().GetComponent<GameTimer>().enabled = true;
         //notify clients that the round is now started, they should allow player to move.
         RpcRoundPlaying();
 

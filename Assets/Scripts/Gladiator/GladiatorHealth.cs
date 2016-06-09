@@ -46,7 +46,10 @@ public class GladiatorHealth : NetworkBehaviour
     public void Damage(float amount)
     {
         float calculatedDamage = amount - (m_Resistance * 0.15f);
-        
+        if (calculatedDamage <= 0.0f)
+        {
+            return;
+        }
         if (m_Armor > 0)
         {
             
