@@ -39,6 +39,7 @@ public class GladiatorHealth : NetworkBehaviour
     {
         curColor = model.GetComponent<SkinnedMeshRenderer>().material.color;
         m_Collider = GetComponent<BoxCollider>();
+        GameElements.getStrategist().GetComponent<CrowdIA>().enabled = true;
     }
 
 

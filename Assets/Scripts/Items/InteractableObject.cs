@@ -28,6 +28,7 @@ public class InteractableObject : MonoBehaviour
                 taken = true;
                 gameObject.transform.parent = anchorPosHand;
                 gameObject.transform.position = anchorPosHand.position;
+                GameElements.setWeaponDropped(false);
             }
             else if (id == "weapon")
             {
@@ -37,6 +38,17 @@ public class InteractableObject : MonoBehaviour
                 anchorPosElbow = other.gameObject.GetComponent<GladiatorShooting>().elbowPosition;
                 taken = true;
             }
+            else if(id== "medpack")
+            {
+                GameElements.setMedDropped(false);
+                gameObject.SetActive(false);
+            }
+            else if(id == "armor")
+            {
+                GameElements.setArmorDropped(false);
+                gameObject.SetActive(false);
+            }
+     
             else
             {
                 gameObject.SetActive(false);

@@ -47,13 +47,13 @@ public class CrowdIA : MonoBehaviour {
 
         CrowdTree = new DecisionTree(kingMaker);
         StartCoroutine(Patrol());
-        DebugLine();
+        //DebugLine();
 
     }
 
     // Update is called once per frame
     void Update() {
-       
+        DebugLine();
 
     }
 
@@ -89,15 +89,15 @@ public class CrowdIA : MonoBehaviour {
 
     //fixed probability
     object WeaponDice() {
-        float halfMaxIntegrity = GameElements.getMaxIntegrity() / 2;
-        if ((GameElements.getIntegrity() >= halfMaxIntegrity) || GameElements.getWeaponDropped())
+        float halfMaxIntegrity = GameElements.getMaxIntegrity() * 0.5f;
+        if ((GameElements.getIntegrity() > halfMaxIntegrity) || GameElements.getWeaponDropped())
             return false;
         return Random.value < weaponProbability ? true : false;
     }
 
     //not a real dice but...
     object MiteDice() {
-        if (GameElements.getEnemyCount() >= monsterTrheshold)
+        if (GameElements.getEnemyCount() <= monsterTrheshold)
             return true;
         return false;
     }
@@ -110,6 +110,7 @@ public class CrowdIA : MonoBehaviour {
 
     void DropWeapon() {
         gameObject.GetComponent<StrategistSpawner>().Spawn(weaponPrefab, itemSpawnPoint());
+        GameElements.setWeaponDropped(true);
         Debug.Log("WEAPON");
     }
 
@@ -119,10 +120,12 @@ public class CrowdIA : MonoBehaviour {
 
     void DropMedpack() {       
         gameObject.GetComponent<StrategistSpawner>().Spawn(medPackPrefab, itemSpawnPoint());
+        //GameElements.setMedDropped(true);
         Debug.Log("MEDPACK");
     }
 
     void DropArmor() {
+        //GameElements.setArmorDropped(true);
         Debug.Log("ARMOR");
     }
 
@@ -131,6 +134,7 @@ public class CrowdIA : MonoBehaviour {
         float spawnZ = Random.Range(arenaBorderU, arenaBorderD);
         return new Vector3(spawnX, arena.transform.position.y + 1f, spawnZ);
     }
+    
     void DebugLine() {
         arenaBorderL = arena.transform.position.x - arenaLR;
         arenaBorderR = arena.transform.position.x + arenaLR;
@@ -145,7 +149,7 @@ public class CrowdIA : MonoBehaviour {
         Debug.DrawLine(new Vector3(arenaX - 30f, arenaY, arenaBorderU), new Vector3(arenaX + 30f, arenaY, arenaBorderU), Color.magenta, 2f, false);
         Debug.DrawLine(new Vector3(arenaX - 30f, arenaY, arenaBorderD), new Vector3(arenaX + 30f, arenaY, arenaBorderD), Color.magenta, 2f, false);
     }
-
+    
     IEnumerator Patrol() {
         while (true) {
             CrowdTree.Walk();

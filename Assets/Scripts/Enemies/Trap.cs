@@ -42,7 +42,7 @@ public class Trap : NetworkBehaviour
     {
         //gameObject.SetActive(false);
         //Destroy(gameObject);
-        GameElements.getGladiator().GetComponent<GladiatorShooting>().CmdDestroyEnemy(gameObject);
+        GameElements.getGladiator().GetComponent<GladiatorShooting>().DestroyEnemy(gameObject);
     }
 
  

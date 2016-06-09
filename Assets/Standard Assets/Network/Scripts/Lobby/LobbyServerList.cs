@@ -25,12 +25,18 @@ namespace UnityStandardAssets.Network
             currentPage = 0;
             previousPage = 0;
 
-            foreach (Transform t in serverListRect)
-                Destroy(t.gameObject);
+            //destroy every entry on start
+            DestroyServerEntries();
 
             noServerFound.SetActive(false);
 
             RequestPage(0);
+        }
+
+        void Update () {
+            //this dirty the layout to force it to recompute evryframe (a sync problem between client/server
+            //sometime to child being assigned before layout was enabled/init, leading to broken layouting)
+            RequestPage(currentPage);
         }
 
         public void OnGUIMatchList(ListMatchResponse response)
@@ -40,6 +46,7 @@ namespace UnityStandardAssets.Network
                 if (currentPage == 0)
                 {
                     noServerFound.SetActive(true);
+                    DestroyServerEntries();
                 }
 
                 currentPage = previousPage;
@@ -48,8 +55,7 @@ namespace UnityStandardAssets.Network
             }
 
             noServerFound.SetActive(false);
-            foreach (Transform t in serverListRect)
-                Destroy(t.gameObject);
+            DestroyServerEntries();
 
             for (int i = 0; i < response.matches.Count; ++i)
             {
@@ -77,6 +83,12 @@ namespace UnityStandardAssets.Network
             previousPage = currentPage;
             currentPage = page;
             lobbyManager.matchMaker.ListMatches(page, 6, "", OnGUIMatchList);
+        }
+
+        private void DestroyServerEntries() {
+            //destroy every serverlistrect entry if there's no server
+            foreach (Transform t in serverListRect)
+                Destroy(t.gameObject);
         }
     }
 }

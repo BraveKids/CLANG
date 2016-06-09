@@ -17,10 +17,11 @@ public class GameElements : MonoBehaviour {
     static bool weaponDropped = false;
     static int enemy = 0;
     static int intWeapon;
+   
 
     // Use this for initialization
     void Start() {
-
+        arena = GameObject.FindGameObjectWithTag("Arena");
         //strategist = null;
         //setCurrentCamera( Camera.main.gameObject);
 
@@ -131,12 +132,24 @@ public class GameElements : MonoBehaviour {
         medDropped = dropped;
     }
 
-    public static int getIntegrity() {
-        return gladiator.GetComponent<GladiatorShooting>().fireWeapon.GetComponent<FireWeapon>().getIntegrity(); ;
+    public static int getIntegrity()
+    {
+        if (gladiator.GetComponent<GladiatorShooting>().fireWeapon != null)
+        {
+            return gladiator.GetComponent<GladiatorShooting>().fireWeapon.GetComponent<FireWeapon>().getIntegrity(); ;
+        }
+        else
+            return 0;
     }
 
-    public static int getMaxIntegrity() {
-        return gladiator.GetComponent<GladiatorShooting>().fireWeapon.GetComponent<FireWeapon>().getMaxIntegrity();
+    public static int getMaxIntegrity()
+    {
+        if (gladiator.GetComponent<GladiatorShooting>().fireWeapon != null)
+        {
+            return gladiator.GetComponent<GladiatorShooting>().fireWeapon.GetComponent<FireWeapon>().getMaxIntegrity();
+        }
+        else
+            return 0;
     }
 
     public static void setWeaponDropped(bool dropped) {
@@ -156,6 +169,7 @@ public class GameElements : MonoBehaviour {
     }
 
     public static int getEnemyCount() {
+        Debug.Log(enemy);
         return enemy;
     }
 

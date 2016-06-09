@@ -26,7 +26,7 @@ public class EnemyHealth : NetworkBehaviour {
         DamageColor();
         if (currentHealth <= 0)
         {
-            GameElements.getGladiator().GetComponent<GladiatorShooting>().CmdDestroyEnemy(gameObject);
+            GameElements.getGladiator().GetComponent<GladiatorShooting>().DestroyEnemy(gameObject);
 
         }
     }

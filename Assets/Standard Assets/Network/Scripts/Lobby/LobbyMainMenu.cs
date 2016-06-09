@@ -17,7 +17,7 @@ namespace UnityStandardAssets.Network
 
         public void OnEnable()
         {
-            lobbyManager.topPanel.ToggleVisibility(true);
+            lobbyManager.topPanel.ToggleVisibility(false);
 
             ipInput.onEndEdit.RemoveAllListeners();
             ipInput.onEndEdit.AddListener(onEndEditIP);
