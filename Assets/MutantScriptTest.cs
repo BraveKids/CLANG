@@ -2,7 +2,8 @@
 using System.Collections;
 
 
-public class MutantScriptTest : MonoBehaviour {
+public class MutantScriptTest : MonoBehaviour
+{
     Animator m_animator;
     GameObject target;
     NavMeshAgent agent;
@@ -12,11 +13,12 @@ public class MutantScriptTest : MonoBehaviour {
     Vector3 direction;
     Vector3 velocity;
     public bool attack;
-    public int numOfAttack =0;
+    public int numOfAttack = 0;
     bool stoppedBefore;
     public GameObject attackTrigger;
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
         rb = GetComponent<Rigidbody>();
         target = GameElements.getGladiator();
         StartCoroutine(Attack());
@@ -25,7 +27,7 @@ public class MutantScriptTest : MonoBehaviour {
             this.enabled = false;
             return;
         }
-        
+
         m_animator = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
         stoppedBefore = false;
@@ -33,12 +35,13 @@ public class MutantScriptTest : MonoBehaviour {
         agent.updateRotation = false;
 
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update()
+    {
         distance = Vector3.Distance(transform.position, target.transform.position);
         angle = Vector3.Angle(transform.forward, (target.transform.position - transform.position));
-    
+
 
 
         if (distance <= 2.5f)
@@ -56,31 +59,31 @@ public class MutantScriptTest : MonoBehaviour {
         else
         {
             rb.isKinematic = false;
-            if (angle > 45 && distance > 2.5f)
+            if (angle > 30 && distance > 2f)
             {
+
                 stoppedBefore = true;
                 attack = false;
                 agent.velocity = Vector3.zero;
                 agent.Stop();
                 m_animator.SetBool("Run", false);
                 m_animator.SetBool("Attack", false);
-                
-                Quaternion targetRotation = Quaternion.LookRotation((target.transform.position - transform.position), Vector3.up);
 
-                Quaternion newRotation = Quaternion.Slerp(transform.rotation, targetRotation, 5f * Time.deltaTime);
-           
-                gameObject.transform.rotation = newRotation;
-                
-                
+                Quaternion targetRotation = Quaternion.LookRotation((target.transform.position - transform.position));
+
+                gameObject.transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 5f * Time.deltaTime);
+
+
             }
             else
             {
-               
+
                 if (stoppedBefore)
                 {
                     agent.Resume();
                     agent.ResetPath();
                 }
+
                 stoppedBefore = false;
                 attack = false;
                 agent.SetDestination(target.transform.position);
@@ -89,14 +92,14 @@ public class MutantScriptTest : MonoBehaviour {
             }
         }
 
-        
 
 
-       
 
 
-        
-	}
+
+
+
+    }
 
     IEnumerator Attack()
     {
@@ -105,9 +108,9 @@ public class MutantScriptTest : MonoBehaviour {
             if (attack)
             {
 
-                m_animator.SetBool("Attack",true);
-                Invoke("AttackUp", 0.7f);
-                Invoke("AttackDown", 1f);
+                m_animator.SetBool("Attack", true);
+                //Invoke("AttackUp", 0.7f);
+                //Invoke("AttackDown", 1f);
                 yield return new WaitForSeconds(2);
 
             }
@@ -125,7 +128,7 @@ public class MutantScriptTest : MonoBehaviour {
 
     private void AttackDown()
     {
-        
+
         attackTrigger.SetActive(false);
     }
     /*

@@ -63,7 +63,7 @@ public class StrategistSpawner : NetworkBehaviour {
         // Set the fired flag so only Fire is only called once.
         m_Fired = true;
         CmdSpawn(spawnObj, position);
-        GameElements.increaseEnemy();
+        
     }
 
     [Command]
@@ -71,9 +71,17 @@ public class StrategistSpawner : NetworkBehaviour {
     {
         GameObject instance = Instantiate(spawnObj, position, Quaternion.identity) as GameObject;
         NetworkServer.Spawn(instance);
+        RpcIncreaseEnemy();
     }
 
-	
+    [ClientRpc]
+    void RpcIncreaseEnemy()
+    {
+        
+        GameElements.increaseEnemy();
+    }
+
+
 
     [ClientCallback]
 	// Update is called once per frame

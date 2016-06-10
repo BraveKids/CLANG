@@ -31,7 +31,7 @@ public class GameManager : NetworkBehaviour
     //Various UI references to hide the screen between rounds.
     [Space]
     [Header("UI")]
-    public CanvasGroup m_FadingScreen;  
+    public CanvasGroup m_FadingScreen;
     public CanvasGroup m_EndRoundScreen;
 
     private int m_RoundNumber;                  // Which round the game is currently on.
@@ -58,7 +58,7 @@ public class GameManager : NetworkBehaviour
         StartCoroutine(GameLoop());
     }
 
- 
+
     /// <summary>
     /// Add a tank from the lobby hook
     /// </summary>
@@ -71,7 +71,7 @@ public class GameManager : NetworkBehaviour
     {
         if (playerNum == 0)
         {
-            
+
             StrategistManager tmp = new StrategistManager();
             tmp.m_Instance = player;
             tmp.m_PlayerNumber = playerNum;
@@ -117,7 +117,7 @@ public class GameManager : NetworkBehaviour
     // This is called from start and will run each phase of the game one after another. ONLY ON SERVER (as Start is only called on server)
     private IEnumerator GameLoop()
     {
-      
+
         while (m_Players.Count < 2)
             yield return null;
 
@@ -186,7 +186,7 @@ public class GameManager : NetworkBehaviour
     [ClientRpc]
     void RpcRoundStarting()
     {
-        
+
         // As soon as the round starts reset the tanks and make sure they can't move.
         ResetAllPlayers();
         DisablePlayerControl();
@@ -211,7 +211,7 @@ public class GameManager : NetworkBehaviour
 
         while (elapsedTime < wait)
         {
-            if(m_RoundNumber == 1)
+            if (m_RoundNumber == 1)
                 m_FadingScreen.alpha = 1.0f - (elapsedTime / wait);
             else
                 m_EndRoundScreen.alpha = 1.0f - (elapsedTime / wait);
@@ -238,7 +238,7 @@ public class GameManager : NetworkBehaviour
             // ... return on the next frame.
             yield return null;
         }
-      
+
 
     }
 
@@ -254,7 +254,7 @@ public class GameManager : NetworkBehaviour
 
     private IEnumerator RoundEnding()
     {
-        
+
 
         RpcUpdateMessage(EndMessage(0));
 
@@ -312,16 +312,16 @@ public class GameManager : NetworkBehaviour
 
     private bool GameIsFinished()
     {
-       
+
         return endGame;
     }
 
-   
+
 
 
     // This function is to find out if there is a winner of the round.
     // This function is called with the assumption that 1 or fewer tanks are currently active.
-    
+
     private Manager GetRoundWinner()
     {
         // Go through all the tanks...
@@ -335,7 +335,7 @@ public class GameManager : NetworkBehaviour
         // If none of the tanks are active it is a draw so return null.
         return null;
     }
-    
+
 
     // This function is to find out if there is a winner of the game.
     private GameObject GetGameWinner()
@@ -359,11 +359,11 @@ public class GameManager : NetworkBehaviour
         // If there is a game winner set the message to say which player has won the game.
         if (GameWinner != null)
             message = winner + " WINS THE GAME!";
-     
+
         // After either the message of a draw or a winner, add some space before the leader board.
         message += "\n\n";
 
-      
+
 
         if (GameWinner != null)
             message += "\n\nReturn to lobby in " + waitTime;

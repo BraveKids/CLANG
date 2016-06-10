@@ -35,7 +35,7 @@ public class GladiatorHealth : NetworkBehaviour
     private BoxCollider m_Collider;                 // Used so that the tank doesn't collide with anything when it's dead.
 
 
-    private void Awake()
+    private void Start()
     {
         curColor = model.GetComponent<SkinnedMeshRenderer>().material.color;
         m_Collider = GetComponent<BoxCollider>();
@@ -53,7 +53,7 @@ public class GladiatorHealth : NetworkBehaviour
         }
         if (m_Armor > 0)
         {
-            
+
             if (m_Armor >= calculatedDamage)
             {
                 m_Armor -= calculatedDamage;
@@ -61,9 +61,9 @@ public class GladiatorHealth : NetworkBehaviour
             }
             else
             {
-                m_CurrentHealth -= (calculatedDamage- m_Armor);
+                m_CurrentHealth -= (calculatedDamage - m_Armor);
                 SetArmor(0f);
-            }          
+            }
         }
 
         // Reduce current health by the amount of damage done.
@@ -77,10 +77,10 @@ public class GladiatorHealth : NetworkBehaviour
     }
     private void DamageColor()
     {
-        
+
         model.GetComponent<SkinnedMeshRenderer>().material.color = Color.red;
         Invoke("DamageColorBack", 0.5f);
-       
+
     }
 
     private void DamageColorBack()
@@ -88,7 +88,7 @@ public class GladiatorHealth : NetworkBehaviour
         model.GetComponent<SkinnedMeshRenderer>().material.color = curColor;
     }
 
-    
+
 
 
     public void SetArmor(float value)
@@ -100,7 +100,7 @@ public class GladiatorHealth : NetworkBehaviour
     {
         return m_Armor;
     }
-    
+
     private void SetHealthUI()
     {
         // Set the slider's value appropriately.
@@ -173,19 +173,23 @@ public class GladiatorHealth : NetworkBehaviour
         SetPlayerActive(true);
     }
 
-    public float getLife() {
+    public float getLife()
+    {
         return m_CurrentHealth;
     }
 
-    public float getArmor() {
+    public float getArmor()
+    {
         return m_Armor;
     }
 
-    public float getMaxLife() {
+    public float getMaxLife()
+    {
         return m_StartingHealth;
     }
 
-    public float getMaxArmor() {
+    public float getMaxArmor()
+    {
         return m_StartingArmor;
     }
 }
