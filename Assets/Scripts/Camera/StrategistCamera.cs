@@ -77,7 +77,7 @@ public class StrategistCamera : MonoBehaviour {
         adiacente = distanceView * Mathf.Cos(DegreeToRadian(cameraAngle));
         cameraBorderU = transform.position.z + adiacente + (cameraBorder / aspectRatio);
         cameraBorderD = transform.position.z + adiacente - (cameraBorder / aspectRatio);
-        /*
+        
         #if UNITY_EDITOR
 
         arenaBorderL = arena.transform.position.x - arenaBorderLR;
@@ -89,14 +89,14 @@ public class StrategistCamera : MonoBehaviour {
         DebugLine();
 
         #endif
-        */
+        
         checkBorder();
 
 
         if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) {
             if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)) {
                 onUi = true;
-                //Debug.Log("Sei sulla UI");
+                Debug.Log("Sei sulla UI");
             }
         }
 
@@ -129,19 +129,19 @@ public class StrategistCamera : MonoBehaviour {
         float moveZ = (pointY - Input.GetTouch(0).position.y) * panningSpeed;
 
         if (checkLeft() && moveX <= 0) {
-            //Debug.Log("You cannot pass!");
+            Debug.Log("You cannot pass!");
             moveX = 0;
         }
         else if (checkRight() && moveX >= 0) {
-            //Debug.Log("You cannot pass!");
+            Debug.Log("You cannot pass!");
             moveX = 0;
         }
         if (checkUp() && moveZ > 0) {
-            //Debug.Log("You cannot pass!");
+            Debug.Log("You cannot pass!");
             moveZ = 0;
         }
         else if (checkDown() && moveZ < 0) {
-            //Debug.Log("You cannot pass!");
+            Debug.Log("You cannot pass!");
             moveZ = 0; ;
         }
 
@@ -215,7 +215,7 @@ public class StrategistCamera : MonoBehaviour {
     }
 
     void FingersUp() {
-        //Debug.Log("Fingers UP");
+       Debug.Log("Fingers UP");
         pressing = false;
         onUi = false;
         pointX = 0;
@@ -267,19 +267,19 @@ public class StrategistCamera : MonoBehaviour {
 
     bool checkBorder() {
         if (cameraBorderL < arenaBorderL) {
-            //Debug.Log("Limite sinistro");
+            Debug.Log("Limite sinistro");
             return true;
         }
         else if (cameraBorderR > arenaBorderR) {
-            //Debug.Log("Limite destro");
+            Debug.Log("Limite destro");
             return true;
         }
         else if (cameraBorderU > arenaBorderU) {
-            //Debug.Log("Limite superiore");
+            Debug.Log("Limite superiore");
             return true;
         }
         else if (cameraBorderD < arenaBorderD) {
-            //Debug.Log("Limite inferiore");
+            Debug.Log("Limite inferiore");
             return true;
         }
         else return false;

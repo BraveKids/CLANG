@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GameElements : MonoBehaviour {
 
@@ -17,6 +18,7 @@ public class GameElements : MonoBehaviour {
     static bool weaponDropped = false;
     static int enemy = 0;
     static int intWeapon;
+   public static List<GameObject> itemSpawned;
    
 
     // Use this for initialization
