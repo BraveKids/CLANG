@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
+
 using System.Collections;
+
 using System.Collections.Generic;
 
-public class GameElements : MonoBehaviour {
+public class GameElements : MonoBehaviour
+{
 
     static GameObject currentCamera;
     static GameObject menuCanvas;
@@ -18,11 +21,17 @@ public class GameElements : MonoBehaviour {
     static bool weaponDropped = false;
     static int enemy = 0;
     static int intWeapon;
+
    public static List<GameObject> itemSpawned;
-   
+
+    public List<GameObject> targets;
+
+
 
     // Use this for initialization
-    void Start() {
+    void Start()
+    {
+        targets = new List<GameObject>();
         arena = GameObject.FindGameObjectWithTag("Arena");
         //strategist = null;
         //setCurrentCamera( Camera.main.gameObject);
@@ -37,100 +46,136 @@ public class GameElements : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update() {
+    void Update()
+    {
 
     }
 
+    public void AddTarget(GameObject target)
+    {
+        if (!targets.Contains(target))
+        {
+            targets.Add(target);
+        }
+    }
 
-    public static GameObject getArena() {
+    public void RemoveTarget(GameObject target)
+    {
+        targets.Remove(target);
+    }
+
+
+    public static GameObject getArena()
+    {
         return arena;
     }
 
-    public static void setArena(GameObject _arena) {
+    public static void setArena(GameObject _arena)
+    {
         arena = _arena;
     }
 
-    public static void setCurrentCamera(GameObject camera) {
+    public static void setCurrentCamera(GameObject camera)
+    {
         currentCamera = camera;
     }
 
-    public static GameObject getCurrentCameraObj() {
+    public static GameObject getCurrentCameraObj()
+    {
         return currentCamera;
     }
 
-    public static Camera getCurrentCamera() {
+    public static Camera getCurrentCamera()
+    {
         return currentCamera.GetComponent<Camera>();
     }
 
 
 
-    public static GameObject getGladiatorCanvas() {
+    public static GameObject getGladiatorCanvas()
+    {
         return gladiatorCanvas;
     }
 
-    public static GameObject getStrategistCanvas() {
+    public static GameObject getStrategistCanvas()
+    {
         return strategistCanvas;
     }
 
-    public static GameObject getMenuCanvas() {
+    public static GameObject getMenuCanvas()
+    {
         return menuCanvas;
     }
 
-    public static GameObject getVirtualJoystick() {
+    public static GameObject getVirtualJoystick()
+    {
         return virtualJoystick;
     }
 
 
-    public static GameObject getStrategist() {
+    public static GameObject getStrategist()
+    {
         return strategist;
     }
 
-    public static void setStrategist(GameObject strategistObj) {
+    public static void setStrategist(GameObject strategistObj)
+    {
         strategist = strategistObj;
     }
 
-    public static GameObject getGladiator() {
+    public static GameObject getGladiator()
+    {
         return gladiator;
     }
 
-    public static void setGladiator(GameObject gladiatorObj) {
+    public static void setGladiator(GameObject gladiatorObj)
+    {
         gladiator = gladiatorObj;
     }
 
 
-    public static float getGladiatorLife() {
+    public static float getGladiatorLife()
+    {
         return gladiator.GetComponent<GladiatorHealth>().getLife();
     }
 
-    public static float getGladiatorArmor() {
+    public static float getGladiatorArmor()
+    {
         return gladiator.GetComponent<GladiatorHealth>().getArmor();
     }
 
-    public static float getMaxLife() {
+    public static float getMaxLife()
+    {
         return gladiator.GetComponent<GladiatorHealth>().getMaxLife();
     }
 
-    public static float getMaxArmor() {
+    public static float getMaxArmor()
+    {
         return gladiator.GetComponent<GladiatorHealth>().getMaxArmor();
     }
 
-    public static void setGladiatorHealth(GladiatorHealth _gladiatorHealth) {
+    public static void setGladiatorHealth(GladiatorHealth _gladiatorHealth)
+    {
         gladiatorHealth = _gladiatorHealth;
     }
 
-    public static bool getArmorDropped() {
+    public static bool getArmorDropped()
+    {
         return armorDropped;
     }
 
-    public static void setArmorDropped(bool dropped) {
+    public static void setArmorDropped(bool dropped)
+    {
         armorDropped = dropped;
     }
 
-    public static bool getMedDropped() {
+    public static bool getMedDropped()
+    {
         return medDropped;
     }
 
-    public static void setMedDropped(bool dropped) {
+    public static void setMedDropped(bool dropped)
+    {
         medDropped = dropped;
     }
 
@@ -154,23 +199,28 @@ public class GameElements : MonoBehaviour {
             return 0;
     }
 
-    public static void setWeaponDropped(bool dropped) {
+    public static void setWeaponDropped(bool dropped)
+    {
         weaponDropped = dropped;
     }
 
-    public static bool getWeaponDropped() {
+    public static bool getWeaponDropped()
+    {
         return weaponDropped;
     }
 
-    public static void decreaseEnemy() {
+    public static void decreaseEnemy()
+    {
         enemy--;
     }
 
-    public static void increaseEnemy() {
+    public static void increaseEnemy()
+    {
         enemy++;
     }
 
-    public static int getEnemyCount() {
+    public static int getEnemyCount()
+    {
         Debug.Log(enemy);
         return enemy;
     }

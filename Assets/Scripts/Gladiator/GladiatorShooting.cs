@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
-using System.Collections;
+using System.Collections.Generic;
 using UnityStandardAssets.CrossPlatformInput;
+using System;
 
 public class GladiatorShooting : NetworkBehaviour
 {
@@ -35,6 +36,10 @@ public class GladiatorShooting : NetworkBehaviour
     public Transform elbowPosition;
     public GameObject handWeapon;
     public GameObject fireWeapon;
+    public List<GameObject> targets;
+
+
+
     private void Awake()
     {
 
@@ -47,10 +52,11 @@ public class GladiatorShooting : NetworkBehaviour
 
     private void Start()
     {
+        targets = new List<GameObject>();
         attackTrigger.SetActive(false);
         basicAttack = false;
         specialAttack = false;
-        
+
         // The fire axis is based on the player number.
         m_FireButton = "Fire" + (m_localID + 1);
 
@@ -67,7 +73,7 @@ public class GladiatorShooting : NetworkBehaviour
         }
         if (fireWeapon != null)
         {
-            if(fireWeapon.GetComponent<FireWeapon>().integrity <= 0)
+            if (fireWeapon.GetComponent<FireWeapon>().integrity <= 0)
             {
                 ThrowWeapon();
             }
@@ -76,11 +82,66 @@ public class GladiatorShooting : NetworkBehaviour
         {
             m_animator.SetTrigger("Dash");
         }
-       
+
+    }
+
+    public void AddTarget(GameObject target)
+    {
+        if (!targets.Contains(target))
+        {
+            if (!isLocalPlayer)
+                throw new InvalidOperationException("This can only be called for the local player!");
+            if (target.GetComponent<NetworkIdentity>() == null)
+                throw new InvalidOperationException("Network only knows about GameObjects that have a NetworkIdentity!");
+
+            CmdAddToList(target);
+        }
     }
 
 
-  
+    [Command]
+    void CmdAddToList(GameObject obj)
+    {
+        // this code is only executed on the server
+        RpcAddToList(obj); // invoke Rpc on all clients
+    }
+
+    [ClientRpc]
+    void RpcAddToList(GameObject obj)
+    {
+        // this code is executed on all clients
+        targets.Add(obj);
+    }
+
+
+    public void RemoveTarget(GameObject target)
+    {
+
+
+        if (!isLocalPlayer)
+            throw new InvalidOperationException("This can only be called for the local player!");
+        if (target.GetComponent<NetworkIdentity>() == null)
+            throw new InvalidOperationException("Network only knows about GameObjects that have a NetworkIdentity!");
+
+        CmdRemoveToList(target);
+    }
+
+    [Command]
+    void CmdRemoveToList(GameObject obj)
+    {
+        // this code is only executed on the server
+        RpcRemoveToList(obj); // invoke Rpc on all clients
+    }
+
+    [ClientRpc]
+    void RpcRemoveToList(GameObject obj)
+    {
+        // this code is executed on all clients
+        targets.Remove(obj);
+    }
+
+
+
 
     public void CommandInterpreter(string command)
     {
@@ -92,9 +153,9 @@ public class GladiatorShooting : NetworkBehaviour
         {
             if (fireWeapon != null)
             {
-             
+
                 SpecialAttack();
-                
+
             }
             else
             {
@@ -103,9 +164,9 @@ public class GladiatorShooting : NetworkBehaviour
         }
         if (command.Equals("attack"))
         {
-         
-                BasicAttack();
-            
+
+            BasicAttack();
+
         }
     }
 
@@ -137,7 +198,7 @@ public class GladiatorShooting : NetworkBehaviour
             attackTrigger.SetActive(true);
             Invoke("BasicAttackDown", 0.6f);
         }
-        
+
     }
 
     private void BasicAttackDown()
@@ -163,6 +224,11 @@ public class GladiatorShooting : NetworkBehaviour
 
             if (!specialAttack)
             {
+                if (targets.Count > 0)
+                {
+                    GameObject target = FindNearestTarget();
+                    transform.LookAt(target.transform);
+                }
                 //m_Rigidbody.velocity = Vector3.zero;
                 //m_Rigidbody.isKinematic = true;
                 specialAttack = true;
@@ -171,35 +237,54 @@ public class GladiatorShooting : NetworkBehaviour
                 Invoke("Fire", 0.5f);
             }
         }
-          
-     
+
+
     }
 
-   private void Fire()
+    public GameObject FindNearestTarget()
+    {
+        GameObject tMin = null;
+        float minDist = Mathf.Infinity;
+        Vector3 currentPos = transform.position;
+        foreach (GameObject t in targets)
+        {
+            float dist = Vector3.Distance(t.transform.position, currentPos);
+            if (dist < minDist)
+            {
+                tMin = t;
+                minDist = dist;
+            }
+        }
+        return tMin;
+    }
+
+
+    private void Fire()
     {
         if (fireWeapon != null)
         {
             CmdFire();
-            Invoke("FireDown", fireWeapon.GetComponent<FireWeapon>().rateOfAttack); 
+            Invoke("FireDown", fireWeapon.GetComponent<FireWeapon>().rateOfAttack);
         }
-        
+
     }
 
     private void ToggleWeapon(string weapon)
     {
-        if(weapon == "hand")
+        if (weapon == "hand")
         {
             fireWeapon.transform.FindChild("Model").gameObject.SetActive(false);
             handWeapon.transform.FindChild("Model").gameObject.SetActive(true);
             CmdToggleWeapon("hand");
-        }else if (weapon == "fire")
+        }
+        else if (weapon == "fire")
         {
             fireWeapon.transform.FindChild("Model").gameObject.SetActive(true);
             handWeapon.transform.FindChild("Model").gameObject.SetActive(false);
             CmdToggleWeapon("fire");
         }
     }
-  
+
 
     [Command]
     private void CmdToggleWeapon(string weapon)
@@ -228,22 +313,23 @@ public class GladiatorShooting : NetworkBehaviour
              Instantiate(m_Shell, m_FireTransform.position, m_FireTransform.rotation) as Rigidbody;
 
         // Create a velocity that is the tank's velocity and the launch force in the fire position's forward direction.
-        Vector3 velocity =  m_CurrentLaunchForce * m_FireTransform.forward;
+        Vector3 velocity = m_CurrentLaunchForce * m_FireTransform.forward;
 
         // Set the shell's velocity to this velocity.
         shellInstance.velocity = velocity;
 
         NetworkServer.Spawn(shellInstance.gameObject);
         Destroy(shellInstance.gameObject, 2.0f);
-        
+
 
 
     }
+
     private void FireDown()
     {
         if (fireWeapon != null)
         {
-            
+
             specialAttack = false;
             m_animator.SetBool("Shoot", false);
             fireWeapon.GetComponent<FireWeapon>().integrity -= 1;
@@ -257,17 +343,17 @@ public class GladiatorShooting : NetworkBehaviour
         fireWeapon = null;
         CmdThrowWeapon();
     }
- 
+
     [Command]
     private void CmdThrowWeapon()
     {
 
         Destroy(this.fireWeapon);
-        
+
     }
     public void DestroyEnemy(GameObject obj)
     {
-        GameElements.decreaseEnemy();
+        
         CmdDestroyEnemy(obj);
     }
 
@@ -275,7 +361,12 @@ public class GladiatorShooting : NetworkBehaviour
     private void CmdDestroyEnemy(GameObject obj)
     {
         Destroy(obj);
-        
+        RpcDecreaseEnemy();
+    }
+    [ClientRpc]
+    private void RpcDecreaseEnemy()
+    {
+        GameElements.decreaseEnemy();
     }
 
     // This is used by the game manager to reset the tank.

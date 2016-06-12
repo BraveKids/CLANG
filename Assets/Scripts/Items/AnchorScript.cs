@@ -21,7 +21,7 @@ public class AnchorScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
         //gameObject.transform.position = new Vector3(anchorPosHand.position.x, anchorPosHand.position.y, anchorPosHand.position.z);
         gameObject.transform.rotation = new Quaternion(Quaternion.LookRotation(anchorPosHand.position - anchorPosElbow.position).x,
                                                        Quaternion.LookRotation(anchorPosHand.position - anchorPosElbow.position).y,

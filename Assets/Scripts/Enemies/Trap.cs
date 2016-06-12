@@ -9,7 +9,7 @@ public class Trap : NetworkBehaviour
     public float timeOfLife = 5f;
     public float timer = 0.0f;
     Animator anim;
-    
+
 
 
     // Use this for initialization
@@ -23,13 +23,13 @@ public class Trap : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
         timer += Time.deltaTime;
-        if(timer >= timeOfLife)
+        if (timer >= timeOfLife)
         {
             Deactivate();
         }
-        
+
     }
 
     public void makeDamage(GameObject player)
@@ -45,7 +45,7 @@ public class Trap : NetworkBehaviour
         GameElements.getGladiator().GetComponent<GladiatorShooting>().DestroyEnemy(gameObject);
     }
 
- 
+
 
     public void OnTriggerEnter(Collider col)
     {
