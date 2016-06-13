@@ -11,9 +11,9 @@ public class Bullet : MonoBehaviour {
     void OnCollisionEnter(Collision collision)
     {
         GameObject obj = collision.gameObject;
-        if (obj.CompareTag("Enemy"))
+        if (obj.tag =="Enemy" || obj.tag == "Wurm")
         {
-            obj.GetComponent<EnemyHealth>().Damage(m_Damage);
+            obj.GetComponentInParent<EnemyHealth>().Damage(m_Damage);
         }
         Destroy(this.gameObject);
     }

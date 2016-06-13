@@ -29,7 +29,7 @@ public class EnemyHealth : NetworkBehaviour
         if (currentHealth <= 0)
         {
 
-            gladiatorScript.RemoveTarget(gameObject);
+            //gladiatorScript.RemoveTarget(gameObject);
 
             gladiatorScript.DestroyEnemy(gameObject);
 

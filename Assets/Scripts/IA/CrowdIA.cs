@@ -26,6 +26,10 @@ public class CrowdIA : NetworkBehaviour
     // Use this for initialization
     void Start()
     {
+        if (!isLocalPlayer)
+        {
+            return;
+        }
         arena = GameObject.FindGameObjectWithTag("Arena");
         DTDecision kingMaker = new DTDecision(StrategistDice);
         DTDecision miteNode = new DTDecision(MiteDice);

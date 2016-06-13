@@ -36,6 +36,7 @@ public class WormIA : MonoBehaviour {
         FSMState dying = new FSMState();
         FSMState waiting = new FSMState();
         FSMState angryWaiting = new FSMState();
+       
 
         //hide
         hide.AddEnterAction(delegate () { target = GameElements.getGladiator(); });

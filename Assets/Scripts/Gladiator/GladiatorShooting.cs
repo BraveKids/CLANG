@@ -253,7 +253,14 @@ public class GladiatorShooting : NetworkBehaviour
                 if (targets.Count > 0)
                 {
                     GameObject target = FindNearestTarget();
-                    transform.LookAt(new Vector3(target.transform.position.x, transform.position.y, target.transform.position.z) );
+                    if (target.tag == "WurmCore")
+                    {
+                        transform.LookAt(new Vector3(target.transform.position.x + 4f, transform.position.y, target.transform.position.z));
+                    }
+                    else
+                    {
+                        transform.LookAt(new Vector3(target.transform.position.x, transform.position.y, target.transform.position.z));
+                    }
                 }
                 //m_Rigidbody.velocity = Vector3.zero;
                 //m_Rigidbody.isKinematic = true;
@@ -381,7 +388,7 @@ public class GladiatorShooting : NetworkBehaviour
     }
     public void DestroyEnemy(GameObject obj)
     {
-
+        RemoveTarget(obj);
         CmdDestroyEnemy(obj);
     }
 
