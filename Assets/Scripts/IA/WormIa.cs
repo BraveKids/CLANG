@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class WormIa : MonoBehaviour {
+public class WormIA : MonoBehaviour {
 
     float timer = 0f;
     GameObject target;
@@ -61,8 +61,7 @@ public class WormIa : MonoBehaviour {
     }
 
     bool StayNormal() {
-        //return myHealth.getCurrentHealth() > myHealth.getMaxHealth() / 2 ? true : false;
-        return true;
+        return myHealth.getCurrentHealth() > myHealth.getMaxHealth() / 2 ? true : false;
     }
 
     bool BeAggressive() {
@@ -73,7 +72,7 @@ public class WormIa : MonoBehaviour {
         //TODO
         //check if aggressive color is set
         //eventually change it
-        //also find a target
+        FindTarget();
     }
 
     void FindTarget() {
@@ -97,6 +96,7 @@ public class WormIa : MonoBehaviour {
     }
 
     void Chase() {
+        //TODO insegui il gladiatore (che poi è il target per semplicità)
     }
 
     bool CheckCollision() {
@@ -121,3 +121,4 @@ public class WormIa : MonoBehaviour {
 
 
 }
+
