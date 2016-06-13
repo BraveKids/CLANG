@@ -22,6 +22,7 @@ public class WormIA : MonoBehaviour {
         FSMState attacking = new FSMState();
         FSMState angryChasing = new FSMState();
         FSMState angryAttacking = new FSMState();
+        FSMState dying = new FSMState();
 
         //hide
         hide.AddEnterAction(delegate () { target = GameElements.getGladiator(); });
@@ -38,6 +39,7 @@ public class WormIA : MonoBehaviour {
         angryAttacking.AddEnterAction(Attack);
         angryAttacking.AddEnterAction(ResetTimer);
         angryAttacking.AddTransition(new FSMTransition(BareTime, hide));
+        angryAttacking.AddTransition(new FSMTransition(LifeOver, dying));
 
         //chasing
         chasing.AddStayAction(Chase);
@@ -47,6 +49,12 @@ public class WormIA : MonoBehaviour {
         attacking.AddEnterAction(Attack);
         attacking.AddEnterAction(ResetTimer);
         attacking.AddTransition(new FSMTransition(BareTime, hide));
+        attacking.AddTransition(new FSMTransition(LifeOver, dying));
+
+        //dying
+        dying.AddEnterAction(Die);
+
+
 
 
 
@@ -73,6 +81,10 @@ public class WormIA : MonoBehaviour {
         //check if aggressive color is set
         //eventually change it
         FindTarget();
+    }
+
+    bool LifeOver() {
+        return myHealth.getCurrentHealth() <= 0 ? true : false;
     }
 
     void FindTarget() {
@@ -116,6 +128,10 @@ public class WormIA : MonoBehaviour {
     bool BareTime() {
         timer += Time.deltaTime;
         return timer >= bareTime ? true : false;
+    }
+
+    void Die() {
+
     }
 
 
