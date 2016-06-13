@@ -1,4 +1,7 @@
 ﻿using UnityEngine;
+
+using System.Collections;
+
 using System.Collections.Generic;
 using UnityEngine.Networking;
 public class GameElements : NetworkBehaviour
@@ -18,7 +21,11 @@ public class GameElements : NetworkBehaviour
     static bool weaponDropped = false;
     static int enemy = 0;
     static int intWeapon;
+
+   public static List<GameObject> itemSpawned;
+
     public List<GameObject> targets;
+
 
 
     // Use this for initialization
