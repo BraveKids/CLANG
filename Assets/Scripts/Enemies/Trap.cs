@@ -40,9 +40,10 @@ public class Trap : NetworkBehaviour
 
     public void Deactivate()
     {
-        //gameObject.SetActive(false);
-        //Destroy(gameObject);
-        GameElements.getGladiator().GetComponent<GladiatorShooting>().DestroyEnemy(gameObject);
+        gameObject.SetActive(false);
+        Destroy(gameObject);
+        GameElements.decreaseEnemy();
+       //GameElements.getGladiator().GetComponent<GladiatorShooting>().DestroyEnemy(gameObject);
     }
 
 

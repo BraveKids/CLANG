@@ -41,7 +41,13 @@ public class GladiatorHealth : NetworkBehaviour
         m_Collider = GetComponent<BoxCollider>();
         GameElements.getStrategist().GetComponent<CrowdIA>().enabled = true;
     }
-
+    public void Recover(float amount)
+    {
+        if (m_CurrentHealth < m_StartingHealth)
+        {
+            m_CurrentHealth += amount;
+        }
+    }
 
     // This is called whenever the tank takes damage.
     public void Damage(float amount)

@@ -37,7 +37,8 @@ public class GladiatorShooting : NetworkBehaviour
     public GameObject handWeapon;
     public GameObject fireWeapon;
     public List<GameObject> targets;
-
+    GladiatorHealth healthScript;
+    GladiatorMovement movementScript;
 
 
     private void Awake()
@@ -46,12 +47,15 @@ public class GladiatorShooting : NetworkBehaviour
         // Set up the references.
         //m_Rigidbody = GetComponent<Rigidbody>();
         m_animator = GetComponent<Animator>();
+        healthScript = GetComponent<GladiatorHealth>();
+        movementScript = GetComponent<GladiatorMovement>();
         fireWeapon = null;
     }
 
 
     private void Start()
     {
+
         targets = new List<GameObject>();
         attackTrigger.SetActive(false);
         basicAttack = false;
@@ -182,6 +186,14 @@ public class GladiatorShooting : NetworkBehaviour
                 m_Shell = fireWeapon.GetComponent<FireWeapon>().bulletPrefab.GetComponent<Rigidbody>();
             }
         }
+        else if (id.Equals("medpack"))
+        {
+            healthScript.Recover(10.6f);
+        }
+        else if (id.Equals("armor"))
+        {
+            healthScript.SetArmor(16f);
+        }
     }
 
     private void BasicAttack()
@@ -189,7 +201,7 @@ public class GladiatorShooting : NetworkBehaviour
         if (!basicAttack)
         {
             basicAttack = true;
-            GetComponent<GladiatorMovement>().setAttacking(true);
+            movementScript.setAttacking(true);
             if (fireWeapon != null)
             {
                 ToggleWeapon("hand");
@@ -209,7 +221,7 @@ public class GladiatorShooting : NetworkBehaviour
             ToggleWeapon("fire");
         }
         Invoke("CanAttack", 0.5f);
-        GetComponent<GladiatorMovement>().setAttacking(false);
+        movementScript.setAttacking(false);
     }
 
     private void CanAttack()
@@ -232,7 +244,7 @@ public class GladiatorShooting : NetworkBehaviour
                 //m_Rigidbody.velocity = Vector3.zero;
                 //m_Rigidbody.isKinematic = true;
                 specialAttack = true;
-                GetComponent<GladiatorMovement>().setAttacking(true);
+                movementScript.setAttacking(true);
                 m_animator.SetBool("Shoot", true);
                 Invoke("Fire", 0.5f);
             }
@@ -333,7 +345,7 @@ public class GladiatorShooting : NetworkBehaviour
             specialAttack = false;
             m_animator.SetBool("Shoot", false);
             fireWeapon.GetComponent<FireWeapon>().integrity -= 1;
-            GetComponent<GladiatorMovement>().setAttacking(false);
+            movementScript.setAttacking(false);
             //m_Rigidbody.isKinematic = false;
         }
     }
@@ -353,7 +365,7 @@ public class GladiatorShooting : NetworkBehaviour
     }
     public void DestroyEnemy(GameObject obj)
     {
-        
+
         CmdDestroyEnemy(obj);
     }
 
@@ -362,11 +374,16 @@ public class GladiatorShooting : NetworkBehaviour
     {
         Destroy(obj);
         RpcDecreaseEnemy();
+
     }
+
     [ClientRpc]
     private void RpcDecreaseEnemy()
     {
-        GameElements.decreaseEnemy();
+        if (!isLocalPlayer)
+        {
+            GameElements.decreaseEnemy();
+        }
     }
 
     // This is used by the game manager to reset the tank.
