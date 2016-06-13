@@ -40,6 +40,7 @@ public class WormIA : MonoBehaviour {
         angryAttacking.AddEnterAction(ResetTimer);
         angryAttacking.AddTransition(new FSMTransition(BareTime, hide));
         angryAttacking.AddTransition(new FSMTransition(LifeOver, dying));
+        angryAttacking.AddExitAction(Hide);
 
         //chasing
         chasing.AddStayAction(Chase);
@@ -50,6 +51,7 @@ public class WormIA : MonoBehaviour {
         attacking.AddEnterAction(ResetTimer);
         attacking.AddTransition(new FSMTransition(BareTime, hide));
         attacking.AddTransition(new FSMTransition(LifeOver, dying));
+        attacking.AddExitAction(Hide);
 
         //dying
         dying.AddEnterAction(Die);
@@ -129,7 +131,9 @@ public class WormIA : MonoBehaviour {
         timer += Time.deltaTime;
         return timer >= bareTime ? true : false;
     }
+    void Hide() {
 
+    }
     void Die() {
 
     }
