@@ -34,6 +34,8 @@ public class WormIA : MonoBehaviour {
         FSMState angryChasing = new FSMState();
         FSMState angryAttacking = new FSMState();
         FSMState dying = new FSMState();
+        FSMState waiting = new FSMState();
+        FSMState angryWaiting = new FSMState();
 
         //hide
         hide.AddEnterAction(delegate () { target = GameElements.getGladiator(); });
@@ -44,7 +46,10 @@ public class WormIA : MonoBehaviour {
         angryChasing.AddEnterAction(BecomeAggressive);
         angryChasing.AddEnterAction(FindTarget);
         angryChasing.AddStayAction(AngryChase);
-        angryChasing.AddTransition(new FSMTransition(CheckCollision, attacking));
+        angryChasing.AddTransition(new FSMTransition(CheckCollision, angryWaiting));
+
+        //angryWaiting
+        angryWaiting.AddTransition(new FSMTransition(GoToAttack, angryAttacking));
 
         //angryAttacking
         angryAttacking.AddEnterAction(Attack);
@@ -55,7 +60,10 @@ public class WormIA : MonoBehaviour {
 
         //chasing
         chasing.AddStayAction(Chase);
-        chasing.AddTransition(new FSMTransition(CheckCollision, attacking));
+        chasing.AddTransition(new FSMTransition(CheckCollision, waiting));
+
+        //waiting
+        waiting.AddTransition(new FSMTransition(GoToAttack, attacking));
 
         //attacking
         attacking.AddEnterAction(Attack);
@@ -155,19 +163,17 @@ public class WormIA : MonoBehaviour {
                                                                                 target.transform.position.z)
                                                                                 , speed* Time.deltaTime);
     }
-
-    bool CheckCollision() {
-        if (trigger.getTriggered())
-            collided = true;
-        if (collided)
-            timerAttack += Time.deltaTime;
-        if(timerAttack>= timeBeforeAttack)
-        {
+    bool GoToAttack() {
+        timerAttack += Time.deltaTime;
+        if (timerAttack >= timeBeforeAttack) {
             timerAttack = 0f;
-            collided = false;
             return true;
         }
         return false;
+    }
+
+    bool CheckCollision() {
+        return trigger.getTriggered();         
     }
 
     void ResetTimer() {
