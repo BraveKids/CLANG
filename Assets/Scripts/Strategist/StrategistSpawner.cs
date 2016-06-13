@@ -72,17 +72,21 @@ public class StrategistSpawner : NetworkBehaviour {
         GameObject instance = Instantiate(spawnObj, position, Quaternion.identity) as GameObject;
         if(instance.tag == "Droppable")
         {
-            RpcIncreaseItems(instance);
+            //RpcIncreaseItems(instance);
         }
         NetworkServer.Spawn(instance);
-        RpcIncreaseEnemy();
+        if (isLocalPlayer)
+        {
+            RpcIncreaseEnemy();
+        }
     }
-
+    /*
     [ClientRpc]
     void RpcIncreaseItems(GameObject obj)
     {
+
         GameElements.itemSpawned.Add(obj);
-    }
+    }*/
     [ClientRpc]
     void RpcIncreaseEnemy()
     {
@@ -94,14 +98,10 @@ public class StrategistSpawner : NetworkBehaviour {
 
     public void SetArmorDropped()
     {
-        CmdSetArmorDropped();
-    }
-
-    [Command]
-    void CmdSetArmorDropped()
-    {
         RpcSetArmorDropped();
     }
+
+  
 
     [ClientRpc]
     void RpcSetArmorDropped()
@@ -111,14 +111,10 @@ public class StrategistSpawner : NetworkBehaviour {
 
     public void SetMedDropped()
     {
-        CmdSetMedDropped();
+        RpcSetMedDropped();
     }
 
-    [Command]
-    void CmdSetMedDropped()
-    {
-        RpcSetArmorDropped();
-    }
+   
 
     [ClientRpc]
     void RpcSetMedDropped()

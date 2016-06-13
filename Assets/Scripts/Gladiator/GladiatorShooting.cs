@@ -253,7 +253,7 @@ public class GladiatorShooting : NetworkBehaviour
                 if (targets.Count > 0)
                 {
                     GameObject target = FindNearestTarget();
-                    transform.LookAt(target.transform);
+                    transform.LookAt(new Vector3(target.transform.position.x, transform.position.y, target.transform.position.z) );
                 }
                 //m_Rigidbody.velocity = Vector3.zero;
                 //m_Rigidbody.isKinematic = true;

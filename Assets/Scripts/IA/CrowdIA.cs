@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
-
-public class CrowdIA : MonoBehaviour
+using UnityEngine.Networking;
+public class CrowdIA : NetworkBehaviour
 {
 
     DecisionTree CrowdTree;
@@ -26,7 +26,7 @@ public class CrowdIA : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        arena = GameElements.getArena();
+        arena = GameObject.FindGameObjectWithTag("Arena");
         DTDecision kingMaker = new DTDecision(StrategistDice);
         DTDecision miteNode = new DTDecision(MiteDice);
         DTDecision weaponNode = new DTDecision(WeaponDice);
