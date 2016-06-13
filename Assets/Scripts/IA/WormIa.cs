@@ -189,11 +189,13 @@ public class WormIA : MonoBehaviour {
         timer += Time.deltaTime;
         return timer >= bareTime ? true : false;
     }
+
     void Hide() {
 
         anim.SetBool("Attack", false);
         
     }
+
     void Die() {
 
     }
