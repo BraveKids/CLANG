@@ -175,6 +175,7 @@ public class GladiatorShooting : NetworkBehaviour
 
     public void PickUpObject(GameObject obj, string id)
     {
+        CmdRemoveItem(obj);
         if (id.Equals("fireweapon"))
         {
             fireWeapon = obj;
@@ -193,6 +194,20 @@ public class GladiatorShooting : NetworkBehaviour
         {
             healthScript.SetArmor(16f);
         }
+    }
+
+    [Command]
+    void CmdRemoveItem(GameObject obj)
+    {
+        // this code is only executed on the server
+        RpcRemoveItem(obj); // invoke Rpc on all clients
+    }
+
+    [ClientRpc]
+    void RpcRemoveItem(GameObject obj)
+    {
+        // this code is executed on all clients
+        GameElements.itemSpawned.Remove(obj);
     }
 
     private void BasicAttack()

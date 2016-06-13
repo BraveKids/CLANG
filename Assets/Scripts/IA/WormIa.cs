@@ -2,16 +2,27 @@
 using System.Collections;
 
 public class WormIA : MonoBehaviour {
-
+    public float normalSpeed;
+    public float boostSpeed;
     float timer = 0f;
-    GameObject target;
+    public GameObject target;
     public float itemEatingProbability;
-    public float bareTime = 2f;
+    public float bareTime = 5f;
+    public WurmTrigger trigger;
+    public WurmAttack attackScript;
+    public EnemyHealth myHealth;
+    public float timeBeforeAttack = 1f;
+    public float timeBeforChasing = 2f;
+    float timerChase = 0f;
+    float timerAttack = 0f;
+    bool collided = false;
     FSM myIa;
-    EnemyHealth myHealth;
+    //EnemyHealth myHealth;
+    Animator anim;
     // Use this for initialization
     void Start() {
-        myHealth = gameObject.GetComponent<EnemyHealth>();
+        anim = GetComponent<Animator>();
+        //myHealth = gameObject.GetComponent<EnemyHealth>();
         FSMState off = new FSMState();
         FSMState on = new FSMState();
 
@@ -60,7 +71,8 @@ public class WormIA : MonoBehaviour {
 
 
 
-        myIa = new FSM(hide);
+        myIa = new FSM(chasing);
+        target = GameElements.getGladiator();
         //StartCoroutine(Patrol());
 
     }
@@ -71,11 +83,35 @@ public class WormIA : MonoBehaviour {
     }
 
     bool StayNormal() {
-        return myHealth.getCurrentHealth() > myHealth.getMaxHealth() / 2 ? true : false;
+        timerChase += Time.deltaTime;
+        if (timerChase >= timeBeforChasing)
+        {
+            if (myHealth.getCurrentHealth() > myHealth.getMaxHealth() / 2)
+            {
+                timerChase = 0f;
+                return true;
+            }
+            else
+                return false;
+        }
+        else
+            return false;
     }
 
     bool BeAggressive() {
-        return !StayNormal();
+        timerChase += Time.deltaTime;
+        if (timerChase >= timeBeforChasing)
+        {
+            if (myHealth.getCurrentHealth() <= myHealth.getMaxHealth() / 2)
+            {
+                timerChase = 0f;
+                return true;
+            }
+            else
+                return false;
+        }
+        else
+            return false;
     }
 
     void BecomeAggressive() {
@@ -105,18 +141,33 @@ public class WormIA : MonoBehaviour {
     }
 
     void AngryChase() {
-        //TODO 
-        //Insegue l'obiettivo
+        Movement(boostSpeed);
     }
 
     void Chase() {
-        //TODO insegui il gladiatore (che poi è il target per semplicità)
+        Movement(normalSpeed);
+    }
+
+    void Movement(float speed)
+    {
+        transform.position = Vector3.MoveTowards(transform.position, new Vector3(target.transform.position.x-5f,
+                                                                                transform.position.y,
+                                                                                target.transform.position.z)
+                                                                                , speed* Time.deltaTime);
     }
 
     bool CheckCollision() {
-        //TODO 
-        //Controlla collisioni con l'oggetto target
-        return true;
+        if (trigger.getTriggered())
+            collided = true;
+        if (collided)
+            timerAttack += Time.deltaTime;
+        if(timerAttack>= timeBeforeAttack)
+        {
+            timerAttack = 0f;
+            collided = false;
+            return true;
+        }
+        return false;
     }
 
     void ResetTimer() {
@@ -124,7 +175,8 @@ public class WormIA : MonoBehaviour {
     }
 
     void Attack() {
-        //TODO animazione attacco
+        attackScript.alreadyAttack = false;
+        anim.SetBool("Attack", true);
     }
 
     bool BareTime() {
@@ -133,6 +185,8 @@ public class WormIA : MonoBehaviour {
     }
     void Hide() {
 
+        anim.SetBool("Attack", false);
+        
     }
     void Die() {
 

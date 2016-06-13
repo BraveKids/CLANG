@@ -41,11 +41,13 @@ public class InteractableObject : MonoBehaviour
             else if(id== "medpack")
             {
                 GameElements.setMedDropped(false);
+                
                 gameObject.SetActive(false);
             }
             else if(id == "armor")
             {
                 GameElements.setArmorDropped(false);
+                
                 gameObject.SetActive(false);
             }
      

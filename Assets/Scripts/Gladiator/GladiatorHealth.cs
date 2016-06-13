@@ -29,7 +29,7 @@ public class GladiatorHealth : NetworkBehaviour
     [SyncVar(hook = "OnCurrentHealthChanged")]
     public float m_CurrentHealth;                  // How much health the tank currently has.*
     [SyncVar]
-    private float m_Armor;
+    public float m_Armor;
     [SyncVar]
     private bool m_ZeroHealthHappened;              // Has the tank been reduced beyond zero health yet?
     private BoxCollider m_Collider;                 // Used so that the tank doesn't collide with anything when it's dead.
@@ -45,7 +45,14 @@ public class GladiatorHealth : NetworkBehaviour
     {
         if (m_CurrentHealth < m_StartingHealth)
         {
-            m_CurrentHealth += amount;
+            if (m_CurrentHealth + amount > m_StartingHealth)
+            {
+                m_CurrentHealth = m_StartingHealth;
+            }
+            else
+            {
+                m_CurrentHealth += amount;
+            }
         }
     }
 

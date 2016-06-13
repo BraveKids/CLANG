@@ -79,7 +79,7 @@ public class DragElementWurm : MonoBehaviour, IDragHandler, IPointerUpHandler, I
                 if (Physics.Raycast(worldPosition, Vector3.up, 3.0f) != true)
                 {
                     strategistPulse.SpawnPrice(pulsePrice);
-                    Vector3 worldCorrectPosition = new Vector3(worldPosition.x - 4f, worldPosition.y-5f, worldPosition.z );
+                    Vector3 worldCorrectPosition = new Vector3(worldPosition.x - 4f, worldPosition.y, worldPosition.z );
                     strategist.GetComponent<StrategistSpawner>().Spawn(prefabObject, worldCorrectPosition);
                     cooldown = true;
                 }

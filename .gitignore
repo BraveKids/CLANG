@@ -23,6 +23,9 @@ Assets/Scenes
 *.mov.meta
 *.apk
 *.apk.meta
+*.pdb
+*.pdb.meta
+*.exe
 FacebookSDK/
 GooglePlayGames/
 Plugins/

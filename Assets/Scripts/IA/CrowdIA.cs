@@ -22,6 +22,7 @@ public class CrowdIA : MonoBehaviour
 
     public GameObject medPackPrefab;
     public GameObject weaponPrefab;
+    public GameObject armorPrefab;
     // Use this for initialization
     void Start()
     {
@@ -50,6 +51,11 @@ public class CrowdIA : MonoBehaviour
         CrowdTree = new DecisionTree(kingMaker);
         StartCoroutine(Patrol());
         //DebugLine();
+
+        arenaBorderL = arena.transform.position.x - arenaLR;
+        arenaBorderR = arena.transform.position.x + arenaLR;
+        arenaBorderD = arena.transform.position.z + arenaU;
+        arenaBorderU = arena.transform.position.z - arenaD;
 
     }
 
@@ -138,15 +144,18 @@ public class CrowdIA : MonoBehaviour
     void DropMedpack()
     {
         gameObject.GetComponent<StrategistSpawner>().Spawn(medPackPrefab, itemSpawnPoint());
-        //GameElements.setMedDropped(true);
+        gameObject.GetComponent<StrategistSpawner>().SetMedDropped();
         //Debug.Log("MEDPACK");
     }
 
     void DropArmor()
     {
-        //GameElements.setArmorDropped(true);
+        gameObject.GetComponent<StrategistSpawner>().Spawn(armorPrefab, itemSpawnPoint());
+        gameObject.GetComponent<StrategistSpawner>().SetArmorDropped();
         //Debug.Log("ARMOR");
     }
+
+
 
     Vector3 itemSpawnPoint()
     {

@@ -7,14 +7,14 @@ public class EnemyHealth : NetworkBehaviour
     public float m_Resistance;
     public GameObject model;
     public bool destroyOnDeath;
-    Color curColor;
+    //Color curColor;
     [SyncVar(hook = "OnChangeHealth")]
     public float currentHealth;
     GladiatorShooting gladiatorScript;
     void Start()
     {
         gladiatorScript = GameElements.getGladiator().GetComponent<GladiatorShooting>();
-        curColor = model.GetComponent<SkinnedMeshRenderer>().material.color;
+        //curColor = model.GetComponent<SkinnedMeshRenderer>().material.color;
         currentHealth = m_Health;
     }
 
@@ -51,14 +51,14 @@ public class EnemyHealth : NetworkBehaviour
     private void DamageColor()
     {
 
-        model.GetComponent<SkinnedMeshRenderer>().material.color = Color.red;
+        //model.GetComponent<SkinnedMeshRenderer>().material.color = Color.red;
         Invoke("DamageColorBack", 0.5f);
 
     }
 
     private void DamageColorBack()
     {
-        model.GetComponent<SkinnedMeshRenderer>().material.color = curColor;
+        //model.GetComponent<SkinnedMeshRenderer>().material.color = curColor;
     }
 
 
