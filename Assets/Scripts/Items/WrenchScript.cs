@@ -15,9 +15,10 @@ public class WrenchScript : MonoBehaviour {
 
      void OnTriggerEnter(Collider obj)
     {
-        if (obj.tag =="Enemy")
+        if (obj.tag =="Enemy" || obj.tag == "Wurm")
         {
-            obj.GetComponent<EnemyHealth>().Damage(m_Damage);
+            //obj.GetComponent<EnemyHealth>().Damage(m_Damage);
+            obj.GetComponentInParent<EnemyHealth>().Damage(m_Damage);
             //gameObject.SetActive(false);
         }
     }

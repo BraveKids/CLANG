@@ -19,6 +19,10 @@ public class AimConeScript : MonoBehaviour
         {
             gladiatorScript.AddTarget(col.gameObject);
         }
+        if(col.tag == "Wurm")
+        {
+            gladiatorScript.AddTarget(col.transform.parent.parent.parent.gameObject);
+        }
     }
 
     void OnTriggerExit(Collider col)
@@ -26,6 +30,10 @@ public class AimConeScript : MonoBehaviour
         if (col.tag == "Enemy")
         {
             gladiatorScript.RemoveTarget(col.gameObject);
+        }
+        if (col.tag == "Wurm")
+        {
+            gladiatorScript.RemoveTarget(col.transform.parent.parent.parent.gameObject);
         }
     }
 }
