@@ -3,8 +3,8 @@
 using System.Collections;
 
 using System.Collections.Generic;
-
-public class GameElements : MonoBehaviour
+using UnityEngine.Networking;
+public class GameElements : NetworkBehaviour
 {
 
     static GameObject currentCamera;
@@ -31,6 +31,7 @@ public class GameElements : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        enemy = 0;
         targets = new List<GameObject>();
         arena = GameObject.FindGameObjectWithTag("Arena");
         //strategist = null;
