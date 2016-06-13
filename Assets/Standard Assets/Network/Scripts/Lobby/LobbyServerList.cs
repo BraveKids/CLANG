@@ -20,6 +20,8 @@ namespace UnityStandardAssets.Network
         static Color OddServerColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
         static Color EvenServerColor = new Color(.94f, .94f, .94f, 1.0f);
 
+        public float serverRefreshRate = 5.0f;
+
         void OnEnable()
         {
             currentPage = 0;
@@ -30,13 +32,15 @@ namespace UnityStandardAssets.Network
 
             noServerFound.SetActive(false);
 
-            RequestPage(0);
+            StartCoroutine(RefreshServerList(serverRefreshRate));
         }
 
-        void Update () {
-            //this dirty the layout to force it to recompute evryframe (a sync problem between client/server
-            //sometime to child being assigned before layout was enabled/init, leading to broken layouting)
-            RequestPage(currentPage);
+        IEnumerator RefreshServerList (float waitTime) {
+            while(true) {
+                print("Refreshing server list...");
+                RequestPage(currentPage);
+                yield return new WaitForSeconds(waitTime);
+            }                      
         }
 
         public void OnGUIMatchList(ListMatchResponse response)

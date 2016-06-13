@@ -9,9 +9,9 @@ public class PlayerLobbyHook : UnityStandardAssets.Network.LobbyHook
         if (lobbyPlayer == null)
             return;
 
-        UnityStandardAssets.Network.LobbyPlayer lp = lobbyPlayer.GetComponent<UnityStandardAssets.Network.LobbyPlayer>();
+        UnityStandardAssets.Network.AutoLobbyPlayer lp = lobbyPlayer.GetComponent<UnityStandardAssets.Network.AutoLobbyPlayer>();
 
         if(lp != null)
-            GameManager.AddPlayer(gamePlayer, lp.slot, lp.playerColor, lp.nameInput.text, lp.playerControllerId);
+            GameManager.AddPlayer(gamePlayer, lp.slot, lp.playerColor, lp.playerName, lp.playerControllerId);
     }
 }

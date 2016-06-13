@@ -56,9 +56,14 @@ public class CrowdIA : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        DebugLine();
 
+        //DebugLine();
     }
+
+
+
+   
+
 
 
 
@@ -120,25 +125,27 @@ public class CrowdIA : MonoBehaviour
     {
         gameObject.GetComponent<StrategistSpawner>().Spawn(weaponPrefab, itemSpawnPoint());
         GameElements.setWeaponDropped(true);
-        Debug.Log("WEAPON");
+        //Debug.Log("WEAPON");
     }
 
     void DropMite()
     {
-        Debug.Log("MITE");
+
+        //Debug.Log("MITE");
+
     }
 
     void DropMedpack()
     {
         gameObject.GetComponent<StrategistSpawner>().Spawn(medPackPrefab, itemSpawnPoint());
         //GameElements.setMedDropped(true);
-        Debug.Log("MEDPACK");
+        //Debug.Log("MEDPACK");
     }
 
     void DropArmor()
     {
         //GameElements.setArmorDropped(true);
-        Debug.Log("ARMOR");
+        //Debug.Log("ARMOR");
     }
 
     Vector3 itemSpawnPoint()

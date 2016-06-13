@@ -12,7 +12,6 @@ namespace UnityStandardAssets.Network
 {
     public class LobbyManager : NetworkLobbyManager 
     {
-
         Dictionary<int, int> currentPlayers;
         const int STRATEGIST = 0;
         const int GLADIATOR = 1;
@@ -51,7 +50,6 @@ namespace UnityStandardAssets.Network
 
         void Start()
         {
-
             s_Singleton = this;
 
             _lobbyHooks = GetComponent<UnityStandardAssets.Network.LobbyHook>();
@@ -74,9 +72,10 @@ namespace UnityStandardAssets.Network
             {
                 if (topPanel.isInGame)
                 {
-                    ChangeTo(lobbyPanel);
+                    
+                    //ChangeTo(lobbyPanel); //leave the lobby to prevent problems
                     if (isMatchmaking)
-                    {
+                    {                        
                         if (conn.playerControllers[0].unetView.isServer)
                         {
                             backDelegate = StopHostClbk;
@@ -97,13 +96,15 @@ namespace UnityStandardAssets.Network
                             backDelegate = StopClientClbk;
                         }
                     }
+                    GoBackButton(); //force to exit from lobby
                 }
                 else
                 {
                     ChangeTo(mainMenuPanel);
                 }
-                //TODO RIPRISTINARE
-                topPanel.ToggleVisibility(false);
+
+                
+                topPanel.ToggleVisibility(true);
                 topPanel.isInGame = false;
             }
             else
@@ -260,25 +261,20 @@ namespace UnityStandardAssets.Network
 
         public override GameObject OnLobbyServerCreateLobbyPlayer(NetworkConnection conn, short playerControllerId)
         {
-       
-
             GameObject obj = Instantiate(lobbyPlayerPrefab.gameObject) as GameObject;
 
-            LobbyPlayer newPlayer = obj.GetComponent<LobbyPlayer>();
-
+            AutoLobbyPlayer newPlayer = obj.GetComponent<AutoLobbyPlayer>();
 
             if (!currentPlayers.ContainsKey(conn.connectionId))
             {
                 currentPlayers.Add(conn.connectionId, numPlayers);
             }
-            
-
 
             newPlayer.RpcToggleJoinButton(numPlayers + 1 >= minPlayer); ;
 
             for (int i = 0; i < numPlayers; ++i)
             {
-                LobbyPlayer p = lobbySlots[i] as LobbyPlayer;
+                AutoLobbyPlayer p = lobbySlots[i] as AutoLobbyPlayer;
 
                 if (p != null)
                 {
@@ -301,7 +297,7 @@ namespace UnityStandardAssets.Network
         {
             for (int i = 0; i < numPlayers; ++i)
             {
-                LobbyPlayer p = lobbySlots[i] as LobbyPlayer;
+                AutoLobbyPlayer p = lobbySlots[i] as AutoLobbyPlayer;
 
                 if (p != null)
                 {
@@ -352,7 +348,7 @@ namespace UnityStandardAssets.Network
                     {
                         if (lobbySlots[i] != null)
                         {//there is max player slot, so some could be == null, need to test it ebfore accessing!
-                            (lobbySlots[i] as LobbyPlayer).RpcUpdateCountdown(floorTime);
+                            (lobbySlots[i] as AutoLobbyPlayer).RpcUpdateCountdown(floorTime);
                         }
                     }
                 }
@@ -362,7 +358,7 @@ namespace UnityStandardAssets.Network
             {
                 if (lobbySlots[i] != null)
                 {
-                    (lobbySlots[i] as LobbyPlayer).RpcUpdateCountdown(0);
+                    (lobbySlots[i] as AutoLobbyPlayer).RpcUpdateCountdown(0);
                 }
             }
 
@@ -382,7 +378,7 @@ namespace UnityStandardAssets.Network
         public override void OnClientError(NetworkConnection conn, int errorCode)
         {
             ChangeTo(mainMenuPanel);
-            infoPanel.Display("Cient error : " + (errorCode == 6 ? "timeout" : errorCode.ToString()), "Close", null);
+            infoPanel.Display("Client error : " + (errorCode == 6 ? "timeout" : errorCode.ToString()), "Close", null);
         }
     }
 }

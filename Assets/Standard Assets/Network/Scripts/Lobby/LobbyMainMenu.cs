@@ -22,8 +22,8 @@ namespace UnityStandardAssets.Network
             ipInput.onEndEdit.RemoveAllListeners();
             ipInput.onEndEdit.AddListener(onEndEditIP);
 
-            matchNameInput.onEndEdit.RemoveAllListeners();
-            matchNameInput.onEndEdit.AddListener(onEndEditGameName);
+            /*matchNameInput.onEndEdit.RemoveAllListeners();
+            matchNameInput.onEndEdit.AddListener(onEndEditGameName);*/
         }
 
         public void OnClickHost()
@@ -58,7 +58,7 @@ namespace UnityStandardAssets.Network
         {
             lobbyManager.StartMatchMaker();
             lobbyManager.matchMaker.CreateMatch(
-                matchNameInput.text,
+                GetUniqueRandomServerName(), //random server name instead of matchNameInput.text,
                 (uint)lobbyManager.maxPlayers,
                 true,
                 "",
@@ -92,6 +92,16 @@ namespace UnityStandardAssets.Network
             {
                 OnClickCreateMatchmakingGame();
             }
+        }
+
+        string GetUniqueRandomServerName() {
+            System.Guid g = System.Guid.NewGuid();
+            string GuidString = System.Convert.ToBase64String(g.ToByteArray());
+            GuidString = GuidString.Replace("=", "");
+            GuidString = GuidString.Replace("+", "");
+            GuidString = GuidString.Replace("/", "");
+            Debug.Log("Unique server name: " + GuidString);
+            return GuidString;
         }
 
     }

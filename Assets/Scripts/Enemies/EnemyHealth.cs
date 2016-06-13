@@ -38,6 +38,16 @@ public class EnemyHealth : NetworkBehaviour
         }
     }
 
+    public float getCurrentHealth()
+    {
+        return currentHealth;
+    }
+
+    public float getMaxHealth()
+    {
+        return m_Health;
+    }
+
     private void DamageColor()
     {
 
@@ -57,11 +67,5 @@ public class EnemyHealth : NetworkBehaviour
         //healthBar.sizeDelta = new Vector2(currentHealth, healthBar.sizeDelta.y);
     }
 
-    public float getMaxHealth() {
-        return m_Health;
-    }
-
-    public float getCurrentHealth() {
-        return currentHealth;
-    }
+   
 }

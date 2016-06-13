@@ -33,8 +33,7 @@ namespace UnityStandardAssets.Network
             if(layout)
                 layout.childAlignment = Time.frameCount%2 == 0 ? TextAnchor.UpperCenter : TextAnchor.UpperLeft;
 
-            if(Input.GetButtonDown("Fire2") && NetworkServer.localConnections.Count > 0 && NetworkServer.localConnections[0].playerControllers.Count < 2)
-            {
+            if(Input.GetButtonDown("Fire2") && NetworkServer.localConnections.Count > 0 && NetworkServer.localConnections[0].playerControllers.Count < 2) {
                 LobbyManager.s_Singleton.TryToAddPlayer();
             }
         }

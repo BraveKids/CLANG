@@ -43,7 +43,9 @@ public class DTDecision : DTNode {
     public void walk(ref DTNode currentNode) {
         object decision = Selector();
         currentNode = Arcs.ContainsKey(decision) ? Arcs[decision] : null;
-        if (currentNode == null) Debug.Log("Nessuna azione trovata");
+        if (currentNode == null) {
+            //Debug.Log("Nessuna azione trovata");
+        }
     }
 }
 

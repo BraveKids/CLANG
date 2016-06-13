@@ -1,9 +1,14 @@
 ﻿using UnityEngine;
 
-using System.Collections;
-
 using System.Collections.Generic;
 using UnityEngine.Networking;
+
+
+
+using System.Collections;
+
+
+
 public class GameElements : NetworkBehaviour
 {
 
@@ -22,17 +27,20 @@ public class GameElements : NetworkBehaviour
     static int enemy = 0;
     static int intWeapon;
 
-   public static List<GameObject> itemSpawned;
+    public static List<GameObject> itemSpawned;
 
-    public List<GameObject> targets;
+
 
 
 
     // Use this for initialization
     void Start()
     {
+
+        itemSpawned = new List<GameObject>();
+
         enemy = 0;
-        targets = new List<GameObject>();
+
         arena = GameObject.FindGameObjectWithTag("Arena");
         //strategist = null;
         //setCurrentCamera( Camera.main.gameObject);
@@ -51,21 +59,6 @@ public class GameElements : NetworkBehaviour
     {
 
     }
-
-    public void AddTarget(GameObject target)
-    {
-        if (!targets.Contains(target))
-        {
-            targets.Add(target);
-        }
-    }
-
-    public void RemoveTarget(GameObject target)
-    {
-        targets.Remove(target);
-    }
-
-
     public static GameObject getArena()
     {
         return arena;
@@ -222,7 +215,9 @@ public class GameElements : NetworkBehaviour
 
     public static int getEnemyCount()
     {
-        Debug.Log(enemy);
+
+        //Debug.Log(enemy);
+
         return enemy;
     }
 

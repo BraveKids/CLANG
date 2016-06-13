@@ -37,8 +37,10 @@ public class GladiatorShooting : NetworkBehaviour
     public GameObject handWeapon;
     public GameObject fireWeapon;
     public List<GameObject> targets;
+
     GladiatorHealth healthScript;
     GladiatorMovement movementScript;
+
 
 
     private void Awake()
@@ -93,12 +95,12 @@ public class GladiatorShooting : NetworkBehaviour
     {
         if (!targets.Contains(target))
         {
-            if (!isLocalPlayer)
-                throw new InvalidOperationException("This can only be called for the local player!");
-            if (target.GetComponent<NetworkIdentity>() == null)
-                throw new InvalidOperationException("Network only knows about GameObjects that have a NetworkIdentity!");
 
-            CmdAddToList(target);
+       
+            if (isLocalPlayer)
+            {
+                CmdAddToList(target);
+            }
         }
     }
 
@@ -121,13 +123,11 @@ public class GladiatorShooting : NetworkBehaviour
     public void RemoveTarget(GameObject target)
     {
 
-
-        if (!isLocalPlayer)
-            throw new InvalidOperationException("This can only be called for the local player!");
-        if (target.GetComponent<NetworkIdentity>() == null)
-            throw new InvalidOperationException("Network only knows about GameObjects that have a NetworkIdentity!");
-
-        CmdRemoveToList(target);
+     
+        if (isLocalPlayer)
+        {
+            CmdRemoveToList(target);
+        }
     }
 
     [Command]
@@ -143,7 +143,6 @@ public class GladiatorShooting : NetworkBehaviour
         // this code is executed on all clients
         targets.Remove(obj);
     }
-
 
 
 
@@ -251,6 +250,7 @@ public class GladiatorShooting : NetworkBehaviour
         }
 
 
+
     }
 
     public GameObject FindNearestTarget()
@@ -270,6 +270,7 @@ public class GladiatorShooting : NetworkBehaviour
         return tMin;
     }
 
+    
 
     private void Fire()
     {
@@ -373,6 +374,7 @@ public class GladiatorShooting : NetworkBehaviour
     private void CmdDestroyEnemy(GameObject obj)
     {
         Destroy(obj);
+
         RpcDecreaseEnemy();
 
     }
@@ -384,6 +386,7 @@ public class GladiatorShooting : NetworkBehaviour
         {
             GameElements.decreaseEnemy();
         }
+
     }
 
     // This is used by the game manager to reset the tank.

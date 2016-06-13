@@ -106,7 +106,8 @@ ModelImporter:
     4300032: Cylinder009
     4300034: Cylinder010
     4300036: Cylinder011
-    7400000: Take 001
+    7400000: Attack
+    7400002: Hide
     9500000: //RootNode
   materials:
     importMaterials: 1
@@ -130,9 +131,81 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: Take 001
+      name: Attack
       takeName: Take 001
       firstFrame: 60
+      lastFrame: 75
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Group001
+        weight: 1
+      - path: Group001/Line001
+        weight: 1
+      - path: Group001/Sphere001
+        weight: 1
+      - path: Group001/Sphere002
+        weight: 1
+      - path: Group001/Sphere003
+        weight: 1
+      - path: Group001/Sphere004
+        weight: 1
+      - path: Group001/Sphere005
+        weight: 1
+      - path: Group001/Sphere006
+        weight: 1
+      - path: Group002
+        weight: 1
+      - path: Group002/Cylinder001
+        weight: 1
+      - path: Group002/Cylinder002
+        weight: 1
+      - path: Group002/Cylinder003
+        weight: 1
+      - path: Group002/Cylinder004
+        weight: 1
+      - path: Group002/Cylinder005
+        weight: 1
+      - path: Group002/Cylinder006
+        weight: 1
+      - path: Group002/Cylinder007
+        weight: 1
+      - path: Group002/Cylinder008
+        weight: 1
+      - path: Group002/Cylinder009
+        weight: 1
+      - path: Group002/Cylinder010
+        weight: 1
+      - path: Group002/Cylinder011
+        weight: 1
+      - path: Line002
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 60
+    - serializedVersion: 16
+      name: Hide
+      takeName: Take 001
+      firstFrame: 75
       lastFrame: 100
       wrapMode: 0
       orientationOffsetY: 0
@@ -140,7 +213,7 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 1
+      loopTime: 0
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0

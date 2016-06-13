@@ -43,7 +43,6 @@ public class MutantScriptTest : MonoBehaviour
         angle = Vector3.Angle(transform.forward, (target.transform.position - transform.position));
 
 
-
         if (distance <= 2.5f)
         {
 
