@@ -4,6 +4,7 @@ using System.Collections;
 public class WormIA : MonoBehaviour {
     public float normalSpeed;
     public float boostSpeed;
+    public GameObject dust;
     float timer = 0f;
     public GameObject target;
     public float itemEatingProbability;
@@ -184,6 +185,14 @@ public class WormIA : MonoBehaviour {
     void Attack() {
         attackScript.alreadyAttack = false;
         anim.SetBool("Attack", true);
+        dust.SetActive(false);
+        Invoke("Attacked", 0.5f);
+    }
+
+
+    void Attacked()
+    {
+        attackScript.alreadyAttack = true;
     }
 
     bool BareTime() {
@@ -193,7 +202,13 @@ public class WormIA : MonoBehaviour {
     void Hide() {
 
         anim.SetBool("Attack", false);
-        
+        dust.SetActive(true);
+        Invoke("NotAttacked", 2f);
+
+    }
+    void NotAttacked()
+    {
+        attackScript.alreadyAttack = false;
     }
     void Die() {
 

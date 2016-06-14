@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.Networking;
 public class EnemyHealth : NetworkBehaviour
 {
+    GameObject GarbageCollector;
     public float m_Health;
     public float m_Resistance;
     public GameObject model;
@@ -13,6 +14,7 @@ public class EnemyHealth : NetworkBehaviour
     GladiatorShooting gladiatorScript;
     void Start()
     {
+        GarbageCollector = GameObject.FindGameObjectWithTag("Garbage");
         gladiatorScript = GameElements.getGladiator().GetComponent<GladiatorShooting>();
         //curColor = model.GetComponent<SkinnedMeshRenderer>().material.color;
         currentHealth = m_Health;
@@ -29,13 +31,19 @@ public class EnemyHealth : NetworkBehaviour
         if (currentHealth <= 0)
         {
 
-            //gladiatorScript.RemoveTarget(gameObject);
-
-            gladiatorScript.DestroyEnemy(gameObject);
+            Destroy(gameObject);
+            //gameObject.SetActive(false);
+            //gameObject.transform.parent = GarbageCollector.transform;
+           
 
 
 
         }
+    }
+
+    void OnDestroy()
+    {
+        gladiatorScript.RemoveTarget(gameObject.transform);
     }
 
     public float getCurrentHealth()
@@ -62,10 +70,15 @@ public class EnemyHealth : NetworkBehaviour
     }
 
 
-    void OnChangeHealth(float currentHealth)
+    void OnChangeHealth(float amount)
     {
+        currentHealth = amount;
         //healthBar.sizeDelta = new Vector2(currentHealth, healthBar.sizeDelta.y);
     }
 
+    void Death()
+    {
+        gladiatorScript.DestroyEnemy(gameObject);
+    }
    
 }

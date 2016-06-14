@@ -27,12 +27,13 @@ public class GladiatorMovement : NetworkBehaviour
     //public float rotationSpeed;
     VirtualJoystick joystickScript;
     private Vector3 lastDirection;
-   
+    public bool dash = false;
     private int speedFloat;
     private int hFloat;
     private int vFloat;
     private int groundedBool;
     private Transform cameraTransform;
+    public Transform dashPoint;
     GameObject model;
     private float h;
     private float v;
@@ -107,10 +108,17 @@ public class GladiatorMovement : NetworkBehaviour
         //AGGIUNTE
         if (Input.GetKeyDown(KeyCode.V))
         {
-
-            anim.SetTrigger("Dash");
-            transform.Translate(Vector3.back * 1f);
+            dash = true;
+            m_Rigidbody.velocity = Vector3.zero;
+            Invoke("DashDown", 0.5f);
+            
         }
+        if (dash)
+        {
+            //anim.SetTrigger("Dash");
+            transform.position = Vector3.MoveTowards(transform.position, dashPoint.position, 3f * Time.deltaTime);
+        }
+        
         
             h = joystickScript.Horizontal();
             //CrossPlatformInputManager.GetAxis("Horizontal");
@@ -131,7 +139,10 @@ public class GladiatorMovement : NetworkBehaviour
     }
 
 
-   
+    void DashDown()
+    {
+        dash = false;
+    }
 
 
     private void FixedUpdate()
@@ -161,7 +172,7 @@ public class GladiatorMovement : NetworkBehaviour
     void MovementManagement(float horizontal, float vertical)
     {
 
-        if (!isAttacking)
+        if (!isAttacking && !dash)
         {
             Rotating(horizontal, vertical);
             if (isMoving)

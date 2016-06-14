@@ -17,11 +17,12 @@ public class AimConeScript : MonoBehaviour
     {
         if (col.tag == "Enemy")
         {
-            gladiatorScript.AddTarget(col.gameObject);
+            gladiatorScript.AddTarget(col.gameObject.transform);
         }
         if(col.tag == "Wurm")
         {
-            gladiatorScript.AddTarget(col.transform.parent.parent.parent.gameObject);
+            gladiatorScript.targets.Add(col.transform.parent.parent.parent);
+            //gladiatorScript.AddTarget(col.transform.parent.parent.parent.gameObject);
         }
     }
 
@@ -29,11 +30,11 @@ public class AimConeScript : MonoBehaviour
     {
         if (col.tag == "Enemy")
         {
-            gladiatorScript.RemoveTarget(col.gameObject);
+            gladiatorScript.targets.Remove(col.gameObject.transform);
         }
         if (col.tag == "Wurm")
         {
-            gladiatorScript.RemoveTarget(col.transform.parent.parent.parent.gameObject);
+            gladiatorScript.targets.Remove(col.transform.parent.parent.parent);
         }
     }
 }
