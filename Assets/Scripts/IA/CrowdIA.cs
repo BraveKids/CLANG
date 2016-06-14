@@ -24,7 +24,14 @@ public class CrowdIA : NetworkBehaviour {
     public GameObject weaponPrefab;
     public GameObject armorPrefab;
     // Use this for initialization
-    void Start() {
+
+    void Start()
+    {
+        if (!isLocalPlayer)
+        {
+            return;
+        }
+
         arena = GameObject.FindGameObjectWithTag("Arena");
         DTDecision kingMaker = new DTDecision(StrategistDice);
         DTDecision miteNode = new DTDecision(MiteDice);

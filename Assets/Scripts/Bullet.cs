@@ -1,25 +1,27 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.Networking;
 
-public class Bullet : MonoBehaviour {
+public class Bullet : NetworkBehaviour
+{
     public float m_Damage;
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-    void OnCollisionEnter(Collision collision)
+    // Use this for initialization
+    void Start()
     {
-        GameObject obj = collision.gameObject;
-        if (obj.CompareTag("Enemy"))
-        {
-            obj.GetComponent<EnemyHealth>().Damage(m_Damage);
-        }
-        Destroy(this.gameObject);
+
     }
 
-	// Update is called once per frame
-	void Update () {
-	
-	}
+    void OnTriggerEnter(Collider obj)
+    {
+        if (obj.tag == "Enemy" || obj.tag == "Wurm")
+        {
+            
+            obj.GetComponentInParent<EnemyHealth>().Damage(m_Damage);
+            
+        }
+        Destroy(gameObject);
+
+        
+
+    }
 }

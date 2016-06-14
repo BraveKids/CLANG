@@ -36,7 +36,7 @@ public class GladiatorShooting : NetworkBehaviour
     public Transform elbowPosition;
     public GameObject handWeapon;
     public GameObject fireWeapon;
-    public List<GameObject> targets;
+    public List<Transform> targets;
 
     GladiatorHealth healthScript;
     GladiatorMovement movementScript;
@@ -58,7 +58,7 @@ public class GladiatorShooting : NetworkBehaviour
     private void Start()
     {
 
-        targets = new List<GameObject>();
+        targets = new List<Transform>();
         attackTrigger.SetActive(false);
         basicAttack = false;
         specialAttack = false;
@@ -90,37 +90,32 @@ public class GladiatorShooting : NetworkBehaviour
         }
 
     }
-
-    public void AddTarget(GameObject target)
+    
+    public void AddTarget(Transform target)
     {
         if (!targets.Contains(target))
         {
-
-       
-            if (isLocalPlayer)
-            {
-                CmdAddToList(target);
-            }
+            targets.Add(target);
         }
     }
-
+    /*
 
     [Command]
-    void CmdAddToList(GameObject obj)
+    void CmdAddToList(Transform obj)
     {
         // this code is only executed on the server
         RpcAddToList(obj); // invoke Rpc on all clients
     }
 
     [ClientRpc]
-    void RpcAddToList(GameObject obj)
+    void RpcAddToList(Transform obj)
     {
         // this code is executed on all clients
         targets.Add(obj);
     }
 
 
-    public void RemoveTarget(GameObject target)
+    public void RemoveTarget(Transform target)
     {
 
      
@@ -131,19 +126,24 @@ public class GladiatorShooting : NetworkBehaviour
     }
 
     [Command]
-    void CmdRemoveToList(GameObject obj)
+    void CmdRemoveToList(Transform obj)
     {
         // this code is only executed on the server
         RpcRemoveToList(obj); // invoke Rpc on all clients
     }
 
     [ClientRpc]
-    void RpcRemoveToList(GameObject obj)
+    void RpcRemoveToList(Transform obj)
     {
         // this code is executed on all clients
         targets.Remove(obj);
     }
+    */
 
+    public void RemoveTarget(Transform obj)
+    {
+            targets.Remove(obj);
+    }
 
 
     public void CommandInterpreter(string command)
@@ -252,8 +252,16 @@ public class GladiatorShooting : NetworkBehaviour
             {
                 if (targets.Count > 0)
                 {
-                    GameObject target = FindNearestTarget();
-                    transform.LookAt(new Vector3(target.transform.position.x, transform.position.y, target.transform.position.z) );
+                    Transform target = FindNearestTarget();
+                    
+                    if (target.tag == "WurmCore")
+                    {
+                        transform.LookAt(new Vector3(target.position.x + 4.5f, transform.position.y, target.position.z));
+                    }
+                    else
+                    {
+                        transform.LookAt(new Vector3(target.position.x, transform.position.y, target.position.z));
+                    }
                 }
                 //m_Rigidbody.velocity = Vector3.zero;
                 //m_Rigidbody.isKinematic = true;
@@ -268,12 +276,12 @@ public class GladiatorShooting : NetworkBehaviour
 
     }
 
-    public GameObject FindNearestTarget()
+    public Transform FindNearestTarget()
     {
-        GameObject tMin = null;
+        Transform tMin = null;
         float minDist = Mathf.Infinity;
         Vector3 currentPos = transform.position;
-        foreach (GameObject t in targets)
+        foreach (Transform t in targets)
         {
             float dist = Vector3.Distance(t.transform.position, currentPos);
             if (dist < minDist)
@@ -381,7 +389,7 @@ public class GladiatorShooting : NetworkBehaviour
     }
     public void DestroyEnemy(GameObject obj)
     {
-
+        //RemoveTarget(obj);
         CmdDestroyEnemy(obj);
     }
 
@@ -389,7 +397,7 @@ public class GladiatorShooting : NetworkBehaviour
     private void CmdDestroyEnemy(GameObject obj)
     {
         Destroy(obj);
-
+        //RemoveTarget(obj);
         RpcDecreaseEnemy();
 
     }
@@ -399,6 +407,7 @@ public class GladiatorShooting : NetworkBehaviour
     {
         if (!isLocalPlayer)
         {
+
             GameElements.decreaseEnemy();
         }
 

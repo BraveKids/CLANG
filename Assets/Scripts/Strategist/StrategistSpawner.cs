@@ -72,7 +72,7 @@ public class StrategistSpawner : NetworkBehaviour {
         GameObject instance = Instantiate(spawnObj, position, Quaternion.identity) as GameObject;
         if(instance.tag == "Droppable")
         {
-            //RpcIncreaseItems(instance);
+            IncreaseItems(instance);
         }
         NetworkServer.Spawn(instance);
         if (isLocalPlayer)
@@ -80,13 +80,13 @@ public class StrategistSpawner : NetworkBehaviour {
             RpcIncreaseEnemy();
         }
     }
-    /*
-    [ClientRpc]
-    void RpcIncreaseItems(GameObject obj)
+    
+   
+    void IncreaseItems(GameObject obj)
     {
 
         GameElements.itemSpawned.Add(obj);
-    }*/
+    }
     [ClientRpc]
     void RpcIncreaseEnemy()
     {
@@ -98,29 +98,21 @@ public class StrategistSpawner : NetworkBehaviour {
 
     public void SetArmorDropped()
     {
-        RpcSetArmorDropped();
+        GameElements.setArmorDropped(true);
     }
 
   
 
-    [ClientRpc]
-    void RpcSetArmorDropped()
-    {
-        GameElements.setArmorDropped(true);
-    }
+   
 
     public void SetMedDropped()
     {
-        RpcSetMedDropped();
+        GameElements.setMedDropped(true);
     }
 
    
 
-    [ClientRpc]
-    void RpcSetMedDropped()
-    {
-        GameElements.setMedDropped(true);
-    }
+   
 
     [ClientCallback]
 	// Update is called once per frame
