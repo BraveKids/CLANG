@@ -1,16 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.Networking;
-public class CrowdIA : NetworkBehaviour
-{
+public class CrowdIA : NetworkBehaviour {
 
     DecisionTree CrowdTree;
     public float helpFrequency = 3f;
-    public float armorProbability = 0.3f;
+    public float monsterPerArmor = 8f;
     public float maxMedpackProbability = 0.5f;
     public float maxArmorProbability = 0.4f;
     public float weaponProbability = 0.4f;
     public int monsterTrheshold;
+    public float lambdaArmor = .1f;
     public float arenaLR = 18f;
     public float arenaU = 5f;
     public float arenaD = 20f;
@@ -24,8 +24,7 @@ public class CrowdIA : NetworkBehaviour
     public GameObject weaponPrefab;
     public GameObject armorPrefab;
     // Use this for initialization
-    void Start()
-    {
+    void Start() {
         arena = GameObject.FindGameObjectWithTag("Arena");
         DTDecision kingMaker = new DTDecision(StrategistDice);
         DTDecision miteNode = new DTDecision(MiteDice);
@@ -60,15 +59,14 @@ public class CrowdIA : NetworkBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    void Update() {
 
         //DebugLine();
     }
 
 
 
-   
+
 
 
 
@@ -77,8 +75,7 @@ public class CrowdIA : NetworkBehaviour
     *   the more the life is full the highest the probability to help the strategist
     *   Linear distribution
     */
-    object StrategistDice()
-    {
+    object StrategistDice() {
         float maxLife = GameElements.getMaxLife();
         float currentLife = GameElements.getGladiatorLife();
         float normalizedLife = currentLife / maxLife;   //this goes from 0 to 1
@@ -86,27 +83,26 @@ public class CrowdIA : NetworkBehaviour
     }
 
     //fixed probability
-    object ArmorDice()
-    {
+    object ArmorDice() {
         if (GameElements.getArmorDropped() || GameElements.getGladiatorArmor() > 0)
             return false;
+        int monsterCount = GameElements.getEnemyCount();
+        float armorProbability = 1 - Mathf.Exp(-lambdaArmor*monsterCount);
         return Random.value < armorProbability ? true : false;
     }
 
     //it goes to a minimum of 0% to a maximum of maxMedpackProbability
-    object MedpackDice()
-    {
+    object MedpackDice() {
         if (GameElements.getMedDropped())
             return false;
         float maxLife = GameElements.getMaxLife();
         float currentLife = GameElements.getGladiatorLife();
-        float currentProbability = 1 - ((currentLife * maxMedpackProbability) / maxLife);
-        return Random.value > currentProbability ? true : false;
+        float currentProbability = maxArmorProbability - (currentLife * maxMedpackProbability) / maxLife;
+        return Random.value < currentProbability ? true : false;
     }
 
     //fixed probability
-    object WeaponDice()
-    {
+    object WeaponDice() {
         float halfMaxIntegrity = GameElements.getMaxIntegrity() * 0.5f;
         if ((GameElements.getIntegrity() > halfMaxIntegrity) || GameElements.getWeaponDropped())
             return false;
@@ -114,8 +110,7 @@ public class CrowdIA : NetworkBehaviour
     }
 
     //not a real dice but...
-    object MiteDice()
-    {
+    object MiteDice() {
         if (GameElements.getEnemyCount() <= monsterTrheshold)
             return true;
         return false;
@@ -127,29 +122,25 @@ public class CrowdIA : NetworkBehaviour
     *
     */
 
-    void DropWeapon()
-    {
+    void DropWeapon() {
         gameObject.GetComponent<StrategistSpawner>().Spawn(weaponPrefab, itemSpawnPoint());
         GameElements.setWeaponDropped(true);
         //Debug.Log("WEAPON");
     }
 
-    void DropMite()
-    {
+    void DropMite() {
 
         //Debug.Log("MITE");
 
     }
 
-    void DropMedpack()
-    {
+    void DropMedpack() {
         gameObject.GetComponent<StrategistSpawner>().Spawn(medPackPrefab, itemSpawnPoint());
         gameObject.GetComponent<StrategistSpawner>().SetMedDropped();
         //Debug.Log("MEDPACK");
     }
 
-    void DropArmor()
-    {
+    void DropArmor() {
         gameObject.GetComponent<StrategistSpawner>().Spawn(armorPrefab, itemSpawnPoint());
         gameObject.GetComponent<StrategistSpawner>().SetArmorDropped();
         //Debug.Log("ARMOR");
@@ -157,15 +148,13 @@ public class CrowdIA : NetworkBehaviour
 
 
 
-    Vector3 itemSpawnPoint()
-    {
+    Vector3 itemSpawnPoint() {
         float spawnX = Random.Range(arenaBorderL, arenaBorderR);
         float spawnZ = Random.Range(arenaBorderU, arenaBorderD);
         return new Vector3(spawnX, arena.transform.position.y + 1f, spawnZ);
     }
 
-    void DebugLine()
-    {
+    void DebugLine() {
         arenaBorderL = arena.transform.position.x - arenaLR;
         arenaBorderR = arena.transform.position.x + arenaLR;
         arenaBorderD = arena.transform.position.z + arenaU;
@@ -180,10 +169,8 @@ public class CrowdIA : NetworkBehaviour
         Debug.DrawLine(new Vector3(arenaX - 30f, arenaY, arenaBorderD), new Vector3(arenaX + 30f, arenaY, arenaBorderD), Color.magenta, 2f, false);
     }
 
-    IEnumerator Patrol()
-    {
-        while (true)
-        {
+    IEnumerator Patrol() {
+        while (true) {
             CrowdTree.Walk();
             yield return new WaitForSeconds(helpFrequency);
         }
