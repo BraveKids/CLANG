@@ -106,17 +106,14 @@ public class GladiatorMovement : NetworkBehaviour
             return;
         }
         //AGGIUNTE
-        if (Input.GetKeyDown(KeyCode.V))
+        /*if (Input.GetKeyDown(KeyCode.V))
         {
-            dash = true;
-            m_Rigidbody.velocity = Vector3.zero;
-            Invoke("DashDown", 0.5f);
-            
-        }
+            //Dodge();
+        }*/
         if (dash)
         {
-            //anim.SetTrigger("Dash");
-            transform.position = Vector3.MoveTowards(transform.position, dashPoint.position, 3f * Time.deltaTime);
+            
+            transform.position = Vector3.MoveTowards(transform.position, dashPoint.position, 7f * Time.deltaTime);
         }
         
         
@@ -137,11 +134,21 @@ public class GladiatorMovement : NetworkBehaviour
 
 
     }
-
+    public void Dodge()
+    {
+        if (!isAttacking)
+        { 
+            m_Rigidbody.velocity = Vector3.zero;
+            dash = true;
+            anim.SetBool("Dash", dash);
+            Invoke("DashDown", 0.5f);
+        }
+    }
 
     void DashDown()
     {
         dash = false;
+        anim.SetBool("Dash", dash);
     }
 
 
