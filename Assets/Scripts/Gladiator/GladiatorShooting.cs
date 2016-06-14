@@ -84,10 +84,7 @@ public class GladiatorShooting : NetworkBehaviour
                 ThrowWeapon();
             }
         }
-        if (Input.GetKeyDown(KeyCode.V))
-        {
-            m_animator.SetTrigger("Dash");
-        }
+        
 
     }
     
@@ -171,6 +168,10 @@ public class GladiatorShooting : NetworkBehaviour
             BasicAttack();
 
         }
+        if (command.Equals("dodge"))
+        {
+            movementScript.Dodge();
+        }
     }
 
     public void PickUpObject(GameObject obj, string id)
@@ -250,6 +251,7 @@ public class GladiatorShooting : NetworkBehaviour
 
             if (!specialAttack)
             {
+                movementScript.setAttacking(true);
                 if (targets.Count > 0)
                 {
                     Transform target = FindNearestTarget();
@@ -266,7 +268,7 @@ public class GladiatorShooting : NetworkBehaviour
                 //m_Rigidbody.velocity = Vector3.zero;
                 //m_Rigidbody.isKinematic = true;
                 specialAttack = true;
-                movementScript.setAttacking(true);
+                
                 m_animator.SetBool("Shoot", true);
                 Invoke("Fire", 0.5f);
             }

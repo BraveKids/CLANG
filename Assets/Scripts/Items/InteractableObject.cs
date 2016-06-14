@@ -3,11 +3,13 @@ using System.Collections;
 using UnityEngine.Networking;
 public class InteractableObject : MonoBehaviour
 {
+
     GameObject player;
     public string id;
     Transform anchorPosHand;
     Transform anchorPosElbow;
-    bool taken;
+    Transform target;
+    public bool taken;
     // Use this for initialization
 
 
@@ -38,28 +40,32 @@ public class InteractableObject : MonoBehaviour
                 anchorPosElbow = other.gameObject.GetComponent<GladiatorShooting>().elbowPosition;
                 taken = true;
             }
-            else if(id== "medpack")
+            else if (id == "medpack")
             {
                 GameElements.setMedDropped(false);
-                
+
                 gameObject.SetActive(false);
+                Destroy(gameObject);
             }
-            else if(id == "armor")
+            else if (id == "armor")
             {
                 GameElements.setArmorDropped(false);
-                
+
                 gameObject.SetActive(false);
+                Destroy(gameObject);
             }
-     
+
             else
             {
                 gameObject.SetActive(false);
+                Destroy(gameObject);
             }
         }
     }
 
     void Update()
     {
+
         if (taken)
         {
             //gameObject.transform.position = new Vector3(anchorPosHand.position.x, anchorPosHand.position.y, anchorPosHand.position.z);
@@ -67,6 +73,7 @@ public class InteractableObject : MonoBehaviour
                                                            Quaternion.LookRotation(anchorPosHand.position - anchorPosElbow.position).y,
                                                            Quaternion.LookRotation(anchorPosHand.position - anchorPosElbow.position).z,
                                                            Quaternion.LookRotation(anchorPosHand.position - anchorPosElbow.position).w);
+
         }
     }
 }

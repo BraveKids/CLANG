@@ -87,8 +87,8 @@ ModelImporter:
     - serializedVersion: 16
       name: CorrectDash
       takeName: Take 001
-      firstFrame: 100
-      lastFrame: 186
+      firstFrame: 120
+      lastFrame: 151
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
