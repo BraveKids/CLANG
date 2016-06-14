@@ -5,11 +5,11 @@ public class CrowdIA : NetworkBehaviour {
 
     DecisionTree CrowdTree;
     public float helpFrequency = 3f;
-    public float monsterPerArmor = 8f;
     public float maxMedpackProbability = 0.5f;
     public float maxArmorProbability = 0.4f;
     public float weaponProbability = 0.4f;
-    public int monsterTrheshold;
+    public int monsterTrheshold = 6;
+    public float miteProbability = 0.4f;
     public float lambdaArmor = .1f;
     public float arenaLR = 18f;
     public float arenaU = 5f;
@@ -119,7 +119,7 @@ public class CrowdIA : NetworkBehaviour {
     //not a real dice but...
     object MiteDice() {
         if (GameElements.getEnemyCount() <= monsterTrheshold)
-            return true;
+            return Random.value<miteProbability ? true:false;
         return false;
     }
 
@@ -137,7 +137,7 @@ public class CrowdIA : NetworkBehaviour {
 
     void DropMite() {
 
-        //Debug.Log("MITE");
+        Debug.Log("MITE");
 
     }
 
