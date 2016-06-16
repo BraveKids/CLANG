@@ -30,6 +30,7 @@ FacebookSDK/
 GooglePlayGames/
 Plugins/
 PlayService*
+*_Data/
 
 # ===================================== #
 # Visual Studio / MonoDevelop generated #
