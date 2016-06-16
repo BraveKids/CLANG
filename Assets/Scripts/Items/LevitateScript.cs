@@ -5,17 +5,19 @@ public class LevitateScript : MonoBehaviour {
     public Transform startPosition;
     public Transform endPosition;
     Transform target;
+    bool done;
     InteractableObject objectScript;
 
     void Start()
     {
+        done = false;
         target = startPosition;
         objectScript = GetComponentInParent<InteractableObject>();
     }
 
     void Update()
     {
-        if (!objectScript.taken)
+        if (!objectScript.taken && !done)
         {
             if (transform.position == endPosition.position)
             {
@@ -27,6 +29,13 @@ public class LevitateScript : MonoBehaviour {
             }
 
             transform.position = Vector3.MoveTowards(transform.position, target.position, 0.3f * Time.deltaTime);
+        }
+        else
+        {
+
+            transform.position = startPosition.position;
+            done = true;
+            return;
         }
     }
 	

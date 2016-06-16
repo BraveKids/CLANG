@@ -11,11 +11,12 @@ public class InteractableObject : MonoBehaviour
     Transform target;
     public bool taken;
     // Use this for initialization
-
+    AstarPath path;
 
 
     void OnTriggerEnter(Collider other)
     {
+        
         if (other.gameObject.tag == "Gladiator")
         {
             other.gameObject.GetComponent<GladiatorShooting>().PickUpObject(this.gameObject, id);
@@ -31,13 +32,16 @@ public class InteractableObject : MonoBehaviour
                 gameObject.transform.parent = anchorPosHand;
                 gameObject.transform.position = anchorPosHand.position;
                 GameElements.setWeaponDropped(false);
+                gameObject.GetComponent<Indicator>().enabled = false;
+                GameElements.itemSpawned.Remove(gameObject);
             }
             else if (id == "weapon")
             {
                 gameObject.GetComponent<BoxCollider>().enabled = false;
-
+                
                 anchorPosHand = other.gameObject.GetComponent<GladiatorShooting>().handPosition;
                 anchorPosElbow = other.gameObject.GetComponent<GladiatorShooting>().elbowPosition;
+
                 taken = true;
             }
             else if (id == "medpack")
@@ -68,6 +72,7 @@ public class InteractableObject : MonoBehaviour
 
         if (taken)
         {
+            
             //gameObject.transform.position = new Vector3(anchorPosHand.position.x, anchorPosHand.position.y, anchorPosHand.position.z);
             gameObject.transform.rotation = new Quaternion(Quaternion.LookRotation(anchorPosHand.position - anchorPosElbow.position).x,
                                                            Quaternion.LookRotation(anchorPosHand.position - anchorPosElbow.position).y,
@@ -75,5 +80,10 @@ public class InteractableObject : MonoBehaviour
                                                            Quaternion.LookRotation(anchorPosHand.position - anchorPosElbow.position).w);
 
         }
+    }
+
+    void OnDestroy()
+    {
+        GameElements.itemSpawned.Remove(gameObject);
     }
 }

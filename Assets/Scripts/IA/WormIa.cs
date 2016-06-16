@@ -106,9 +106,13 @@ public class WormIA : MonoBehaviour {
         }
         else
             return false;
-    }
+    
+        //return false;
+        }
 
-    bool BeAggressive() {
+    bool BeAggressive()
+    {
+        
         timerChase += Time.deltaTime;
         if (timerChase >= timeBeforChasing)
         {
@@ -122,6 +126,8 @@ public class WormIA : MonoBehaviour {
         }
         else
             return false;
+    
+        //return true;
     }
 
     void BecomeAggressive() {
@@ -160,7 +166,7 @@ public class WormIA : MonoBehaviour {
 
     void Movement(float speed)
     {
-        transform.position = Vector3.MoveTowards(transform.position, new Vector3(target.transform.position.x-5f,
+        transform.position = Vector3.MoveTowards(transform.position, new Vector3(target.transform.position.x-4f,
                                                                                 transform.position.y,
                                                                                 target.transform.position.z)
                                                                                 , speed* Time.deltaTime);

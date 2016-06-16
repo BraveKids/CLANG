@@ -394,6 +394,12 @@ public class GameManager : NetworkBehaviour
 
     private void DisablePlayerControl()
     {
+        GameObject[] Enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        foreach(GameObject enemy in Enemies)
+        {
+            enemy.SetActive(false);
+        } 
+
         for (int i = 0; i < m_Players.Count; i++)
         {
             m_Players[i].DisableControl();

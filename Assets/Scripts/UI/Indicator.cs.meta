@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: efb6451b480e0f045ac1f51ce1e91f43
+timeCreated: 1466005130
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - indicatorCamera: {instanceID: 0}
+  - canvas: {instanceID: 0}
+  - offScreenSpritePrefab: {fileID: 11429512, guid: ee744ae635cdcd6418c5fb48d77c1337,
+      type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

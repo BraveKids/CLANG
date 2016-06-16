@@ -31,13 +31,13 @@ public class GladiatorShooting : NetworkBehaviour
 
     public bool basicAttack;
     public bool specialAttack;
-    public GameObject attackTrigger;
+    public Transform attackTransform;
     public Transform handPosition;
     public Transform elbowPosition;
     public GameObject handWeapon;
     public GameObject fireWeapon;
     public List<Transform> targets;
-
+    public GameObject meleePrefab;
     GladiatorHealth healthScript;
     GladiatorMovement movementScript;
 
@@ -59,7 +59,7 @@ public class GladiatorShooting : NetworkBehaviour
     {
 
         targets = new List<Transform>();
-        attackTrigger.SetActive(false);
+        
         basicAttack = false;
         specialAttack = false;
 
@@ -179,6 +179,10 @@ public class GladiatorShooting : NetworkBehaviour
         CmdRemoveItem(obj);
         if (id.Equals("fireweapon"))
         {
+            if (fireWeapon != null)
+            {
+                ThrowWeapon();
+            }
             fireWeapon = obj;
             if (handWeapon != null)
             {
@@ -217,12 +221,25 @@ public class GladiatorShooting : NetworkBehaviour
         {
             basicAttack = true;
             movementScript.setAttacking(true);
+            if (targets.Count > 0)
+            {
+                Transform target = FindNearestTarget();
+
+                if (target.tag == "WurmCore")
+                {
+                    transform.LookAt(new Vector3(target.position.x + 4.5f, transform.position.y, target.position.z));
+                }
+                else
+                {
+                    transform.LookAt(new Vector3(target.position.x, transform.position.y, target.position.z));
+                }
+            }
             if (fireWeapon != null)
             {
                 ToggleWeapon("hand");
             }
             m_animator.SetTrigger("Attack");
-            attackTrigger.SetActive(true);
+            CmdAttack();
             Invoke("BasicAttackDown", 0.6f);
         }
 
@@ -230,7 +247,7 @@ public class GladiatorShooting : NetworkBehaviour
 
     private void BasicAttackDown()
     {
-        attackTrigger.SetActive(false);
+     
         if (fireWeapon != null)
         {
             ToggleWeapon("fire");
@@ -255,24 +272,26 @@ public class GladiatorShooting : NetworkBehaviour
                 if (targets.Count > 0)
                 {
                     Transform target = FindNearestTarget();
-                    
-                    if (target.tag == "WurmCore")
-                    {
-                        transform.LookAt(new Vector3(target.position.x + 4.5f, transform.position.y, target.position.z));
+                   
+
+                        if (target.tag == "WurmCore")
+                        {
+                            transform.LookAt(new Vector3(target.position.x + 4.5f, transform.position.y, target.position.z));
+                        }
+                        else
+                        {
+                            transform.LookAt(new Vector3(target.position.x, transform.position.y, target.position.z));
+                        }
                     }
-                    else
-                    {
-                        transform.LookAt(new Vector3(target.position.x, transform.position.y, target.position.z));
-                    }
+                    //m_Rigidbody.velocity = Vector3.zero;
+                    //m_Rigidbody.isKinematic = true;
+                    specialAttack = true;
+
+                    m_animator.SetBool("Shoot", true);
+                    Invoke("Fire", 0.5f);
                 }
-                //m_Rigidbody.velocity = Vector3.zero;
-                //m_Rigidbody.isKinematic = true;
-                specialAttack = true;
-                
-                m_animator.SetBool("Shoot", true);
-                Invoke("Fire", 0.5f);
             }
-        }
+        
 
 
 
@@ -362,6 +381,26 @@ public class GladiatorShooting : NetworkBehaviour
 
 
     }
+
+    [Command]
+    private void CmdAttack()
+    {
+        Debug.Log("Sparo");
+        // Create an instance of the shell and store a reference to it's rigidbody.
+        GameObject triggerInstance =
+             Instantiate(meleePrefab, attackTransform.position, attackTransform.rotation) as GameObject;
+
+        
+
+        NetworkServer.Spawn(triggerInstance.gameObject);
+        Destroy(triggerInstance.gameObject, 0.2f);
+
+
+
+    }
+
+
+  
 
     private void FireDown()
     {

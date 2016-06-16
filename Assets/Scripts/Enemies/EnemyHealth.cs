@@ -8,30 +8,51 @@ public class EnemyHealth : NetworkBehaviour
     public float m_Resistance;
     public GameObject model;
     public bool destroyOnDeath;
-    //Color curColor;
+    Color curColor;
     [SyncVar(hook = "OnChangeHealth")]
     public float currentHealth;
     GladiatorShooting gladiatorScript;
+    MutantScriptTest mutantScript;
     void Start()
     {
-        GarbageCollector = GameObject.FindGameObjectWithTag("Garbage");
+        mutantScript = GetComponent<MutantScriptTest>();
+       
         gladiatorScript = GameElements.getGladiator().GetComponent<GladiatorShooting>();
-        //curColor = model.GetComponent<SkinnedMeshRenderer>().material.color;
+        if (model.GetComponent<SkinnedMeshRenderer>() != null)
+        {
+            curColor = model.GetComponent<SkinnedMeshRenderer>().material.color;
+        }
+        else
+        {
+            curColor = model.GetComponent<MeshRenderer>().material.color;
+        }
         currentHealth = m_Health;
     }
 
 
     public void Damage(float amount)
     {
-
+        if (mutantScript != null)
+        {
+            mutantScript.Damage();
+        }
         float calculatedDamage = amount - m_Resistance * 0.3f;
 
         currentHealth -= calculatedDamage;
         DamageColor();
         if (currentHealth <= 0)
         {
+            if (mutantScript != null)
+            {
+                mutantScript.Death();
+                Invoke("Death", 1.8f);
+            }
+            else
+            {
+                Death();
+            }
 
-            Destroy(gameObject);
+            
             //gameObject.SetActive(false);
             //gameObject.transform.parent = GarbageCollector.transform;
            
@@ -39,6 +60,11 @@ public class EnemyHealth : NetworkBehaviour
 
 
         }
+    }
+
+    void Death()
+    {
+        gladiatorScript.DestroyEnemy(gameObject);
     }
 
     void OnDestroy()
@@ -58,15 +84,30 @@ public class EnemyHealth : NetworkBehaviour
 
     private void DamageColor()
     {
+        if (model.GetComponent<SkinnedMeshRenderer>() != null)
+        {
+           model.GetComponent<SkinnedMeshRenderer>().material.color = Color.red;
+        }
+        else
+        {
+            model.GetComponent<MeshRenderer>().material.color= Color.red;
+        }
 
-        //model.GetComponent<SkinnedMeshRenderer>().material.color = Color.red;
+       
         Invoke("DamageColorBack", 0.5f);
 
     }
 
     private void DamageColorBack()
     {
-        //model.GetComponent<SkinnedMeshRenderer>().material.color = curColor;
+        if (model.GetComponent<SkinnedMeshRenderer>() != null)
+        {
+            model.GetComponent<SkinnedMeshRenderer>().material.color = curColor;
+        }
+        else
+        {
+            model.GetComponent<MeshRenderer>().material.color = curColor;
+        }
     }
 
 
@@ -76,9 +117,6 @@ public class EnemyHealth : NetworkBehaviour
         //healthBar.sizeDelta = new Vector2(currentHealth, healthBar.sizeDelta.y);
     }
 
-    void Death()
-    {
-        gladiatorScript.DestroyEnemy(gameObject);
-    }
    
+
 }

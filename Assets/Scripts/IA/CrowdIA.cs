@@ -130,8 +130,9 @@ public class CrowdIA : NetworkBehaviour {
     */
 
     void DropWeapon() {
-        gameObject.GetComponent<StrategistSpawner>().Spawn(weaponPrefab, itemSpawnPoint());
         GameElements.setWeaponDropped(true);
+        gameObject.GetComponent<StrategistSpawner>().Spawn(weaponPrefab, itemSpawnPoint());
+        
         //Debug.Log("WEAPON");
     }
 
@@ -142,14 +143,16 @@ public class CrowdIA : NetworkBehaviour {
     }
 
     void DropMedpack() {
-        gameObject.GetComponent<StrategistSpawner>().Spawn(medPackPrefab, itemSpawnPoint());
         gameObject.GetComponent<StrategistSpawner>().SetMedDropped();
+        gameObject.GetComponent<StrategistSpawner>().Spawn(medPackPrefab, itemSpawnPoint());
+        
         //Debug.Log("MEDPACK");
     }
 
     void DropArmor() {
-        gameObject.GetComponent<StrategistSpawner>().Spawn(armorPrefab, itemSpawnPoint());
         gameObject.GetComponent<StrategistSpawner>().SetArmorDropped();
+        gameObject.GetComponent<StrategistSpawner>().Spawn(armorPrefab, itemSpawnPoint());
+        
         //Debug.Log("ARMOR");
     }
 

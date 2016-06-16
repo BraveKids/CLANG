@@ -46,14 +46,16 @@ public class StrategistManager : Manager {
     {
         
         m_Spawner.enabled = false;
-
+        
     }
 
 
     // Used during the phases of the game where the player should be able to control their tank.
     public override void EnableControl()
     {
+   
         m_Spawner.enabled = true;
+      
 
 
     }

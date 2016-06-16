@@ -48,17 +48,19 @@ public class GladiatorManager : Manager
         
         m_Movement.enabled = false;
         m_Shooting.enabled = false;
+        
     }
 
 
     // Used during the phases of the game where the player should be able to control their tank.
     public override void EnableControl()
     {
-     
+        
         m_Movement.enabled = true;
         m_Shooting.enabled = true;
-
        
+
+
     }
 
     public override string GetName()

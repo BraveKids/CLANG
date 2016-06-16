@@ -8,7 +8,7 @@ public class GladiatorHealth : NetworkBehaviour
     public float m_StartingHealth = 32f;
     public float m_Resistance = 14f;
     // The amount of health each tank starts with.
-    public float m_StartingArmor = 0f;
+    public float m_MaxArmor = 16f;
     public Slider m_Slider;
     public GameObject model;
     Color curColor;
@@ -25,21 +25,28 @@ public class GladiatorHealth : NetworkBehaviour
     //public GameObject m_RightDustTrail;
     public GladiatorSetup m_Setup;
     public GladiatorManager m_Manager;                   //Associated manager, to disable control when dying.
-
+    RectTransform healthBar;
+    RectTransform armorBar;
     [SyncVar(hook = "OnCurrentHealthChanged")]
     public float m_CurrentHealth;                  // How much health the tank currently has.*
-    [SyncVar]
+    [SyncVar(hook = "OnCurrentArmorChanged")]
     public float m_Armor;
     [SyncVar]
     private bool m_ZeroHealthHappened;              // Has the tank been reduced beyond zero health yet?
     private BoxCollider m_Collider;                 // Used so that the tank doesn't collide with anything when it's dead.
+    bool invulnerable;
 
-
-    private void Start()
+    void Start()
     {
+        invulnerable = false;
         curColor = model.GetComponent<SkinnedMeshRenderer>().material.color;
         m_Collider = GetComponent<BoxCollider>();
         GameElements.getStrategist().GetComponent<CrowdIA>().enabled = true;
+        if (isLocalPlayer)
+        {
+            healthBar = GameObject.FindGameObjectWithTag("HealthBar").GetComponent<RectTransform>();
+            armorBar = GameObject.FindGameObjectWithTag("ArmorBar").GetComponent<RectTransform>();
+        }
     }
     public void Recover(float amount)
     {
@@ -59,34 +66,47 @@ public class GladiatorHealth : NetworkBehaviour
     // This is called whenever the tank takes damage.
     public void Damage(float amount)
     {
-        float calculatedDamage = amount - (m_Resistance * 0.15f);
-        if (calculatedDamage <= 0.0f)
+        if (!invulnerable)
         {
-            return;
-        }
-        if (m_Armor > 0)
-        {
-
-            if (m_Armor >= calculatedDamage)
+            float calculatedDamage = amount - (m_Resistance * 0.15f);
+            if (calculatedDamage <= 0.0f)
             {
-                m_Armor -= calculatedDamage;
+                return;
+            }
+            if (m_Armor > 0)
+            {
 
+                if (m_Armor >= calculatedDamage)
+                {
+                    m_Armor -= calculatedDamage;
+
+                }
+                else
+                {
+                    m_CurrentHealth -= (calculatedDamage - m_Armor);
+                    SetArmor(0f);
+                }
             }
             else
             {
-                m_CurrentHealth -= (calculatedDamage - m_Armor);
-                SetArmor(0f);
+
+                // Reduce current health by the amount of damage done.
+                m_CurrentHealth -= calculatedDamage;
+                invulnerable = true;
+                Invoke("Vulnerable", 2f);
+            }
+            DamageColor();
+            // If the current health is at or below zero and it has not yet been registered, call OnZeroHealth.
+            if (m_CurrentHealth <= 0f && !m_ZeroHealthHappened)
+            {
+                OnZeroHealth();
             }
         }
+    }
 
-        // Reduce current health by the amount of damage done.
-        m_CurrentHealth -= calculatedDamage;
-        DamageColor();
-        // If the current health is at or below zero and it has not yet been registered, call OnZeroHealth.
-        if (m_CurrentHealth <= 0f && !m_ZeroHealthHappened)
-        {
-            OnZeroHealth();
-        }
+    void Vulnerable()
+    {
+        invulnerable = false;
     }
     private void DamageColor()
     {
@@ -116,11 +136,24 @@ public class GladiatorHealth : NetworkBehaviour
 
     private void SetHealthUI()
     {
-        // Set the slider's value appropriately.
-        //m_Slider.value = m_CurrentHealth;
+        if (isLocalPlayer)
+        {
 
-        // Interpolate the color of the bar between the choosen colours based on the current percentage of the starting health.
-        //m_FillImage.color = Color.Lerp(m_ZeroHealthColor, m_FullHealthColor, m_CurrentHealth / m_StartingHealth);
+            float value = m_CurrentHealth / m_StartingHealth;
+
+            healthBar.localScale = new Vector3(value, transform.localScale.y, transform.localScale.z);
+        }
+    }
+
+    private void SetArmorUI()
+    {
+        if (isLocalPlayer)
+        {
+
+            float value = m_Armor / m_MaxArmor;
+
+            armorBar.localScale = new Vector3(value, transform.localScale.y, transform.localScale.z);
+        }
     }
 
 
@@ -129,6 +162,14 @@ public class GladiatorHealth : NetworkBehaviour
         m_CurrentHealth = value;
         // Change the UI elements appropriately.
         SetHealthUI();
+
+    }
+
+    void OnCurrentArmorChanged(float value)
+    {
+        m_Armor = value;
+        // Change the UI elements appropriately.
+        SetArmorUI();
 
     }
 
@@ -181,6 +222,7 @@ public class GladiatorHealth : NetworkBehaviour
     // This function is called at the start of each round to make sure each tank is set up correctly.
     public void SetDefaults()
     {
+        m_Armor = 0f;
         m_CurrentHealth = m_StartingHealth;
         m_ZeroHealthHappened = false;
         SetPlayerActive(true);
@@ -203,6 +245,6 @@ public class GladiatorHealth : NetworkBehaviour
 
     public float getMaxArmor()
     {
-        return m_StartingArmor;
+        return m_MaxArmor;
     }
 }
