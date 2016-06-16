@@ -29,9 +29,16 @@ public class GladiatorHealth : NetworkBehaviour
     private bool m_ZeroHealthHappened;              // Has the tank been reduced beyond zero health yet?
     private BoxCollider m_Collider;                 // Used so that the tank doesn't collide with anything when it's dead.
     bool invulnerable;
-
+    Animator anim;
+    NetworkAnimator netAnim;
+    GladiatorShooting attackScript;
+    GladiatorMovement movementScript;
     void Start()
     {
+        movementScript = GetComponent<GladiatorMovement>();
+        attackScript = GetComponent<GladiatorShooting>();
+        anim = GetComponent<Animator>();
+        netAnim = GetComponent<NetworkAnimator>();
         invulnerable = false;
         curColor = model.GetComponent<SkinnedMeshRenderer>().material.color;
         m_Collider = GetComponent<BoxCollider>();
@@ -57,11 +64,34 @@ public class GladiatorHealth : NetworkBehaviour
         }
     }
 
+    [Command]
+    public void CmdSetAnimTrigger(string triggerName)
+    {
+        if (!isServer)
+        {
+            anim.SetTrigger(triggerName);
+        }
+        RpcSetAnimTrigger(triggerName);
+    }
+
+    [ClientRpc]
+    public void RpcSetAnimTrigger(string triggerName)
+    {
+        anim.SetTrigger(triggerName);
+    }
+
     // This is called whenever the tank takes damage.
     public void Damage(float amount)
     {
         if (!invulnerable)
         {
+            //movementScript.setAttacking(true);
+            attackScript.damaged = true;
+
+            CmdSetAnimTrigger("Damage");
+
+            
+                Invoke("NotDamaged", 1f);
             float calculatedDamage = amount - (m_Resistance * 0.15f);
             if (calculatedDamage <= 0.0f)
             {
@@ -87,15 +117,27 @@ public class GladiatorHealth : NetworkBehaviour
                 // Reduce current health by the amount of damage done.
                 m_CurrentHealth -= calculatedDamage;
                 invulnerable = true;
+               
                 Invoke("Vulnerable", 2f);
             }
             DamageColor();
             // If the current health is at or below zero and it has not yet been registered, call OnZeroHealth.
             if (m_CurrentHealth <= 0f && !m_ZeroHealthHappened)
             {
-                OnZeroHealth();
+                movementScript.setAttacking(true);
+                attackScript.damaged = true;
+
+                CmdSetAnimTrigger("Death");
+                
+                    Invoke("OnZeroHealth", 2f);
             }
         }
+    }
+
+    void NotDamaged()
+    {
+        //movementScript.setAttacking(false);
+        attackScript.damaged = false;
     }
 
     void Vulnerable()

@@ -38,7 +38,7 @@ public class GladiatorShooting : NetworkBehaviour
     public GameObject meleePrefab;
     GladiatorHealth healthScript;
     GladiatorMovement movementScript;
-
+    public bool damaged;
 
 
     private void Awake()
@@ -167,7 +167,7 @@ public class GladiatorShooting : NetworkBehaviour
 
     private void BasicAttack()
     {
-        if (!basicAttack)
+        if (!basicAttack && !damaged)
         {
             basicAttack = true;
             movementScript.setAttacking(true);
@@ -216,7 +216,7 @@ public class GladiatorShooting : NetworkBehaviour
         if (fireWeapon != null)
         {
 
-            if (!specialAttack)
+            if (!specialAttack && !damaged)
             {
                 movementScript.setAttacking(true);
                 if (targets.Count > 0)
