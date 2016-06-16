@@ -16,13 +16,7 @@ public class GladiatorHealth : NetworkBehaviour
     public Image m_FillImage;                         // The image component of the slider.
     public Color m_FullHealthColor = Color.green;     // The color the health bar will be when on full health.
     public Color m_ZeroHealthColor = Color.red;       // The color the health bar will be when on no health.
-    //public AudioClip m_TankExplosion;                 // The clip to play when the tank explodes.
-    //public ParticleSystem m_ExplosionParticles;       // The particle system the will play when the tank is destroyed.
     public GameObject m_PlayerRenderers;                // References to all the gameobjects that need to be disabled when the tank is dead.
-    //public GameObject m_HealthCanvas;
-    //public GameObject m_AimCanvas;
-    //public GameObject m_LeftDustTrail;
-    //public GameObject m_RightDustTrail;
     public GladiatorSetup m_Setup;
     public GladiatorManager m_Manager;                   //Associated manager, to disable control when dying.
     RectTransform healthBar;

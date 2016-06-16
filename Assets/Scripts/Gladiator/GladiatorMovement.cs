@@ -8,7 +8,7 @@ public class GladiatorMovement : NetworkBehaviour
     public float m_Speed = 12f;                   // How fast the tank moves forward and back.
     public float m_TurnSpeed = 180f;              // How fast the tank turns in degrees per second.
     public float m_PitchRange = 0.2f;             // The amount by which the pitch of the engine noises can vary.
-       // The particle system of dust that is kicked up from the rightt track.
+                                                  // The particle system of dust that is kicked up from the rightt track.
     public Rigidbody m_Rigidbody;              // Reference used to move the tank.
 
     private string m_MovementAxis;              // The name of the input axis for moving forward and back.
@@ -39,7 +39,7 @@ public class GladiatorMovement : NetworkBehaviour
     private float v;
     public Camera gladiatorCamera;
     private bool isMoving;
-    private bool fly = false;
+
     private float distToGround;
     public bool attacking = false;
     //VARIABILI UI
@@ -53,21 +53,14 @@ public class GladiatorMovement : NetworkBehaviour
     }
 
 
-    //AGGIUNTE TOMMASO
     public override void OnStartLocalPlayer()
     {
         gladiatorCamera.gameObject.GetComponent<GladiatorCamera>().enabled = true;
         cameraTransform = gladiatorCamera.transform;
-        //GameElements.getGladiatorCanvas().transform.FindChild("VirtualJoypad").gameObject.SetActive(true);
-        //camera = gameObject.transform.FindChild("Camera").GetComponent<Camera>();
-
-        //cameraTransform = camera.gameObject.transform;
         GameObject.FindGameObjectWithTag("Canvas").transform.FindChild("GladiatorCanvas").gameObject.SetActive(true);
         GetComponent<GameTimer>().enabled = true;
         buttons = GameObject.FindGameObjectWithTag("Canvas").transform.FindChild("GladiatorCanvas/VirtualJoypad/Buttons");
         buttons.gameObject.SetActive(true);
-        //camera = transform.FindChild("Camera").gameObject.GetComponent<Camera>();
-        
         hFloat = Animator.StringToHash("H");
         vFloat = Animator.StringToHash("V");
         speed = runSpeed;
@@ -76,26 +69,21 @@ public class GladiatorMovement : NetworkBehaviour
         distToGround = GetComponent<Collider>().bounds.extents.y;
         joystickScript = GameObject.FindGameObjectWithTag("VirtualJoystick").GetComponent<VirtualJoystick>(); ;
     }
-    //AGGIUNTE END
 
 
     private void Start()
     {
-        
-        
+
+
         if (!this.isLocalPlayer)
         {
-            
+
             gladiatorCamera.GetComponent<GladiatorCamera>().enabled = false;
             GameObject.Destroy(gladiatorCamera.gameObject);
         }
         m_Rigidbody.freezeRotation = true;
         anim = GetComponent<Animator>();
-        // The axes are based on player number.
-        //m_MovementAxis = "Vertical" + (m_LocalID + 1);
-        //m_TurnAxis = "Horizontal" + (m_LocalID + 1);
-       
-        // Store the original pitch of the audio source.
+
 
     }
 
@@ -105,27 +93,20 @@ public class GladiatorMovement : NetworkBehaviour
         {
             return;
         }
-        //AGGIUNTE
-        /*if (Input.GetKeyDown(KeyCode.V))
-        {
-            //Dodge();
-        }*/
+
         if (dash)
         {
-            
-            transform.position = Vector3.MoveTowards(transform.position, dashPoint.position, 7f * Time.deltaTime);
+
+            transform.position = Vector3.MoveTowards(transform.position, dashPoint.position, 5f * Time.deltaTime);
         }
-        
-        
-            h = joystickScript.Horizontal();
-            //CrossPlatformInputManager.GetAxis("Horizontal");
-            v = joystickScript.Vertical();
-            //CrossPlatformInputManager.GetAxis("Vertical");
-            isMoving = Mathf.Abs(h) > 0.1 || Mathf.Abs(v) > 0.1;
-        //AGGIUNTE END
-        // Store the value of both input axes.
-        //m_MovementInput = Input.GetAxis(m_MovementAxis);
-        //m_TurnInput = Input.GetAxis(m_TurnAxis);
+
+
+        h = joystickScript.Horizontal();
+
+        v = joystickScript.Vertical();
+
+        isMoving = Mathf.Abs(h) > 0.1 || Mathf.Abs(v) > 0.1;
+
 
         anim.SetFloat(hFloat, h);
         anim.SetFloat(vFloat, v);
@@ -137,18 +118,19 @@ public class GladiatorMovement : NetworkBehaviour
     public void Dodge()
     {
         if (!isAttacking)
-        { 
+        {
+            anim.SetBool("Dash", true);
             m_Rigidbody.velocity = Vector3.zero;
             dash = true;
-            anim.SetBool("Dash", dash);
-            Invoke("DashDown", 0.5f);
+            
+            Invoke("DashDown", 0.4f);
         }
     }
 
     void DashDown()
     {
         dash = false;
-        anim.SetBool("Dash", dash);
+        anim.SetBool("Dash", false);
     }
 
 
@@ -160,14 +142,9 @@ public class GladiatorMovement : NetworkBehaviour
         }
 
 
-       
-        // Adjust the rigidbodies position and orientation in FixedUpdate.
-        //Move();
-        //Turn();
 
-        //AGGIUNTE
 
-        //AGGIUNTE END
+
     }
     //AGGIUNTE
     bool IsGrounded()
@@ -175,7 +152,7 @@ public class GladiatorMovement : NetworkBehaviour
         return Physics.Raycast(transform.position, -Vector3.up, distToGround + 0.1f);
     }
 
-    
+
     void MovementManagement(float horizontal, float vertical)
     {
 
@@ -193,23 +170,16 @@ public class GladiatorMovement : NetworkBehaviour
                 speed = 0f;
                 anim.SetFloat(speedFloat, 0f);
             }
-            //if(Physics.Raycast(movingTranform.position, transform.forward, 0.2f))
-            //if(movingTranform.gameObject.GetComponent<CollisionDetector>().colliding)
-            //{
-              //  speed = 0f;
-                
-            //}
-            transform.position = Vector3.MoveTowards(transform.position, new Vector3(movingTranform.position.x, transform.position.y, movingTranform.position.z),speed * Time.deltaTime);
-            //transform.Translate(Vector3.forward * speed * Time.deltaTime);
-            //GetComponent<Rigidbody>().AddForce(Vector3.forward*speed);
+
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(movingTranform.position.x, transform.position.y, movingTranform.position.z), speed * Time.deltaTime);
+
         }
     }
 
     Vector3 Rotating(float horizontal, float vertical)
     {
         Vector3 forward = cameraTransform.TransformDirection(Vector3.forward);
-        if (!fly)
-            forward.y = 0.0f;
+        forward.y = 0.0f;
         forward = forward.normalized;
 
         Vector3 right = new Vector3(forward.z, 0, -forward.x);
@@ -229,11 +199,11 @@ public class GladiatorMovement : NetworkBehaviour
             Quaternion targetRotation = Quaternion.LookRotation(targetDirection, Vector3.up);
 
             Quaternion newRotation = Quaternion.Lerp(transform.rotation, targetRotation, finalTurnSmoothing * Time.deltaTime);
-            //GetComponent<Rigidbody>().MoveRotation(newRotation);
+
             gameObject.transform.rotation = newRotation;
             lastDirection = targetDirection;
         }
-     
+
 
         return targetDirection;
     }
@@ -249,19 +219,18 @@ public class GladiatorMovement : NetworkBehaviour
             transform.rotation = newRotation;
         }
     }
-  
+
 
 
     // This function is called at the start of each round to make sure each tank is set up correctly.
     public void SetDefaults()
     {
-        //m_Rigidbody.velocity = Vector3.zero;
-        //m_Rigidbody.angularVelocity = Vector3.zero;
+
 
         m_MovementInput = 0f;
         m_TurnInput = 0f;
 
-     
+
     }
 
     //We freeze the rigibody when the control is disabled to avoid the tank drifting!

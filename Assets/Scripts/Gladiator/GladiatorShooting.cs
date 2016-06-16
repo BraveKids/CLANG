@@ -15,19 +15,17 @@ public class GladiatorShooting : NetworkBehaviour
     //public AudioClip m_ChargingClip;          // Audio that plays when each shot is charging up.
     //public AudioClip m_FireClip;              // Audio that plays when each shot is fired.
     public float m_MinLaunchForce = 15f;      // The force given to the shell if the fire button is not held.
-    //public float m_MaxLaunchForce = 30f;      // The force given to the shell if the fire button is held for the max charge time.
-    //public float m_MaxChargeTime = 0.75f;     // How long the shell can charge for before it is fired at max force.
+
 
     [SyncVar]
     public int m_localID;
     Animator m_animator;
-    private string m_FireButton;            // The input axis that is used for launching shells.
-    //private Rigidbody m_Rigidbody;          // Reference to the rigidbody component.
+    
     [SyncVar]
     private float m_CurrentLaunchForce;     // The force that will be given to the shell when the fire button is released.
     //[SyncVar]
     //private float m_ChargeSpeed;            // How fast the launch force increases, based on the max charge time.
-    private bool m_Fired;                   // Whether or not the shell has been launched with this button press.
+   
 
     public bool basicAttack;
     public bool specialAttack;
@@ -57,17 +55,9 @@ public class GladiatorShooting : NetworkBehaviour
 
     private void Start()
     {
-
         targets = new List<Transform>();
-        
         basicAttack = false;
         specialAttack = false;
-
-        // The fire axis is based on the player number.
-        m_FireButton = "Fire" + (m_localID + 1);
-
-        // The rate that the launch force charges up is the range of possible forces by the max charge time.
-        //m_ChargeSpeed = (m_MaxLaunchForce - m_MinLaunchForce) / m_MaxChargeTime;
     }
 
     [ClientCallback]
@@ -95,47 +85,7 @@ public class GladiatorShooting : NetworkBehaviour
             targets.Add(target);
         }
     }
-    /*
 
-    [Command]
-    void CmdAddToList(Transform obj)
-    {
-        // this code is only executed on the server
-        RpcAddToList(obj); // invoke Rpc on all clients
-    }
-
-    [ClientRpc]
-    void RpcAddToList(Transform obj)
-    {
-        // this code is executed on all clients
-        targets.Add(obj);
-    }
-
-
-    public void RemoveTarget(Transform target)
-    {
-
-     
-        if (isLocalPlayer)
-        {
-            CmdRemoveToList(target);
-        }
-    }
-
-    [Command]
-    void CmdRemoveToList(Transform obj)
-    {
-        // this code is only executed on the server
-        RpcRemoveToList(obj); // invoke Rpc on all clients
-    }
-
-    [ClientRpc]
-    void RpcRemoveToList(Transform obj)
-    {
-        // this code is executed on all clients
-        targets.Remove(obj);
-    }
-    */
 
     public void RemoveTarget(Transform obj)
     {
@@ -187,7 +137,7 @@ public class GladiatorShooting : NetworkBehaviour
             if (handWeapon != null)
             {
                 ToggleWeapon("fire");
-                //m_FireTransform = fireWeapon.GetComponent<FireWeapon>().shootPosition.transform;
+                
                 m_Shell = fireWeapon.GetComponent<FireWeapon>().bulletPrefab.GetComponent<Rigidbody>();
             }
         }
@@ -288,7 +238,7 @@ public class GladiatorShooting : NetworkBehaviour
                     specialAttack = true;
 
                     m_animator.SetBool("Shoot", true);
-                    Invoke("Fire", 0.5f);
+                    Invoke("Fire", 0.3f);
                 }
             }
         
@@ -321,7 +271,7 @@ public class GladiatorShooting : NetworkBehaviour
         if (fireWeapon != null)
         {
             CmdFire();
-            Invoke("FireDown", fireWeapon.GetComponent<FireWeapon>().rateOfAttack);
+            Invoke("FireDown", 0.7f);
         }
 
     }
