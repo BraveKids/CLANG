@@ -23,7 +23,7 @@ public class WormIA : MonoBehaviour {
     // Use this for initialization
     void Start() {
         anim = GetComponent<Animator>();
-        //myHealth = gameObject.GetComponent<EnemyHealth>();
+        myHealth = gameObject.GetComponent<EnemyHealth>();
         FSMState off = new FSMState();
         FSMState on = new FSMState();
 
