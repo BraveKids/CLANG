@@ -21,6 +21,7 @@ public class DragElementWurm : MonoBehaviour, IDragHandler, IPointerUpHandler, I
     public float cooldownTimer;
     bool cooldown;
     public float timer;
+    public Text pulseCostText;
 
     public void Toggle()
     {
@@ -34,6 +35,7 @@ public class DragElementWurm : MonoBehaviour, IDragHandler, IPointerUpHandler, I
         strategistCamera = strategist.GetComponent<StrategistSpawner>().strategistCamera;
         strategistPulse = strategist.GetComponent<StrategistPulse>();
         pulsePrice = prefabObject.GetComponent<PulsePrice>().pulsePrice;
+        pulseCostText.text = string.Format("{0}", pulsePrice);
 
         //gameObject.GetComponent<RawImage>().texture = AssetPreview.GetAssetPreview(prefabObject);
     }
@@ -47,11 +49,11 @@ public class DragElementWurm : MonoBehaviour, IDragHandler, IPointerUpHandler, I
     {
         if (cooldown)
         {
-            GetComponent<RawImage>().color = Color.blue;
+            GetComponent<Image>().color = Color.blue;
             timer += Time.deltaTime;
             if (timer >= cooldownTimer)
             {
-                GetComponent<RawImage>().color = Color.white;
+                GetComponent<Image>().color = Color.white;
                 timer = 0.0f;
                 cooldown = false;
             }

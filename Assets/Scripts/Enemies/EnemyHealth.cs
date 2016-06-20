@@ -7,6 +7,7 @@ public class EnemyHealth : NetworkBehaviour
     public float m_Health;
     public float m_Resistance;
     public GameObject model;
+    public GameObject[] wurmModel;
     public bool destroyOnDeath;
     Color curColor;
     [SyncVar(hook = "OnChangeHealth")]
@@ -18,13 +19,14 @@ public class EnemyHealth : NetworkBehaviour
         mutantScript = GetComponent<MutantScriptTest>();
        
         gladiatorScript = GameElements.getGladiator().GetComponent<GladiatorShooting>();
-        if (model.GetComponent<SkinnedMeshRenderer>() != null)
+        if (gameObject.tag == "WurmCore")
         {
-            curColor = model.GetComponent<SkinnedMeshRenderer>().material.color;
+            curColor = wurmModel[0].GetComponent<MeshRenderer>().material.color;
+            
         }
         else
         {
-            curColor = model.GetComponent<MeshRenderer>().material.color;
+            curColor = model.GetComponent<SkinnedMeshRenderer>().material.color;
         }
         currentHealth = m_Health;
     }
@@ -45,7 +47,7 @@ public class EnemyHealth : NetworkBehaviour
             if (mutantScript != null)
             {
                 mutantScript.Death();
-                Invoke("Death", 1.8f);
+                Invoke("Death", 2f);
             }
             else
             {
@@ -81,36 +83,45 @@ public class EnemyHealth : NetworkBehaviour
     {
         return m_Health;
     }
-
+    
     private void DamageColor()
     {
-        if (model.GetComponent<SkinnedMeshRenderer>() != null)
+        if (gameObject.tag == "WurmCore")
         {
-           model.GetComponent<SkinnedMeshRenderer>().material.color = Color.red;
+            foreach (GameObject model in wurmModel)
+            {
+                model.GetComponent<MeshRenderer>().material.color = Color.red;
+            }
+            
         }
         else
         {
-            model.GetComponent<MeshRenderer>().material.color= Color.red;
+            model.GetComponent<SkinnedMeshRenderer>().material.color = Color.red;
+
         }
 
        
-        Invoke("DamageColorBack", 0.5f);
+        Invoke("DamageColorBack", 0.3f);
 
     }
 
     private void DamageColorBack()
     {
-        if (model.GetComponent<SkinnedMeshRenderer>() != null)
+        if (gameObject.tag == "WurmCore")
         {
-            model.GetComponent<SkinnedMeshRenderer>().material.color = curColor;
+            foreach (GameObject model in wurmModel)
+            {
+                model.GetComponent<MeshRenderer>().material.color = curColor;
+            }
+            
         }
         else
         {
-            model.GetComponent<MeshRenderer>().material.color = curColor;
+            model.GetComponent<SkinnedMeshRenderer>().material.color = curColor;
         }
     }
 
-
+    
     void OnChangeHealth(float amount)
     {
         currentHealth = amount;

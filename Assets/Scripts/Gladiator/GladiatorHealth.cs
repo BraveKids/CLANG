@@ -13,14 +13,13 @@ public class GladiatorHealth : NetworkBehaviour
     public GameObject model;
     Color curColor;
     // The slider to represent how much health the tank currently has.
-    public Image m_FillImage;                         // The image component of the slider.
+    public Image healthBar;                         // The image component of the slider.
+    public Image armorBar;
     public Color m_FullHealthColor = Color.green;     // The color the health bar will be when on full health.
     public Color m_ZeroHealthColor = Color.red;       // The color the health bar will be when on no health.
     public GameObject m_PlayerRenderers;                // References to all the gameobjects that need to be disabled when the tank is dead.
     public GladiatorSetup m_Setup;
     public GladiatorManager m_Manager;                   //Associated manager, to disable control when dying.
-    RectTransform healthBar;
-    RectTransform armorBar;
     [SyncVar(hook = "OnCurrentHealthChanged")]
     public float m_CurrentHealth;                  // How much health the tank currently has.*
     [SyncVar(hook = "OnCurrentArmorChanged")]
@@ -33,21 +32,20 @@ public class GladiatorHealth : NetworkBehaviour
     NetworkAnimator netAnim;
     GladiatorShooting attackScript;
     GladiatorMovement movementScript;
+
     void Start()
     {
-        movementScript = GetComponent<GladiatorMovement>();
-        attackScript = GetComponent<GladiatorShooting>();
-        anim = GetComponent<Animator>();
-        netAnim = GetComponent<NetworkAnimator>();
         invulnerable = false;
         curColor = model.GetComponent<SkinnedMeshRenderer>().material.color;
         m_Collider = GetComponent<BoxCollider>();
         GameElements.getStrategist().GetComponent<CrowdIA>().enabled = true;
         if (isLocalPlayer)
         {
-            healthBar = GameObject.FindGameObjectWithTag("HealthBar").GetComponent<RectTransform>();
-            armorBar = GameObject.FindGameObjectWithTag("ArmorBar").GetComponent<RectTransform>();
+            healthBar = GameObject.FindGameObjectWithTag("HealthBar").GetComponent<Image>();
+            armorBar = GameObject.FindGameObjectWithTag("ArmorBar").GetComponent<Image>();
         }
+        attackScript = GetComponent<GladiatorShooting>();
+        anim = GetComponent<Animator>();
     }
     public void Recover(float amount)
     {
@@ -85,13 +83,9 @@ public class GladiatorHealth : NetworkBehaviour
     {
         if (!invulnerable)
         {
-            //movementScript.setAttacking(true);
             attackScript.damaged = true;
-
             CmdSetAnimTrigger("Damage");
-
-            
-                Invoke("NotDamaged", 1f);
+            Invoke("NotDamaged", 1f);
             float calculatedDamage = amount - (m_Resistance * 0.15f);
             if (calculatedDamage <= 0.0f)
             {
@@ -117,7 +111,6 @@ public class GladiatorHealth : NetworkBehaviour
                 // Reduce current health by the amount of damage done.
                 m_CurrentHealth -= calculatedDamage;
                 invulnerable = true;
-               
                 Invoke("Vulnerable", 2f);
             }
             DamageColor();
@@ -128,12 +121,11 @@ public class GladiatorHealth : NetworkBehaviour
                 attackScript.damaged = true;
 
                 CmdSetAnimTrigger("Death");
-                
-                    Invoke("OnZeroHealth", 2f);
+
+                Invoke("OnZeroHealth", 2f);
             }
         }
     }
-
     void NotDamaged()
     {
         //movementScript.setAttacking(false);
@@ -144,6 +136,7 @@ public class GladiatorHealth : NetworkBehaviour
     {
         invulnerable = false;
     }
+    
     private void DamageColor()
     {
 
@@ -151,12 +144,12 @@ public class GladiatorHealth : NetworkBehaviour
         Invoke("DamageColorBack", 0.5f);
 
     }
-
+    
     private void DamageColorBack()
     {
         model.GetComponent<SkinnedMeshRenderer>().material.color = curColor;
     }
-
+    
 
 
 
@@ -174,21 +167,24 @@ public class GladiatorHealth : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-
-            float value = m_CurrentHealth / m_StartingHealth;
-
-            healthBar.localScale = new Vector3(value, transform.localScale.y, transform.localScale.z);
+            //float value = m_CurrentHealth / m_StartingHealth;
+            //healthBar.localScale = new Vector3(value, transform.localScale.y, transform.localScale.z);
+            healthBar.fillAmount = mapValueTo01(m_CurrentHealth, 0f, m_StartingHealth);
         }
+    }
+
+    // Maps a value from some arbitrary range to the 0 to 1 range
+    public static float mapValueTo01(float value, float min, float max) {
+        return (value - min) * 1f / (max - min);
     }
 
     private void SetArmorUI()
     {
         if (isLocalPlayer)
         {
-
-            float value = m_Armor / m_MaxArmor;
-
-            armorBar.localScale = new Vector3(value, transform.localScale.y, transform.localScale.z);
+            //float value = m_Armor / m_MaxArmor;
+            //armorBar.localScale = new Vector3(value, transform.localScale.y, transform.localScale.z);
+            armorBar.fillAmount = mapValueTo01(m_Armor, 0, m_MaxArmor);
         }
     }
 

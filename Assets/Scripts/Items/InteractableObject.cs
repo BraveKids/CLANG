@@ -20,6 +20,7 @@ public class InteractableObject : MonoBehaviour
         if (other.gameObject.tag == "Gladiator")
         {
             other.gameObject.GetComponent<GladiatorShooting>().PickUpObject(this.gameObject, id);
+            GameElements.itemSpawned.Remove(gameObject);
             if (id == "fireweapon")
             {
 
@@ -33,7 +34,7 @@ public class InteractableObject : MonoBehaviour
                 gameObject.transform.position = anchorPosHand.position;
                 GameElements.setWeaponDropped(false);
                 gameObject.GetComponent<Indicator>().enabled = false;
-                GameElements.itemSpawned.Remove(gameObject);
+               
             }
             else if (id == "weapon")
             {
@@ -56,6 +57,10 @@ public class InteractableObject : MonoBehaviour
                 GameElements.setArmorDropped(false);
 
                 gameObject.SetActive(false);
+                Destroy(gameObject);
+            }else if (id == "grenade")
+            {
+                GameElements.setWeaponDropped(false);
                 Destroy(gameObject);
             }
 
