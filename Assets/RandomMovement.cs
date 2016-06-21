@@ -3,21 +3,18 @@ using System.Collections;
 
 public class RandomMovement : MonoBehaviour {
 
-    // Use this for initialization
-    public float vel;
-	void Start () {
-        StartCoroutine(ChangeDir());
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+    public Transform center;
+    public float degreesPerSecond = -65.0f;
 
-    IEnumerator ChangeDir() {
-        while (true) {
-            GetComponent<Rigidbody>().velocity = new Vector3(Random.Range(-vel, vel), 0f, Random.Range(-vel, vel));
-            yield return new WaitForSeconds(Random.Range(0f, 4f));
-        }
+    private Vector3 v;
+
+    void Start() {
+        v = transform.position - center.position;
+    }
+
+    void Update() {
+        
+        v = Quaternion.AngleAxis(degreesPerSecond * Time.deltaTime, Vector3.up) * v;
+        transform.position = center.position + v;
     }
 }

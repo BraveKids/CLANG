@@ -5,17 +5,21 @@ using System.Collections.Generic;
 public class SwarmAI : MonoBehaviour {
 
     public GameObject beePrefab;
-    public int swarmSize;
+    public float boxDimension = 2;
+    public int swarmSize = 5;
+
+    public float maxVel = 3f;
     private List<GameObject> swarm;
     private Collider boxCollider;
-    public float alignmentWeight;
-    public float cohesionWeight;
-
-    public float separationWeight;
+    public float alignmentWeight = 1.5f;
+    public float cohesionWeight = 2.5f;
+    public float separationWeight = 2;
+    public float followWeight = 5f;
+    public bool follow = true;
     public GameObject target;
     public Vector3 centerPosition;
     public Vector3 velocity;
-    public float boxDimension;
+    
     GameObject damageCollider;
 
 
@@ -46,10 +50,7 @@ public class SwarmAI : MonoBehaviour {
             swarm.Add(boid);
 
             BeeAI beeAI = boid.GetComponent<BeeAI>();
-            float totWeight = alignmentWeight + cohesionWeight + separationWeight;
-            beeAI.SetAlignment(alignmentWeight / totWeight);
-            beeAI.SetCohesion(cohesionWeight / totWeight);
-            beeAI.SetSeparation(separationWeight / totWeight);
+           
         }
     }
 
@@ -59,11 +60,9 @@ public class SwarmAI : MonoBehaviour {
         velocity = Vector3.zero;
         foreach (GameObject agent in swarm) {
             centerPosition += agent.transform.position;
-            velocity += agent.GetComponent<Rigidbody>().velocity;
+            velocity += agent.transform.forward;
             BeeAI beeAI = agent.GetComponent<BeeAI>();
-            beeAI.SetAlignment(alignmentWeight);
-            beeAI.SetCohesion(cohesionWeight);
-            beeAI.SetSeparation(separationWeight);
+  
         }
         centerPosition /= swarmSize;
         velocity /= swarmSize;

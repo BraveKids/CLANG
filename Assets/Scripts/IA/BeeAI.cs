@@ -5,37 +5,68 @@ public class BeeAI : MonoBehaviour {
 
     SwarmAI swarm;
     Rigidbody rigidbody;
-    float alignmentWeight;
-    float cohesionWeight;
-
-    float separationWeight;
+   
+    Vector3 velocity;
 
     // Use this for initialization
     void Start() {
+        velocity = Vector3.zero;
         rigidbody = GetComponent<Rigidbody>();
         swarm = GetComponentInParent<SwarmAI>();
         //transform.localPosition = transform.position;
+        StartCoroutine(NextVel());
     }
 
     // Update is called once per frame
     void Update() {
-        Vector3 alignment = Alignment() * alignmentWeight;
-        Vector3 cohesion = Cohesion() * cohesionWeight;
-        Vector3 separation = Separation() * separationWeight;
-        Vector3 chasee = swarm.target.transform.position - transform.position;
-        Vector3 velocity= alignment * alignmentWeight + cohesion * cohesionWeight + separation * separationWeight+chasee;
-        rigidbody.velocity = velocity;
-        rigidbody.velocity.Normalize();
-        Quaternion rotation = Quaternion.LookRotation(velocity);
+        //Invoke("NextVel", Random.Range(0f,5f));   
+        Quaternion rotation = Quaternion.LookRotation(new Vector3(velocity.x, 0f, velocity.z));
 
-        rigidbody.MoveRotation(rotation);
-        //rigidbody.MoveRotation(Quaternion.Lerp(transform.rotation,rotation,5f*Time.deltaTime));
-        Debug.DrawLine(transform.position, new Vector3(transform.position.x, transform.position.y + 5f, transform.position.z), Color.green, 0, false);
+        //rigidbody.MoveRotation(rotation);
+        rigidbody.MoveRotation(Quaternion.Lerp(transform.rotation, rotation, 5f * Time.deltaTime));
+    }
+
+    IEnumerator NextVel() {
+        while (true) {
+            Vector3 alignment = Alignment() * swarm.alignmentWeight;
+            Vector3 cohesion = Cohesion() * swarm.cohesionWeight;
+            Vector3 separation = Separation() *swarm.separationWeight;
+            Vector3 chasee = swarm.target.transform.position - transform.position;
+            velocity = alignment * swarm.alignmentWeight + cohesion * swarm.cohesionWeight + separation * swarm.separationWeight;
+            if (swarm.follow) velocity += (chasee*swarm.followWeight);
+
+            //limit max and min velocity
+            if (velocity.x >= swarm.maxVel) velocity.x = swarm.maxVel;
+            if (velocity.y >= swarm.maxVel) velocity.y = swarm.maxVel;
+            if (velocity.z >= swarm.maxVel) velocity.z = swarm.maxVel;
+
+            if (velocity.x <= -swarm.maxVel) velocity.x = -swarm.maxVel;
+            if (velocity.y <= -swarm.maxVel) velocity.y = -swarm.maxVel;
+            if (velocity.z <= -swarm.maxVel) velocity.z = -swarm.maxVel;
+
+            //take the agents inside a box
+            if (transform.position.x >= swarm.centerPosition.x + swarm.boxDimension / 2 && velocity.x >= 0) velocity.x = -0.1f;
+            if (transform.position.x <= swarm.centerPosition.x - swarm.boxDimension / 2 && velocity.x <= 0) velocity.x = 0.1f;
+
+            if (transform.position.y >= swarm.centerPosition.y + swarm.boxDimension / 2 && velocity.y >= 0) velocity.y = -0.1f;
+            if (transform.position.y <= swarm.centerPosition.y - swarm.boxDimension / 2 && velocity.y <= 0) velocity.y = 0.1f;
+
+            if (transform.position.z >= swarm.centerPosition.z + swarm.boxDimension / 2 && velocity.z >= 0) velocity.z = -0.1f;
+            if (transform.position.z <= swarm.centerPosition.z - swarm.boxDimension / 2 && velocity.z <= 0) velocity.z = 0.1f;
+
+
+
+            rigidbody.velocity = velocity;
+            rigidbody.velocity.Normalize();
+            
+
+            yield return new WaitForSeconds(Random.Range(0f, .5f));
+        }
     }
 
     Vector3 Alignment() {
         Vector3 alignment = Vector3.zero;
-        foreach(GameObject agent in swarm.GetSwarm()) {
+        foreach (GameObject agent in swarm.GetSwarm()) {
             alignment += agent.transform.GetComponent<Rigidbody>().velocity;
         }
         alignment.Normalize();
@@ -71,22 +102,12 @@ public class BeeAI : MonoBehaviour {
         }
 
         separation /= swarm.swarmSize;
-        
+
         separation *= -1;
         separation.Normalize();
 
         return separation;
     }
 
-    public void SetAlignment(float alignmentW) {
-        alignmentWeight = alignmentW;
-    }
-
-    public void SetSeparation(float separationW) {
-        separationWeight = separationW;
-    }
-
-    public void SetCohesion(float cohesionW) {
-        cohesionWeight = cohesionW;
-    }
+    
 }
