@@ -20,9 +20,18 @@ public class CrowdIA : NetworkBehaviour {
     private float arenaBorderD;
     private GameObject arena;
 
+    //for debug
+    public float armorProbability;
+    public float strategistProbability;
+    public float medpackProbability;
+
     public GameObject medPackPrefab;
     public GameObject weaponPrefab;
     public GameObject armorPrefab;
+
+    public bool debugMode;
+
+    public GameObject[] arenaElements;
     // Use this for initialization
 
     void Start()
@@ -33,6 +42,7 @@ public class CrowdIA : NetworkBehaviour {
         }
 
         arena = GameObject.FindGameObjectWithTag("Arena");
+        arenaElements = GameObject.FindGameObjectsWithTag("ArenaElements");
         DTDecision kingMaker = new DTDecision(StrategistDice);
         DTDecision miteNode = new DTDecision(MiteDice);
         DTDecision weaponNode = new DTDecision(WeaponDice);
@@ -85,8 +95,8 @@ public class CrowdIA : NetworkBehaviour {
     object StrategistDice() {
         float maxLife = GameElements.getMaxLife();
         float currentLife = GameElements.getGladiatorLife();
-        float normalizedLife = currentLife / maxLife;   //this goes from 0 to 1
-        return Random.value < normalizedLife ? "strategist" : "gladiator";
+        strategistProbability = currentLife / maxLife;   //this goes from 0 to 1
+        return Random.value < strategistProbability ? "strategist" : "gladiator";
     }
 
     //fixed probability
@@ -94,7 +104,7 @@ public class CrowdIA : NetworkBehaviour {
         if (GameElements.getArmorDropped() || GameElements.getGladiatorArmor() > 0)
             return false;
         int monsterCount = GameElements.getEnemyCount();
-        float armorProbability = 1 - Mathf.Exp(-lambdaArmor*monsterCount);
+        armorProbability = 1 - Mathf.Exp(-lambdaArmor*monsterCount);
         return Random.value < armorProbability ? true : false;
     }
 
@@ -104,8 +114,8 @@ public class CrowdIA : NetworkBehaviour {
             return false;
         float maxLife = GameElements.getMaxLife();
         float currentLife = GameElements.getGladiatorLife();
-        float currentProbability = maxArmorProbability - (currentLife * maxMedpackProbability) / maxLife;
-        return Random.value < currentProbability ? true : false;
+        medpackProbability = maxArmorProbability - (currentLife * maxMedpackProbability) / maxLife;
+        return Random.value < medpackProbability ? true : false;
     }
 
     //fixed probability
@@ -132,36 +142,68 @@ public class CrowdIA : NetworkBehaviour {
     void DropWeapon() {
         GameElements.setWeaponDropped(true);
         gameObject.GetComponent<StrategistSpawner>().Spawn(weaponPrefab, itemSpawnPoint());
+        DebugLine("WEAPON");
         
-        //Debug.Log("WEAPON");
     }
 
     void DropMite() {
 
-        Debug.Log("MITE");
+        DebugLine("MITE");
 
     }
 
     void DropMedpack() {
         gameObject.GetComponent<StrategistSpawner>().SetMedDropped();
         gameObject.GetComponent<StrategistSpawner>().Spawn(medPackPrefab, itemSpawnPoint());
-        
-        //Debug.Log("MEDPACK");
+
+        DebugLine("MEDPACK");
+
     }
 
     void DropArmor() {
         gameObject.GetComponent<StrategistSpawner>().SetArmorDropped();
         gameObject.GetComponent<StrategistSpawner>().Spawn(armorPrefab, itemSpawnPoint());
-        
-        //Debug.Log("ARMOR");
+
+        DebugLine("ARMOR");
+
     }
 
 
 
     Vector3 itemSpawnPoint() {
+        while (true) {
+            bool isCorrect = true;
+            Vector3 spawnPoint = RandomSpawnPoint();
+            foreach (GameObject elem in arenaElements) {
+                if (PointInOABB(spawnPoint, elem.GetComponent<BoxCollider>())) {
+                    isCorrect = false;
+                    break;
+                }
+            }
+            if (isCorrect) return spawnPoint;
+        }
+        
+    }
+
+    Vector3 RandomSpawnPoint() {
         float spawnX = Random.Range(arenaBorderL, arenaBorderR);
         float spawnZ = Random.Range(arenaBorderU, arenaBorderD);
-        return new Vector3(spawnX, arena.transform.position.y + 1f, spawnZ);
+        Vector3 spawnPoint = new Vector3(spawnX, arena.transform.position.y + 1f, spawnZ);
+        return spawnPoint;
+    }
+
+    bool PointInOABB(Vector3 point, BoxCollider box) {
+        point = box.transform.InverseTransformPoint(point) - box.center;
+
+        float halfX = (box.size.x * 0.5f);
+        float halfY = (box.size.y * 0.5f);
+        float halfZ = (box.size.z * 0.5f);
+        if (point.x < halfX && point.x > -halfX &&
+           point.y < halfY && point.y > -halfY &&
+           point.z < halfZ && point.z > -halfZ)
+            return true;
+        else
+            return false;
     }
 
     void DebugLine() {
@@ -184,6 +226,10 @@ public class CrowdIA : NetworkBehaviour {
             CrowdTree.Walk();
             yield return new WaitForSeconds(helpFrequency);
         }
+    }
+
+    void DebugLine(string text) {
+        if (debugMode) Debug.Log(text);
     }
 
 }
