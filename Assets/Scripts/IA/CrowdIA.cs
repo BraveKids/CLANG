@@ -26,7 +26,8 @@ public class CrowdIA : NetworkBehaviour {
     public float medpackProbability;
 
     public GameObject medPackPrefab;
-    public GameObject weaponPrefab;
+    public GameObject gunPrefab;
+    public GameObject grenadePrefab;
     public GameObject armorPrefab;
 
     public bool debugMode;
@@ -34,10 +35,8 @@ public class CrowdIA : NetworkBehaviour {
     public GameObject[] arenaElements;
     // Use this for initialization
 
-    void Start()
-    {
-        if (!isLocalPlayer)
-        {
+    void Start() {
+        if (!isLocalPlayer) {
             return;
         }
 
@@ -104,7 +103,7 @@ public class CrowdIA : NetworkBehaviour {
         if (GameElements.getArmorDropped() || GameElements.getGladiatorArmor() > 0)
             return false;
         int monsterCount = GameElements.getEnemyCount();
-        armorProbability = 1 - Mathf.Exp(-lambdaArmor*monsterCount);
+        armorProbability = 1 - Mathf.Exp(-lambdaArmor * monsterCount);
         return Random.value < armorProbability ? true : false;
     }
 
@@ -129,7 +128,7 @@ public class CrowdIA : NetworkBehaviour {
     //not a real dice but...
     object MiteDice() {
         if (GameElements.getEnemyCount() <= monsterTrheshold)
-            return Random.value<miteProbability ? true:false;
+            return Random.value < miteProbability ? true : false;
         return false;
     }
 
@@ -141,9 +140,15 @@ public class CrowdIA : NetworkBehaviour {
 
     void DropWeapon() {
         GameElements.setWeaponDropped(true);
-        gameObject.GetComponent<StrategistSpawner>().Spawn(weaponPrefab, itemSpawnPoint());
+
+        if (Random.value <= .5f)
+            gameObject.GetComponent<StrategistSpawner>().Spawn(gunPrefab, itemSpawnPoint());
+
+        else
+            gameObject.GetComponent<StrategistSpawner>().Spawn(grenadePrefab, itemSpawnPoint());
+
         DebugLine("WEAPON");
-        
+
     }
 
     void DropMite() {
@@ -182,7 +187,7 @@ public class CrowdIA : NetworkBehaviour {
             }
             if (isCorrect) return spawnPoint;
         }
-        
+
     }
 
     Vector3 RandomSpawnPoint() {
