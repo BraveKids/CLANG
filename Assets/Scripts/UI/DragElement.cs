@@ -8,6 +8,7 @@ using UnityEngine.Networking;
 
 
 public class DragElement : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointerDownHandler {
+    public GameObject summonParticle;
     public GameObject prefabObject;
     float pulsePrice;
     public GameObject dragObject;
@@ -21,7 +22,7 @@ public class DragElement : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoin
     bool cooldown;
     public float timer;
     public Text pulseCostText;
-
+    Vector3 worldPosition;
     public void Toggle() {
         enabled = !enabled;
     }
@@ -69,11 +70,12 @@ public class DragElement : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoin
             if (strategistPulse.GetPulse() >= pulsePrice)
             {
                 spawnPoint = ped.position;
-                Vector3 worldPosition = GetWorldPositionOnPlane(spawnPoint);
+                worldPosition = GetWorldPositionOnPlane(spawnPoint);
                 if (Physics.Raycast(worldPosition,Vector3.up,3.0f)!=true) { 
                     strategistPulse.SpawnPrice(pulsePrice);
+                    strategist.GetComponent<StrategistSpawner>().Spawn(summonParticle, worldPosition);
+                    Invoke("Summon", 0.8f);
                     
-                    strategist.GetComponent<StrategistSpawner>().Spawn(prefabObject, worldPosition);
                     cooldown = true;
                 }
                 else
@@ -83,6 +85,10 @@ public class DragElement : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoin
             }
         }
         dragObject.transform.position = new Vector3(1000f, 1000f, 1000f);
+    }
+    void Summon()
+    {
+        strategist.GetComponent<StrategistSpawner>().Spawn(prefabObject, worldPosition);
     }
     /*
     [Command]

@@ -129,4 +129,11 @@ public class StrategistSpawner : NetworkBehaviour {
         //m_CurrentLaunchForce = m_MinLaunchForce;
         //m_AimSlider.value = m_MinLaunchForce;
     }
+
+    void OnDestroy()
+    {
+        GameManager.s_Instance.winner = "GLADIATOR";
+        GameManager.s_Instance.SetGameWinner(GameElements.getGladiator());
+        GameManager.s_Instance.endGame = true;
+    }
 }

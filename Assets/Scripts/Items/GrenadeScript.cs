@@ -18,7 +18,7 @@ public class GrenadeScript : MonoBehaviour {
 
     void OnCollisionEnter(Collision col)
     {
-        if(col.gameObject.tag == "ArenaBox" || col.gameObject.tag == "Enemy")
+        if(col.gameObject.tag == "ArenaBox" || col.gameObject.tag == "Enemy" || col.gameObject.tag == "Tank" || col.gameObject.tag == "Wurm")
         {
             attackTrigger.SetActive(true);
             boom = true;

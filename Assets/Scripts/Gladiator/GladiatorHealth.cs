@@ -44,9 +44,13 @@ public class GladiatorHealth : NetworkBehaviour
             healthBar = GameObject.FindGameObjectWithTag("HealthBar").GetComponent<Image>();
             armorBar = GameObject.FindGameObjectWithTag("ArmorBar").GetComponent<Image>();
         }
+        movementScript = GetComponent<GladiatorMovement>();
         attackScript = GetComponent<GladiatorShooting>();
         anim = GetComponent<Animator>();
+        netAnim = GetComponent<NetworkAnimator>();
     }
+
+ 
     public void Recover(float amount)
     {
         if (m_CurrentHealth < m_StartingHealth)
@@ -83,9 +87,14 @@ public class GladiatorHealth : NetworkBehaviour
     {
         if (!invulnerable)
         {
+            invulnerable = true;
+            Invoke("Vulnerable", 1.5f);
             attackScript.damaged = true;
-            CmdSetAnimTrigger("Damage");
+            //CmdSetAnimTrigger("Damage");
+            netAnim.SetTrigger("Damage");
+            DamageColor();
             Invoke("NotDamaged", 1f);
+
             float calculatedDamage = amount - (m_Resistance * 0.15f);
             if (calculatedDamage <= 0.0f)
             {
@@ -110,12 +119,12 @@ public class GladiatorHealth : NetworkBehaviour
 
                 // Reduce current health by the amount of damage done.
                 m_CurrentHealth -= calculatedDamage;
-                invulnerable = true;
-                Invoke("Vulnerable", 2f);
+                
+                
             }
-            DamageColor();
+            
             // If the current health is at or below zero and it has not yet been registered, call OnZeroHealth.
-            if (m_CurrentHealth <= 0f && !m_ZeroHealthHappened)
+            if (m_CurrentHealth <= 0f)
             {
                 movementScript.setAttacking(true);
                 attackScript.damaged = true;
@@ -124,6 +133,7 @@ public class GladiatorHealth : NetworkBehaviour
 
                 Invoke("OnZeroHealth", 2f);
             }
+            
         }
     }
     void NotDamaged()
@@ -214,6 +224,15 @@ public class GladiatorHealth : NetworkBehaviour
         GameManager.s_Instance.endGame = true;
         InternalOnZeroHealth();
         //RpcOnZeroHealth();
+    }
+
+    private void OnDestroy()
+    {
+        m_ZeroHealthHappened = true;
+        GameManager.s_Instance.winner = "STRATEGIST";
+        GameManager.s_Instance.SetGameWinner(GameElements.getStrategist());
+        GameManager.s_Instance.endGame = true;
+        InternalOnZeroHealth();
     }
 
     private void InternalOnZeroHealth()

@@ -368,7 +368,7 @@ namespace UnityStandardAssets.Network
 
 
         // ----------------- Client callbacks ------------------
-
+        
         public override void OnClientDisconnect(NetworkConnection conn)
         {
             base.OnClientDisconnect(conn);
@@ -381,4 +381,5 @@ namespace UnityStandardAssets.Network
             infoPanel.Display("Client error : " + (errorCode == 6 ? "timeout" : errorCode.ToString()), "Close", null);
         }
     }
+    
 }

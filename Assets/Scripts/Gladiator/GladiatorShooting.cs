@@ -20,8 +20,6 @@ public class GladiatorShooting : NetworkBehaviour
     public GameObject grenadeModel;
     public bool grenadeTaken;
     bool grenadeLaunching;
-
-    [SyncVar]
     public int m_localID;
     Animator m_animator;
     
@@ -32,6 +30,7 @@ public class GladiatorShooting : NetworkBehaviour
    
 
     public bool basicAttack;
+    [SyncVar]
     public bool specialAttack;
     public Transform attackTransform;
     public Transform handPosition;
@@ -271,15 +270,21 @@ public class GladiatorShooting : NetworkBehaviour
                     //m_Rigidbody.velocity = Vector3.zero;
                     //m_Rigidbody.isKinematic = true;
                     specialAttack = true;
-
+                    CmdShoot(true);
                     m_animator.SetBool("Shoot", true);
                     Invoke("Fire", 0.3f);
                 }
             }
-        
-
-
-
+    }
+    [Command]
+    void CmdShoot(bool shot)
+    {
+        RpcShoot(shot);
+    }
+    [ClientRpc]
+    void RpcShoot(bool shot)
+    {
+        specialAttack = shot;
     }
 
     void GrenadeAttack()
@@ -470,6 +475,7 @@ public class GladiatorShooting : NetworkBehaviour
         {
 
             specialAttack = false;
+            CmdShoot(false);
             m_animator.SetBool("Shoot", false);
             fireWeapon.GetComponent<FireWeapon>().integrity -= 1;
             movementScript.setAttacking(false);

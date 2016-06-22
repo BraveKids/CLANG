@@ -3,7 +3,6 @@ using System.Collections;
 using UnityEngine.Networking;
 public class EnemyHealth : NetworkBehaviour
 {
-    GameObject GarbageCollector;
     public float m_Health;
     public float m_Resistance;
     public GameObject model;
@@ -14,10 +13,11 @@ public class EnemyHealth : NetworkBehaviour
     public float currentHealth;
     GladiatorShooting gladiatorScript;
     MutantScriptTest mutantScript;
+    TankScript tankScript;
     void Start()
     {
         mutantScript = GetComponent<MutantScriptTest>();
-       
+        tankScript = GetComponent<TankScript>();
         gladiatorScript = GameElements.getGladiator().GetComponent<GladiatorShooting>();
         if (gameObject.tag == "WurmCore")
         {
@@ -38,29 +38,30 @@ public class EnemyHealth : NetworkBehaviour
         {
             mutantScript.Damage();
         }
+        else if (tankScript != null)
+        {
+            tankScript.Damage();
+        }
+    
         float calculatedDamage = amount - m_Resistance * 0.3f;
 
         currentHealth -= calculatedDamage;
         DamageColor();
-        if (currentHealth <= 0)
+        if (currentHealth <= 0 /*&& gameObject.tag != "Tank"*/)
         {
             if (mutantScript != null)
             {
                 mutantScript.Death();
                 Invoke("Death", 2f);
+            }else if(tankScript != null)
+            {
+                tankScript.Death();
+                Invoke("Death", 3f);
             }
             else
             {
                 Death();
             }
-
-            
-            //gameObject.SetActive(false);
-            //gameObject.transform.parent = GarbageCollector.transform;
-           
-
-
-
         }
     }
 
