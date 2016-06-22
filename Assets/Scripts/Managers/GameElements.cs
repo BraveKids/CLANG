@@ -20,6 +20,7 @@ public class GameElements : NetworkBehaviour
     static GameObject strategist;
     static GameObject gladiator;
     static GameObject arena;
+    static SoundManager soundManager;
     static GladiatorHealth gladiatorHealth;
     static bool armorDropped = false;
     static bool medDropped = false;
@@ -51,7 +52,7 @@ public class GameElements : NetworkBehaviour
         //Debug.Log(strategistCanvas);
         virtualJoystick = gladiatorCanvas.transform.FindChild("VirtualJoypad/TapArea/BackgroundImage").gameObject;
 
-
+        soundManager = GameObject.FindGameObjectWithTag("SoundManager").GetComponent<SoundManager>();
     }
 
     // Update is called once per frame
@@ -219,6 +220,10 @@ public class GameElements : NetworkBehaviour
         //Debug.Log(enemy);
 
         return enemy;
+    }
+
+    public static SoundManager GetSoundManager() {
+        return soundManager;
     }
 
 

@@ -245,6 +245,8 @@ public class GameManager : NetworkBehaviour
     [ClientRpc]
     void RpcRoundPlaying()
     {
+        GameElements.GetSoundManager().SetBackgroundMusic("gameMusic");
+
         // As soon as the round begins playing let the players control the tanks.
         EnablePlayerControl();
 
