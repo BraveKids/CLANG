@@ -7,6 +7,7 @@ using System;
 
 public class GladiatorShooting : NetworkBehaviour
 {
+    public ParticleSystem flare;
     public int m_PlayerNumber = 1;            // Used to identify the different players.
     public Rigidbody m_Shell;                 // Prefab of the shell.
     public Transform m_FireTransform;         // A child of the tank where the shells are spawned.
@@ -18,6 +19,7 @@ public class GladiatorShooting : NetworkBehaviour
     //public AudioClip m_FireClip;              // Audio that plays when each shot is fired.
     public float m_MinLaunchForce = 15f;      // The force given to the shell if the fire button is not held.
     public GameObject grenadeModel;
+    [SyncVar]
     public bool grenadeTaken;
     bool grenadeLaunching;
     public int m_localID;
@@ -58,6 +60,7 @@ public class GladiatorShooting : NetworkBehaviour
 
     private void Start()
     {
+        flare.gameObject.SetActive(false);
         grenadeTaken = false;
         grenadeLaunching = false;
         targets = new List<Transform>();
@@ -354,6 +357,8 @@ public class GladiatorShooting : NetworkBehaviour
     {
         if (fireWeapon != null)
         {
+            flare.gameObject.SetActive(true);
+            flare.Play();
             CmdFire();
             Invoke("FireDown", 0.7f);
         }

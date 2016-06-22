@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 0bab7214e4f6fbc46be3ac1484a80d52
-timeCreated: 1466343188
+timeCreated: 1466413527
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -87,20 +87,18 @@ TextureImporter:
     - name: UI_elements_2_0
       rect:
         serializedVersion: 2
-        x: 503
+        x: 517
         y: 4488
-        width: 1301
-        height: 241
+        width: 1267
+        height: 239
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline:
-      - - {x: -454.0297, y: 87.40015}
-        - {x: -455.0297, y: 86.40015}
-        - {x: -455.0297, y: -85.59985}
-        - {x: 453.9703, y: -85.59985}
-        - {x: 453.9703, y: 86.40015}
-        - {x: 452.9703, y: 87.40015}
+      - - {x: -452.03845, y: 86.90015}
+        - {x: -452.03845, y: -85.09985}
+        - {x: 453.96155, y: -85.09985}
+        - {x: 453.96155, y: 86.90015}
     - name: UI_elements_2_1
       rect:
         serializedVersion: 2
@@ -925,23 +923,19 @@ TextureImporter:
     - name: UI_elements_2_33
       rect:
         serializedVersion: 2
-        x: 519
-        y: 4181
-        width: 1287
-        height: 251
+        x: 527
+        y: 4185
+        width: 1272
+        height: 244
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline:
-      - - {x: -457.11115, y: 90.806885}
-        - {x: -457.11115, y: 89.806885}
-        - {x: -454.11115, y: 86.806885}
-        - {x: -454.11115, y: -84.193115}
-        - {x: -452.11115, y: -86.193115}
-        - {x: 457.88885, y: -86.193115}
-        - {x: 459.88885, y: -84.193115}
-        - {x: 459.88885, y: 88.806885}
-        - {x: 457.88885, y: 90.806885}
+      - - {x: -453.90186, y: 88.16162}
+        - {x: -453.90186, y: -85.83838}
+        - {x: -452.90186, y: -86.83838}
+        - {x: 454.09814, y: -86.83838}
+        - {x: 454.09814, y: 88.16162}
     - name: UI_elements_2_11
       rect:
         serializedVersion: 2

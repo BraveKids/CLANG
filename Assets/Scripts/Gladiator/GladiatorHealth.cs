@@ -21,7 +21,7 @@ public class GladiatorHealth : NetworkBehaviour
     public GladiatorSetup m_Setup;
     public GladiatorManager m_Manager;                   //Associated manager, to disable control when dying.
     [SyncVar(hook = "OnCurrentHealthChanged")]
-    public float m_CurrentHealth;                  // How much health the tank currently has.*
+    public float m_CurrentHealth = 32f;                  // How much health the tank currently has.*
     [SyncVar(hook = "OnCurrentArmorChanged")]
     public float m_Armor;
     [SyncVar]

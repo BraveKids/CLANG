@@ -21,9 +21,11 @@ namespace UnityStandardAssets.Network
         public int minPlayer;
 
         public LobbyTopPanel topPanel;
+        public Image background;
 
         public RectTransform mainMenuPanel;
         public RectTransform lobbyPanel;
+        public RectTransform creditsPanel;
 
         public LobbyInfoPanel infoPanel;
 
@@ -58,6 +60,8 @@ namespace UnityStandardAssets.Network
             backButton.gameObject.SetActive(false);
             GetComponent<Canvas>().enabled = true;
 
+            background = GetComponent<Image>();
+
             DontDestroyOnLoad(gameObject);
             currentPlayers = new Dictionary<int, int>();
             SetServerInfo("Offline", "None");
@@ -70,10 +74,10 @@ namespace UnityStandardAssets.Network
 
             if (SceneManager.GetActiveScene().name == lobbyScene)
             {
+                background.enabled = true;
                 if (topPanel.isInGame)
                 {
                     
-                    //ChangeTo(lobbyPanel); //leave the lobby to prevent problems
                     if (isMatchmaking)
                     {                        
                         if (conn.playerControllers[0].unetView.isServer)
@@ -112,6 +116,7 @@ namespace UnityStandardAssets.Network
                 ChangeTo(null);
 
                 Destroy(GameObject.Find("MainMenuUI(Clone)"));
+                background.enabled = false;
 
                 backDelegate = StopGameClbk;
                 topPanel.isInGame = true;
@@ -142,6 +147,10 @@ namespace UnityStandardAssets.Network
                 backButton.gameObject.SetActive(false);
                 SetServerInfo("Offline", "None");
                 isMatchmaking = false;
+            }
+
+            if (newPanel == creditsPanel) {
+                backDelegate = SimpleBackClbk;
             }
         }
 
@@ -368,7 +377,7 @@ namespace UnityStandardAssets.Network
 
 
         // ----------------- Client callbacks ------------------
-        
+
         public override void OnClientDisconnect(NetworkConnection conn)
         {
             base.OnClientDisconnect(conn);
@@ -381,5 +390,4 @@ namespace UnityStandardAssets.Network
             infoPanel.Display("Client error : " + (errorCode == 6 ? "timeout" : errorCode.ToString()), "Close", null);
         }
     }
-    
 }
