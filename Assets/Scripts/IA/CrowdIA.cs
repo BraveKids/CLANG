@@ -5,9 +5,8 @@ public class CrowdIA : NetworkBehaviour {
 
     DecisionTree CrowdTree;
     public float helpFrequency = 3f;
-    public float maxMedpackProbability = 0.5f;
-    public float maxArmorProbability = 0.4f;
-    public float weaponProbability = 0.4f;
+    public float maxMedpackProbability = 0.4f;
+    public float weaponProbability = 0.5f;
     public int monsterTrheshold = 6;
     public float miteProbability = 0.4f;
     public float lambdaArmor = .1f;
@@ -21,19 +20,22 @@ public class CrowdIA : NetworkBehaviour {
     private GameObject arena;
 
     //for debug
-    public float armorProbability;
-    public float strategistProbability;
-    public float medpackProbability;
+    public float armorProbability = 0f;
+    public float strategistProbability = 0f;
+    public float medpackProbability = 0f;
 
     public GameObject medPackPrefab;
     public GameObject gunPrefab;
     public GameObject grenadePrefab;
     public GameObject armorPrefab;
-
+    public GameObject mitePrefab;
+    
     public bool debugMode;
 
     public GameObject[] arenaElements;
     // Use this for initialization
+
+    public int count;
 
     void Start() {
         if (!isLocalPlayer) {
@@ -76,8 +78,16 @@ public class CrowdIA : NetworkBehaviour {
 
     // Update is called once per frame
     void Update() {
-
+        float maxLife = GameElements.getMaxLife();
+        float currentLife = GameElements.getGladiatorLife();
+        strategistProbability = currentLife / maxLife;   //this goes from 0 to 1
         //DebugLine();
+        int monsterCount = GameElements.getEnemyCount();
+        armorProbability = 1 - Mathf.Exp(-lambdaArmor * monsterCount);
+        
+        medpackProbability = maxMedpackProbability - (currentLife * maxMedpackProbability) / maxLife;
+
+        count = GameElements.getEnemyCount();
     }
 
 
@@ -95,7 +105,7 @@ public class CrowdIA : NetworkBehaviour {
         float maxLife = GameElements.getMaxLife();
         float currentLife = GameElements.getGladiatorLife();
         strategistProbability = currentLife / maxLife;   //this goes from 0 to 1
-        return Random.value < strategistProbability ? "strategist" : "gladiator";
+        return Random.value <= strategistProbability ? "strategist" : "gladiator";
     }
 
     //fixed probability
@@ -113,14 +123,14 @@ public class CrowdIA : NetworkBehaviour {
             return false;
         float maxLife = GameElements.getMaxLife();
         float currentLife = GameElements.getGladiatorLife();
-        medpackProbability = maxArmorProbability - (currentLife * maxMedpackProbability) / maxLife;
+        medpackProbability = maxMedpackProbability - (currentLife * maxMedpackProbability) / maxLife;
         return Random.value < medpackProbability ? true : false;
     }
 
     //fixed probability
     object WeaponDice() {
         float halfMaxIntegrity = GameElements.getMaxIntegrity() * 0.5f;
-        if ((GameElements.getIntegrity() > halfMaxIntegrity) || GameElements.getWeaponDropped())
+        if (GameElements.getGladiator().GetComponent<GladiatorShooting>().grenadeTaken || GameElements.getWeaponDropped() || (GameElements.getIntegrity() > halfMaxIntegrity))
             return false;
         return Random.value < weaponProbability ? true : false;
     }
@@ -152,6 +162,8 @@ public class CrowdIA : NetworkBehaviour {
     }
 
     void DropMite() {
+        gameObject.GetComponent<StrategistSpawner>().Spawn(mitePrefab, itemSpawnPoint());
+
 
         DebugLine("MITE");
 
