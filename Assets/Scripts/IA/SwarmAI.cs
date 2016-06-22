@@ -19,18 +19,45 @@ public class SwarmAI : MonoBehaviour {
     public GameObject target;
     public Vector3 centerPosition;
     public Vector3 velocity;
+    public float swarmDamage;
     
-    GameObject damageCollider;
+    SphereCollider damageCollider;
+
+    public bool collided;
+    public bool debugMode;
+
+    EnemyHealth health;
+    FSM SwarmFSM;
 
 
 
     // Use this for initialization
     void Start() {
+        collided = false;
+
+        FSMState chasing = new FSMState();
+        FSMState attacking = new FSMState();
+        FSMState dying = new FSMState();
+
+        chasing.AddTransition(new FSMTransition(Colliding, attacking));
+        chasing.AddTransition(new FSMTransition(GoigToDie, dying));
+
+
+        attacking.AddTransition(new FSMTransition(NotColliding, chasing));
+        attacking.AddTransition(new FSMTransition(GoigToDie, dying));
+        attacking.AddStayAction(Attack);
+
+        SwarmFSM = new FSM(chasing);
+
+        dying.AddStayAction(Die);
+
+
         centerPosition = Vector3.zero;
         velocity = Vector3.zero;
         boxCollider = GetComponent<Collider>();
         swarm = new List<GameObject>();
-        damageCollider = transform.GetChild(0).gameObject;
+        //damageCollider = transform.GetChild(0).gameObject;
+        damageCollider = GetComponent<SphereCollider>();
 
 
         for (var i = 0; i < swarmSize; i++) {
@@ -68,13 +95,56 @@ public class SwarmAI : MonoBehaviour {
         velocity /= swarmSize;
         //position.Normalize();
         centerPosition.y = transform.position.y;
-        damageCollider.transform.position = centerPosition;
+        //damageCollider.transform.position = centerPosition;
+        Vector3 colliderPos = transform.InverseTransformPoint(centerPosition);
+        damageCollider.center = colliderPos;
+  
         Debug.DrawLine(centerPosition, new Vector3(centerPosition.x, centerPosition.y + 5f, centerPosition.z), Color.red, 0, false);
+
+        SwarmFSM.Update();
     }
 
     public List<GameObject> GetSwarm() {
         return swarm;
     }
+
+    bool Colliding() {
+        return collided;
+    }
+
+    bool NotColliding() {
+        return !collided;
+    }
+
+    bool GoigToDie() {
+        return health.currentHealth <= 0;
+    }
+
+    void Die() {
+        DebugLine("Dying");
+    }
+    void Attack() {
+        DebugLine("Attack");
+        //TODO infliggi il danno al gladiatore
+    }
+
+    void OnTriggerEnter(Collider col) {
+        if (col.gameObject.tag == "Gladiator")
+            collided = true;
+    }
+    
+    void OnTriggerExit(Collider col) {
+        if (col.gameObject.tag == "Gladiator") {
+            collided = false;
+        }
+    }
+
+    void DebugLine(string text) {
+        if (debugMode)
+            Debug.Log(text);
+    }
+
+
 
 
 }
