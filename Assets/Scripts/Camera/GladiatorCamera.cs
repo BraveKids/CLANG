@@ -19,10 +19,6 @@ public class GladiatorCamera : MonoBehaviour {
     // Use this for initialization
     void Start() {
         initRot = transform.rotation;
-        //menuCamera = Camera.main.gameObject;
-        //menuCamera = GameElements.getCurrentCameraObj();
-        //GameElements.setCurrentCamera(gameObject);
-        //menuCamera.SetActive(false);
         player = GameObject.FindGameObjectWithTag("Gladiator");
 
     }
@@ -40,8 +36,7 @@ public class GladiatorCamera : MonoBehaviour {
         cameraZ = transform.position.z;
 
         cameraX = playerX;
-        //cameraZ = playerZ - cameraDistance;
-        //cameraY = playerY + cameraHeight;
+
 
         //Move on start after set them
         float sin = Mathf.Sin(cameraAngle * (Mathf.PI / 180));

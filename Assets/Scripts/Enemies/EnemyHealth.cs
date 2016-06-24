@@ -3,28 +3,30 @@ using System.Collections;
 using UnityEngine.Networking;
 public class EnemyHealth : NetworkBehaviour
 {
-    GameObject GarbageCollector;
     public float m_Health;
     public float m_Resistance;
     public GameObject model;
+    public GameObject[] wurmModel;
     public bool destroyOnDeath;
     Color curColor;
     [SyncVar(hook = "OnChangeHealth")]
     public float currentHealth;
     GladiatorShooting gladiatorScript;
     MutantScriptTest mutantScript;
+    TankScript tankScript;
     void Start()
     {
         mutantScript = GetComponent<MutantScriptTest>();
-       
+        tankScript = GetComponent<TankScript>();
         gladiatorScript = GameElements.getGladiator().GetComponent<GladiatorShooting>();
-        if (model.GetComponent<SkinnedMeshRenderer>() != null)
+        if (gameObject.tag == "WurmCore")
         {
-            curColor = model.GetComponent<SkinnedMeshRenderer>().material.color;
+            curColor = wurmModel[0].GetComponent<MeshRenderer>().material.color;
+            
         }
         else
         {
-            curColor = model.GetComponent<MeshRenderer>().material.color;
+            curColor = model.GetComponent<SkinnedMeshRenderer>().material.color;
         }
         currentHealth = m_Health;
     }
@@ -36,29 +38,30 @@ public class EnemyHealth : NetworkBehaviour
         {
             mutantScript.Damage();
         }
+        else if (tankScript != null)
+        {
+            tankScript.Damage();
+        }
+    
         float calculatedDamage = amount - m_Resistance * 0.3f;
 
         currentHealth -= calculatedDamage;
         DamageColor();
-        if (currentHealth <= 0)
+        if (currentHealth <= 0 /*&& gameObject.tag != "Tank"*/)
         {
             if (mutantScript != null)
             {
                 mutantScript.Death();
-                Invoke("Death", 1.8f);
+                Invoke("Death", 2f);
+            }else if(tankScript != null)
+            {
+                tankScript.Death();
+                Invoke("Death", 3f);
             }
             else
             {
                 Death();
             }
-
-            
-            //gameObject.SetActive(false);
-            //gameObject.transform.parent = GarbageCollector.transform;
-           
-
-
-
         }
     }
 
@@ -81,36 +84,45 @@ public class EnemyHealth : NetworkBehaviour
     {
         return m_Health;
     }
-
+    
     private void DamageColor()
     {
-        if (model.GetComponent<SkinnedMeshRenderer>() != null)
+        if (gameObject.tag == "WurmCore")
         {
-           model.GetComponent<SkinnedMeshRenderer>().material.color = Color.red;
+            foreach (GameObject model in wurmModel)
+            {
+                model.GetComponent<MeshRenderer>().material.color = Color.red;
+            }
+            
         }
         else
         {
-            model.GetComponent<MeshRenderer>().material.color= Color.red;
+            model.GetComponent<SkinnedMeshRenderer>().material.color = Color.red;
+
         }
 
        
-        Invoke("DamageColorBack", 0.5f);
+        Invoke("DamageColorBack", 0.3f);
 
     }
 
     private void DamageColorBack()
     {
-        if (model.GetComponent<SkinnedMeshRenderer>() != null)
+        if (gameObject.tag == "WurmCore")
         {
-            model.GetComponent<SkinnedMeshRenderer>().material.color = curColor;
+            foreach (GameObject model in wurmModel)
+            {
+                model.GetComponent<MeshRenderer>().material.color = curColor;
+            }
+            
         }
         else
         {
-            model.GetComponent<MeshRenderer>().material.color = curColor;
+            model.GetComponent<SkinnedMeshRenderer>().material.color = curColor;
         }
     }
 
-
+    
     void OnChangeHealth(float amount)
     {
         currentHealth = amount;

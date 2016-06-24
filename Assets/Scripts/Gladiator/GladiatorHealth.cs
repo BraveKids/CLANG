@@ -13,16 +13,15 @@ public class GladiatorHealth : NetworkBehaviour
     public GameObject model;
     Color curColor;
     // The slider to represent how much health the tank currently has.
-    public Image m_FillImage;                         // The image component of the slider.
+    public Image healthBar;                         // The image component of the slider.
+    public Image armorBar;
     public Color m_FullHealthColor = Color.green;     // The color the health bar will be when on full health.
     public Color m_ZeroHealthColor = Color.red;       // The color the health bar will be when on no health.
     public GameObject m_PlayerRenderers;                // References to all the gameobjects that need to be disabled when the tank is dead.
     public GladiatorSetup m_Setup;
     public GladiatorManager m_Manager;                   //Associated manager, to disable control when dying.
-    RectTransform healthBar;
-    RectTransform armorBar;
     [SyncVar(hook = "OnCurrentHealthChanged")]
-    public float m_CurrentHealth;                  // How much health the tank currently has.*
+    public float m_CurrentHealth = 32f;                  // How much health the tank currently has.*
     [SyncVar(hook = "OnCurrentArmorChanged")]
     public float m_Armor;
     [SyncVar]
@@ -33,22 +32,25 @@ public class GladiatorHealth : NetworkBehaviour
     NetworkAnimator netAnim;
     GladiatorShooting attackScript;
     GladiatorMovement movementScript;
+
     void Start()
     {
-        movementScript = GetComponent<GladiatorMovement>();
-        attackScript = GetComponent<GladiatorShooting>();
-        anim = GetComponent<Animator>();
-        netAnim = GetComponent<NetworkAnimator>();
         invulnerable = false;
         curColor = model.GetComponent<SkinnedMeshRenderer>().material.color;
         m_Collider = GetComponent<BoxCollider>();
         GameElements.getStrategist().GetComponent<CrowdIA>().enabled = true;
         if (isLocalPlayer)
         {
-            healthBar = GameObject.FindGameObjectWithTag("HealthBar").GetComponent<RectTransform>();
-            armorBar = GameObject.FindGameObjectWithTag("ArmorBar").GetComponent<RectTransform>();
+            healthBar = GameObject.FindGameObjectWithTag("HealthBar").GetComponent<Image>();
+            armorBar = GameObject.FindGameObjectWithTag("ArmorBar").GetComponent<Image>();
         }
+        movementScript = GetComponent<GladiatorMovement>();
+        attackScript = GetComponent<GladiatorShooting>();
+        anim = GetComponent<Animator>();
+        netAnim = GetComponent<NetworkAnimator>();
     }
+
+ 
     public void Recover(float amount)
     {
         if (m_CurrentHealth < m_StartingHealth)
@@ -85,13 +87,15 @@ public class GladiatorHealth : NetworkBehaviour
     {
         if (!invulnerable)
         {
-            //movementScript.setAttacking(true);
+            invulnerable = true;
+            Invoke("Vulnerable", 1.5f);
             attackScript.damaged = true;
+            movementScript.setAttacking(true);
+          
+            netAnim.SetTrigger("Damage");
+            DamageColor();
+            Invoke("NotDamaged", 0.5f);
 
-            CmdSetAnimTrigger("Damage");
-
-            
-                Invoke("NotDamaged", 1f);
             float calculatedDamage = amount - (m_Resistance * 0.15f);
             if (calculatedDamage <= 0.0f)
             {
@@ -116,27 +120,26 @@ public class GladiatorHealth : NetworkBehaviour
 
                 // Reduce current health by the amount of damage done.
                 m_CurrentHealth -= calculatedDamage;
-                invulnerable = true;
-               
-                Invoke("Vulnerable", 2f);
+                
+                
             }
-            DamageColor();
+            
             // If the current health is at or below zero and it has not yet been registered, call OnZeroHealth.
-            if (m_CurrentHealth <= 0f && !m_ZeroHealthHappened)
+            if (m_CurrentHealth <= 0f)
             {
                 movementScript.setAttacking(true);
                 attackScript.damaged = true;
 
                 CmdSetAnimTrigger("Death");
-                
-                    Invoke("OnZeroHealth", 2f);
+
+                Invoke("OnZeroHealth", 2f);
             }
+            
         }
     }
-
     void NotDamaged()
     {
-        //movementScript.setAttacking(false);
+        movementScript.setAttacking(false);
         attackScript.damaged = false;
     }
 
@@ -144,6 +147,7 @@ public class GladiatorHealth : NetworkBehaviour
     {
         invulnerable = false;
     }
+    
     private void DamageColor()
     {
 
@@ -151,12 +155,12 @@ public class GladiatorHealth : NetworkBehaviour
         Invoke("DamageColorBack", 0.5f);
 
     }
-
+    
     private void DamageColorBack()
     {
         model.GetComponent<SkinnedMeshRenderer>().material.color = curColor;
     }
-
+    
 
 
 
@@ -174,21 +178,22 @@ public class GladiatorHealth : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-
-            float value = m_CurrentHealth / m_StartingHealth;
-
-            healthBar.localScale = new Vector3(value, transform.localScale.y, transform.localScale.z);
+    
+            healthBar.fillAmount = mapValueTo01(m_CurrentHealth, 0f, m_StartingHealth);
         }
+    }
+
+    // Maps a value from some arbitrary range to the 0 to 1 range
+    public static float mapValueTo01(float value, float min, float max) {
+        return (value - min) * 1f / (max - min);
     }
 
     private void SetArmorUI()
     {
         if (isLocalPlayer)
         {
-
-            float value = m_Armor / m_MaxArmor;
-
-            armorBar.localScale = new Vector3(value, transform.localScale.y, transform.localScale.z);
+        
+            armorBar.fillAmount = mapValueTo01(m_Armor, 0, m_MaxArmor);
         }
     }
 
@@ -213,11 +218,24 @@ public class GladiatorHealth : NetworkBehaviour
     {
         // Set the flag so that this function is only called once.
         m_ZeroHealthHappened = true;
+        GameManager.s_Instance.messageCanvasObj.SetActive(true);
         GameManager.s_Instance.winner = "STRATEGIST";
         GameManager.s_Instance.SetGameWinner(GameElements.getStrategist());
-        GameManager.s_Instance.endGame = true;
+        GameManager.s_Instance.setEndGame(true);
+        
         InternalOnZeroHealth();
-        //RpcOnZeroHealth();
+       
+    }
+
+    private void OnDestroy()
+    {        
+        //GameObject.FindGameObjectWithTag("GameController").SetActive(false);
+        m_ZeroHealthHappened = true;
+        GameManager.s_Instance.messageCanvasObj.SetActive(true);
+        GameManager.s_Instance.winner = "STRATEGIST";
+        GameManager.s_Instance.SetGameWinner(GameElements.getStrategist());
+        GameManager.s_Instance.setEndGame(true);
+        InternalOnZeroHealth();
     }
 
     private void InternalOnZeroHealth()

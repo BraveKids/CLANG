@@ -19,7 +19,7 @@ public class StrategistCamera : MonoBehaviour {
     Plane[] planes;
     public bool debugMode = false;
 
-   
+
 
     //indicano i limiti dell'arena
     public float arenaBorderLR = 25f;
@@ -62,7 +62,7 @@ public class StrategistCamera : MonoBehaviour {
     float cameraHeightPlaneU;
     float cameraHeightPlaneD;
 
-    void Start() {
+    void Start () {
         arena = GameObject.FindGameObjectWithTag("Arena");
         camera = gameObject.GetComponent<Camera>();
 
@@ -72,7 +72,7 @@ public class StrategistCamera : MonoBehaviour {
         oppositeCameraAngle = 180 - cameraAngle;
         needleAngle = 180 - (oppositeCameraAngle + fieldOfViewMid);
         baseLeftAngle = 180 - (cameraAngle + fieldOfViewMid);
-        
+
         minY = arena.transform.position.y + distanceFromGround;
 
 
@@ -80,7 +80,7 @@ public class StrategistCamera : MonoBehaviour {
 
         ComputeAnything();
 
-        
+
 
 
 
@@ -90,44 +90,15 @@ public class StrategistCamera : MonoBehaviour {
         arenaBorderU = arena.transform.position.z + arenaBorderUL;
         arenaBorderD = arena.transform.position.z - arenaBorderDL;
         minY = arena.transform.position.y + distanceFromGround;
-        
+
     }
 
-    void Update() {
+    void Update () {
 
-        /* ComputeDistanceView();
-
-
-
-         adiacente = distanceView * Mathf.Cos(DegreeToRadian(cameraAngle));
-
-         cameraCenterOnArena = new Vector3(transform.position.x, arena.transform.position.y, transform.position.z + adiacente);
-
-         Debug.DrawLine(cameraCenterOnArena, new Vector3(transform.position.x, arena.transform.position.y + 5f, transform.position.z + adiacente));
-
-         //cameraHeightPlane/sin(fov/2)=distanceView/sin(needleAngle)
-         float cameraHeightPlaneU = (distanceView * Mathf.Sin(DegreeToRadian(fieldOfViewMid)) / Mathf.Sin(DegreeToRadian(needleAngle)));
-
-         // Debug.DrawLine(cameraCenterOnArena, new Vector3(cameraCenterOnArena.x, cameraCenterOnArena.y, cameraCenterOnArena.z + cameraHeightPlane),Color.red,2,false);
-
-         //cameraBorderU = transform.position.z + adiacente + (cameraBorder / aspectRatio);
-         //cameraBorderD = transform.position.z + adiacente - (cameraBorder / aspectRatio);
-
-         cameraBorderU = cameraCenterOnArena.z + cameraHeightPlaneU;
-
-         float cameraHeightPlaneD = distanceView * Mathf.Sin(DegreeToRadian(fieldOfViewMid)) / Mathf.Sin(DegreeToRadian(baseLeftAngle));
-         cameraBorderD = cameraCenterOnArena.z - cameraHeightPlaneD;
-         //distanceview:cameraHeightPlane=cameraHeight:x
-         float cameraHeight = transform.position.y - arena.transform.position.y;
-         float camera90Dept = cameraHeight * Mathf.Sin(DegreeToRadian(fieldOfViewMid)) / Mathf.Sin(DegreeToRadian(cameraAngle));
-
-         cameraBorderL = transform.position.x - (camera90Dept * camera.aspect);
-         cameraBorderR = transform.position.x + (camera90Dept * camera.aspect);
-         Debug.DrawLine(new Vector3(cameraBorderL, arena.transform.position.y, cameraCenterOnArena.z), new Vector3(cameraBorderL, arena.transform.position.y + 5f, cameraCenterOnArena.z), Color.red,0, false);
-         */
+      
 
 #if UNITY_EDITOR
-     
+
         DebugLine();
 
 #endif
@@ -147,8 +118,7 @@ public class StrategistCamera : MonoBehaviour {
             if (Input.touchCount == 2) {
                 pressing = true;
                 Zooming();
-            }
-            else if (Input.touchCount == 1) {
+            } else if (Input.touchCount == 1) {
                 pressing = true;
                 Panning();
             }
@@ -160,7 +130,7 @@ public class StrategistCamera : MonoBehaviour {
 
     }
 
-    void Panning() {
+    void Panning () {
         ComputeAnything();
 
         if (pointX == 0 && pointY == 0) { //first touch
@@ -175,16 +145,14 @@ public class StrategistCamera : MonoBehaviour {
         if (checkLeft() && moveX <= 0) {
             DebugTerm("You cannot pass!");
             moveX = 0;
-        }
-        else if (checkRight() && moveX >= 0) {
+        } else if (checkRight() && moveX >= 0) {
             DebugTerm("You cannot pass!");
             moveX = 0;
         }
         if (checkUp() && moveZ > 0) {
             DebugTerm("You cannot pass!");
             moveZ = 0;
-        }
-        else if (checkDown() && moveZ < 0) {
+        } else if (checkDown() && moveZ < 0) {
             DebugTerm("You cannot pass!");
             moveZ = 0; ;
         }
@@ -194,11 +162,11 @@ public class StrategistCamera : MonoBehaviour {
         pointX = Input.GetTouch(0).position.x;
         pointY = Input.GetTouch(0).position.y;
 
-        
+
 
     }
 
-    void Zooming() {
+    void Zooming () {
 
         ComputeAnything();
 
@@ -224,25 +192,17 @@ public class StrategistCamera : MonoBehaviour {
         if (deltaMagnitudeDiff < -maximumZoomSpeed) deltaMagnitudeDiff = -maximumZoomSpeed;
         if (deltaMagnitudeDiff > maximumZoomSpeed) deltaMagnitudeDiff = maximumZoomSpeed;
 
-        // Otherwise change the field of view based on the change in distance between the touches.
-        //camera.fieldOfView += deltaMagnitudeDiff * perspectiveZoomSpeed;
 
-        // Clamp the field of view to make sure it's between 0 and 180.
-        //camera.fieldOfView = Mathf.Clamp(camera.fieldOfView, 0.1f, 179.9f);
 
         if (transform.position.y < minY && deltaMagnitudeDiff <= 0) {
-            //DebugTerm("min limit");
+       
             return;
         }
-        /*
-        else if (transform.position.y > maxY && deltaMagnitudeDiff > 0) {
-            DebugTerm("max limit");
-        }*/
+       
         float moveX = 0;
         float moveY = 0;
 
         if (checkBorder() && deltaMagnitudeDiff > 0) {
-            //DebugTerm("Border touched while zooming");
             if (checkLeft() && !checkRight()) {
                 moveX = 1;
             }
@@ -267,7 +227,7 @@ public class StrategistCamera : MonoBehaviour {
 
     }
 
-    void FingersUp() {
+    void FingersUp () {
         DebugTerm("Fingers UP");
         pressing = false;
         onUi = false;
@@ -275,39 +235,34 @@ public class StrategistCamera : MonoBehaviour {
         pointY = 0;
     }
 
-    void ComputeDistanceView() {
+    void ComputeDistanceView () {
         cameraHeight = transform.position.y - arena.transform.position.y;
         float result = cameraHeight / Mathf.Sin(DegreeToRadian(cameraAngle));
         distanceView = result;
     }
 
-    void Compute90CameraDept() {
+    void Compute90CameraDept () {
         float cameraHeight = transform.position.y - arena.transform.position.y;
         camera90Dept = cameraHeight * Mathf.Sin(DegreeToRadian(fieldOfViewMid)) / Mathf.Sin(DegreeToRadian(cameraAngle));
     }
 
-   
 
-    /*float ComputeUBorder(float distance, float upAngle, float bottomAngle) {
 
-    }
-    float ComputeLRBorder(float distance) {
 
-    }*/
-    private float RadianToDegree(float angle) {
+    private float RadianToDegree (float angle) {
         return angle * (180 / Mathf.PI);
     }
 
-    private float DegreeToRadian(float angle) {
+    private float DegreeToRadian (float angle) {
         return Mathf.PI * angle / 180;
     }
 
-    void DebugLine() {
-        //Debug.DrawLine(transform.position,)
+    void DebugLine () {
+      
         adiacente = distanceView * Mathf.Cos(DegreeToRadian(cameraAngle));
         Debug.DrawLine(transform.position, new Vector3(transform.position.x, arena.transform.position.y, transform.position.z + adiacente), Color.green, 0, false);
         Debug.DrawLine(new Vector3(arena.transform.position.x, minY, arena.transform.position.z),
-            new Vector3(arena.transform.position.x, minY+5f, arena.transform.position.z), Color.red, 0, false);
+            new Vector3(arena.transform.position.x, minY + 5f, arena.transform.position.z), Color.red, 0, false);
 
 
         //Camera border
@@ -331,7 +286,7 @@ public class StrategistCamera : MonoBehaviour {
 
     }
 
-    void ComputeAnything() {
+    void ComputeAnything () {
         //Per trovare il punto centrale della camera
         ComputeDistanceView();
         adiacente = distanceView * Mathf.Cos(DegreeToRadian(cameraAngle));
@@ -351,43 +306,39 @@ public class StrategistCamera : MonoBehaviour {
         cameraBorderD = cameraCenterOnArena.z - cameraHeightPlaneD;
     }
 
-    bool checkBorder() {
+    bool checkBorder () {
         if (cameraBorderL < arenaBorderL) {
             DebugTerm("Limite sinistro");
             return true;
-        }
-        else if (cameraBorderR > arenaBorderR) {
+        } else if (cameraBorderR > arenaBorderR) {
             DebugTerm("Limite destro");
             return true;
-        }
-        else if (cameraBorderU > arenaBorderU) {
+        } else if (cameraBorderU > arenaBorderU) {
             DebugTerm("Limite superiore");
             return true;
-        }
-        else if (cameraBorderD < arenaBorderD) {
+        } else if (cameraBorderD < arenaBorderD) {
             DebugTerm("Limite inferiore");
             return true;
-        }
-        else return false;
+        } else return false;
     }
 
-    bool checkLeft() {
+    bool checkLeft () {
         return cameraBorderL <= arenaBorderL;
     }
 
-    bool checkRight() {
+    bool checkRight () {
         return cameraBorderR >= arenaBorderR;
     }
 
-    bool checkUp() {
+    bool checkUp () {
         return cameraBorderU >= arenaBorderU;
     }
 
-    bool checkDown() {
+    bool checkDown () {
         return cameraBorderD <= arenaBorderD;
     }
 
-    void DebugTerm(string text) {
+    void DebugTerm (string text) {
         if (debugMode) Debug.Log(text);
     }
 }

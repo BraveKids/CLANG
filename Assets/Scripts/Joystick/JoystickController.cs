@@ -3,7 +3,6 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 using System.Collections;
-using UnityStandardAssets.CrossPlatformInput;
 public class JoystickController : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
 {
     private Image joystick;

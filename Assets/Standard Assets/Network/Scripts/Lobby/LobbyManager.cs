@@ -7,7 +7,6 @@ using UnityEngine.Networking.Match;
 using System.Collections;
 using System.Collections.Generic;
 
-
 namespace UnityStandardAssets.Network
 {
     public class LobbyManager : NetworkLobbyManager 
@@ -16,14 +15,17 @@ namespace UnityStandardAssets.Network
         const int STRATEGIST = 0;
         const int GLADIATOR = 1;
         static public LobbyManager s_Singleton;
-
+        
         [Tooltip("The minimum number of players in the lobby before player can be ready")]
         public int minPlayer;
 
         public LobbyTopPanel topPanel;
-
+        public Image background;
+        
         public RectTransform mainMenuPanel;
         public RectTransform lobbyPanel;
+        public RectTransform creditsPanel;
+        public RectTransform roundEndPanel;
 
         public LobbyInfoPanel infoPanel;
 
@@ -41,6 +43,8 @@ namespace UnityStandardAssets.Network
         protected ulong _currentMatchID;
 
         protected LobbyHook _lobbyHooks;
+        public bool endGame = false;
+        public bool disconnectedStrategist = false;
 
         void Awake()
         {
@@ -58,6 +62,8 @@ namespace UnityStandardAssets.Network
             backButton.gameObject.SetActive(false);
             GetComponent<Canvas>().enabled = true;
 
+            background = GetComponent<Image>();
+
             DontDestroyOnLoad(gameObject);
             currentPlayers = new Dictionary<int, int>();
             SetServerInfo("Offline", "None");
@@ -70,10 +76,10 @@ namespace UnityStandardAssets.Network
 
             if (SceneManager.GetActiveScene().name == lobbyScene)
             {
+                background.enabled = true;
                 if (topPanel.isInGame)
                 {
                     
-                    //ChangeTo(lobbyPanel); //leave the lobby to prevent problems
                     if (isMatchmaking)
                     {                        
                         if (conn.playerControllers[0].unetView.isServer)
@@ -100,6 +106,7 @@ namespace UnityStandardAssets.Network
                 }
                 else
                 {
+                    Debug.Log("menu da Lobby manager - OnlobbyClientSceneChanged");
                     ChangeTo(mainMenuPanel);
                 }
 
@@ -112,6 +119,7 @@ namespace UnityStandardAssets.Network
                 ChangeTo(null);
 
                 Destroy(GameObject.Find("MainMenuUI(Clone)"));
+                background.enabled = false;
 
                 backDelegate = StopGameClbk;
                 topPanel.isInGame = true;
@@ -143,6 +151,17 @@ namespace UnityStandardAssets.Network
                 SetServerInfo("Offline", "None");
                 isMatchmaking = false;
             }
+
+            if (newPanel == creditsPanel) {
+                backDelegate = SimpleBackClbk;
+            }
+
+            if (newPanel == roundEndPanel)
+            {
+                backButton.gameObject.SetActive(false);
+                topPanel.isInGame = false;
+                background.enabled = true;
+            }
         }
 
         public void DisplayIsConnecting()
@@ -169,6 +188,7 @@ namespace UnityStandardAssets.Network
 
         public void SimpleBackClbk()
         {
+
             ChangeTo(mainMenuPanel);
         }
 
@@ -184,7 +204,6 @@ namespace UnityStandardAssets.Network
                 StopHost();
             }
 
-            
             ChangeTo(mainMenuPanel);
         }
 
@@ -202,6 +221,7 @@ namespace UnityStandardAssets.Network
 
         public void StopServerClbk()
         {
+    
             StopServer();
             ChangeTo(mainMenuPanel);
         }
@@ -371,12 +391,32 @@ namespace UnityStandardAssets.Network
 
         public override void OnClientDisconnect(NetworkConnection conn)
         {
-            base.OnClientDisconnect(conn);
-            ChangeTo(mainMenuPanel);
+
+            
+            if (endGame)
+            {
+                Debug.Log("Fine normale");
+                base.OnClientDisconnect(conn);
+                ChangeTo(mainMenuPanel);
+            }
+            else
+            {
+                Debug.Log("Fine brutale");
+                ChangeTo(roundEndPanel);
+            }
+
+        }
+
+        public override void OnStopHost()
+        {
+   
+
+            base.OnStopHost();
         }
 
         public override void OnClientError(NetworkConnection conn, int errorCode)
         {
+            
             ChangeTo(mainMenuPanel);
             infoPanel.Display("Client error : " + (errorCode == 6 ? "timeout" : errorCode.ToString()), "Close", null);
         }

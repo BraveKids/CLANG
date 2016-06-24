@@ -2,45 +2,31 @@
 using UnityEngine.UI;
 using System.Collections;
 
-namespace UnityStandardAssets.Network
-{
-    public class LobbyTopPanel : MonoBehaviour
-    {
+namespace UnityStandardAssets.Network {
+    public class LobbyTopPanel : MonoBehaviour {
         public bool isInGame = false;
 
         protected bool isDisplayed = true;
-        protected Image panelImage;
-
-        void Start()
-        {
-            panelImage = GetComponent<Image>();
-        }
+        public GameObject mainLogo;
 
 
-        void Update()
-        {
-            if (!isInGame)
-                return;
-
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
+        void Update () {
+            if (Input.GetKeyDown(KeyCode.Escape) && isInGame) {
                 ToggleVisibility(!isDisplayed);
             }
-
+            if (Input.GetKeyDown(KeyCode.Escape) && !isInGame) {
+                Application.Quit();
+            }
+            mainLogo.SetActive(!isInGame);
         }
 
-        public void ToggleVisibility(bool visible)
-        {
+        public void ToggleVisibility (bool visible) {
             isDisplayed = visible;
-            foreach (Transform t in transform)
-            {
+            foreach (Transform t in transform) {
                 t.gameObject.SetActive(isDisplayed);
             }
 
-            if (panelImage != null)
-            {
-                panelImage.enabled = isDisplayed;
-            }
+
         }
     }
 }

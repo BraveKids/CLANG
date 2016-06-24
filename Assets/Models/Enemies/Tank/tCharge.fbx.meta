@@ -1,0 +1,331 @@
+fileFormatVersion: 2
+guid: 2f07b21d9dbdf214a9451bc73927c550
+timeCreated: 1466410892
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: Box004
+    100002: Box008
+    100004: Box009
+    100006: Cylinder001
+    100008: Group001
+    100010: Group002
+    100012: Group003
+    100014: mixamorig:Head
+    100016: mixamorig:HeadTop_End
+    100018: mixamorig:Hips
+    100020: mixamorig:LeftArm
+    100022: mixamorig:LeftFoot
+    100024: mixamorig:LeftForeArm
+    100026: mixamorig:LeftHand
+    100028: mixamorig:LeftLeg
+    100030: mixamorig:LeftShoulder
+    100032: mixamorig:LeftToe_End
+    100034: mixamorig:LeftToeBase
+    100036: mixamorig:LeftUpLeg
+    100038: mixamorig:Neck
+    100040: mixamorig:RightArm
+    100042: mixamorig:RightFoot
+    100044: mixamorig:RightForeArm
+    100046: mixamorig:RightHand
+    100048: mixamorig:RightLeg
+    100050: mixamorig:RightShoulder
+    100052: mixamorig:RightToe_End
+    100054: mixamorig:RightToeBase
+    100056: mixamorig:RightUpLeg
+    100058: mixamorig:Spine
+    100060: mixamorig:Spine1
+    100062: mixamorig:Spine2
+    100064: Pyramid001
+    100066: Pyramid002
+    100068: Pyramid003
+    100070: Pyramid004
+    100072: Pyramid005
+    100074: Pyramid006
+    100076: Pyramid007
+    100078: Pyramid008
+    100080: Pyramid009
+    100082: Pyramid010
+    100084: Pyramid011
+    100086: Pyramid012
+    100088: Pyramid013
+    100090: Pyramid014
+    100092: Sphere001
+    100094: //RootNode
+    400000: Box004
+    400002: Box008
+    400004: Box009
+    400006: Cylinder001
+    400008: Group001
+    400010: Group002
+    400012: Group003
+    400014: mixamorig:Head
+    400016: mixamorig:HeadTop_End
+    400018: mixamorig:Hips
+    400020: mixamorig:LeftArm
+    400022: mixamorig:LeftFoot
+    400024: mixamorig:LeftForeArm
+    400026: mixamorig:LeftHand
+    400028: mixamorig:LeftLeg
+    400030: mixamorig:LeftShoulder
+    400032: mixamorig:LeftToe_End
+    400034: mixamorig:LeftToeBase
+    400036: mixamorig:LeftUpLeg
+    400038: mixamorig:Neck
+    400040: mixamorig:RightArm
+    400042: mixamorig:RightFoot
+    400044: mixamorig:RightForeArm
+    400046: mixamorig:RightHand
+    400048: mixamorig:RightLeg
+    400050: mixamorig:RightShoulder
+    400052: mixamorig:RightToe_End
+    400054: mixamorig:RightToeBase
+    400056: mixamorig:RightUpLeg
+    400058: mixamorig:Spine
+    400060: mixamorig:Spine1
+    400062: mixamorig:Spine2
+    400064: Pyramid001
+    400066: Pyramid002
+    400068: Pyramid003
+    400070: Pyramid004
+    400072: Pyramid005
+    400074: Pyramid006
+    400076: Pyramid007
+    400078: Pyramid008
+    400080: Pyramid009
+    400082: Pyramid010
+    400084: Pyramid011
+    400086: Pyramid012
+    400088: Pyramid013
+    400090: Pyramid014
+    400092: Sphere001
+    400094: //RootNode
+    4300000: Box004
+    4300002: Pyramid002
+    4300004: Pyramid003
+    4300006: Pyramid004
+    4300008: Sphere001
+    4300010: Cylinder001
+    4300012: Pyramid001
+    4300014: Pyramid009
+    4300016: Pyramid008
+    4300018: Pyramid005
+    4300020: Pyramid007
+    4300022: Pyramid006
+    4300024: Box008
+    4300026: Pyramid010
+    4300028: Pyramid011
+    4300030: Pyramid012
+    4300032: Pyramid013
+    4300034: Pyramid014
+    4300036: Box009
+    7400000: TankCharge
+    9500000: //RootNode
+    13700000: Box004
+    13700002: Box008
+    13700004: Box009
+    13700006: Cylinder001
+    13700008: Pyramid001
+    13700010: Pyramid002
+    13700012: Pyramid003
+    13700014: Pyramid004
+    13700016: Pyramid005
+    13700018: Pyramid006
+    13700020: Pyramid007
+    13700022: Pyramid008
+    13700024: Pyramid009
+    13700026: Pyramid010
+    13700028: Pyramid011
+    13700030: Pyramid012
+    13700032: Pyramid013
+    13700034: Pyramid014
+    13700036: Sphere001
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleRotations: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: TankCharge
+      takeName: Take 001
+      firstFrame: 1
+      lastFrame: 120
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 72.5
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 1
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Box004
+        weight: 1
+      - path: Group001
+        weight: 1
+      - path: Group001/Cylinder001
+        weight: 1
+      - path: Group001/Pyramid001
+        weight: 1
+      - path: Group001/Pyramid002
+        weight: 1
+      - path: Group001/Pyramid003
+        weight: 1
+      - path: Group001/Pyramid004
+        weight: 1
+      - path: Group001/Sphere001
+        weight: 1
+      - path: Group002
+        weight: 1
+      - path: Group002/Box008
+        weight: 1
+      - path: Group002/Pyramid005
+        weight: 1
+      - path: Group002/Pyramid006
+        weight: 1
+      - path: Group002/Pyramid007
+        weight: 1
+      - path: Group002/Pyramid008
+        weight: 1
+      - path: Group002/Pyramid009
+        weight: 1
+      - path: Group003
+        weight: 1
+      - path: Group003/Box009
+        weight: 1
+      - path: Group003/Pyramid010
+        weight: 1
+      - path: Group003/Pyramid011
+        weight: 1
+      - path: Group003/Pyramid012
+        weight: 1
+      - path: Group003/Pyramid013
+        weight: 1
+      - path: Group003/Pyramid014
+        weight: 1
+      - path: mixamorig:Hips
+        weight: 1
+      - path: mixamorig:Hips/mixamorig:LeftUpLeg
+        weight: 1
+      - path: mixamorig:Hips/mixamorig:LeftUpLeg/mixamorig:LeftLeg
+        weight: 1
+      - path: mixamorig:Hips/mixamorig:LeftUpLeg/mixamorig:LeftLeg/mixamorig:LeftFoot
+        weight: 1
+      - path: mixamorig:Hips/mixamorig:LeftUpLeg/mixamorig:LeftLeg/mixamorig:LeftFoot/mixamorig:LeftToeBase
+        weight: 1
+      - path: mixamorig:Hips/mixamorig:LeftUpLeg/mixamorig:LeftLeg/mixamorig:LeftFoot/mixamorig:LeftToeBase/mixamorig:LeftToe_End
+        weight: 1
+      - path: mixamorig:Hips/mixamorig:RightUpLeg
+        weight: 1
+      - path: mixamorig:Hips/mixamorig:RightUpLeg/mixamorig:RightLeg
+        weight: 1
+      - path: mixamorig:Hips/mixamorig:RightUpLeg/mixamorig:RightLeg/mixamorig:RightFoot
+        weight: 1
+      - path: mixamorig:Hips/mixamorig:RightUpLeg/mixamorig:RightLeg/mixamorig:RightFoot/mixamorig:RightToeBase
+        weight: 1
+      - path: mixamorig:Hips/mixamorig:RightUpLeg/mixamorig:RightLeg/mixamorig:RightFoot/mixamorig:RightToeBase/mixamorig:RightToe_End
+        weight: 1
+      - path: mixamorig:Hips/mixamorig:Spine
+        weight: 1
+      - path: mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1
+        weight: 1
+      - path: mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1/mixamorig:Spine2
+        weight: 1
+      - path: mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1/mixamorig:Spine2/mixamorig:LeftShoulder
+        weight: 1
+      - path: mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1/mixamorig:Spine2/mixamorig:LeftShoulder/mixamorig:LeftArm
+        weight: 1
+      - path: mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1/mixamorig:Spine2/mixamorig:LeftShoulder/mixamorig:LeftArm/mixamorig:LeftForeArm
+        weight: 1
+      - path: mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1/mixamorig:Spine2/mixamorig:LeftShoulder/mixamorig:LeftArm/mixamorig:LeftForeArm/mixamorig:LeftHand
+        weight: 1
+      - path: mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1/mixamorig:Spine2/mixamorig:Neck
+        weight: 1
+      - path: mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1/mixamorig:Spine2/mixamorig:Neck/mixamorig:Head
+        weight: 1
+      - path: mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1/mixamorig:Spine2/mixamorig:Neck/mixamorig:Head/mixamorig:HeadTop_End
+        weight: 1
+      - path: mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1/mixamorig:Spine2/mixamorig:RightShoulder
+        weight: 1
+      - path: mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1/mixamorig:Spine2/mixamorig:RightShoulder/mixamorig:RightArm
+        weight: 1
+      - path: mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1/mixamorig:Spine2/mixamorig:RightShoulder/mixamorig:RightArm/mixamorig:RightForeArm
+        weight: 1
+      - path: mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1/mixamorig:Spine2/mixamorig:RightShoulder/mixamorig:RightArm/mixamorig:RightForeArm/mixamorig:RightHand
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

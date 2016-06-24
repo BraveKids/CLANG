@@ -7,16 +7,16 @@ using System.Collections;
 public class ButtonScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
 {
     public string command;
-    public GameObject trigger;
+    //public GameObject trigger;
     GameObject player;
     private Image bgImg;
-    public Color triggerColor;
+    //public Color triggerColor;
     private void Start()
     {
         player = GameElements.getGladiator();
         bgImg = GetComponent<Image>();
   
-        trigger.SetActive(false);
+        //trigger.SetActive(false);
 
 
     }
@@ -25,7 +25,7 @@ public class ButtonScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandle
         Vector2 pos;
         if (RectTransformUtility.ScreenPointToLocalPointInRectangle(bgImg.rectTransform, ped.position, ped.pressEventCamera, out pos))
         {
-            trigger.SetActive(true);
+            //trigger.SetActive(true);
             Debug.Log("ButtonPressed");
             player.GetComponent<GladiatorShooting>().CommandInterpreter(command);
 
@@ -34,7 +34,7 @@ public class ButtonScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandle
 
     public virtual void OnPointerUp(PointerEventData ped)
     {
-        trigger.SetActive(false);
+        //trigger.SetActive(false);
         
     }
     }

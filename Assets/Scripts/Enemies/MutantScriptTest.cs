@@ -11,12 +11,10 @@ public class MutantScriptTest : NetworkBehaviour
     public float distance;
     public float angle;
     Rigidbody rb;
-    Vector3 direction;
-    Vector3 velocity;
     public bool attack;
     public bool damaged;
     public int numOfAttack = 0;
-    bool stoppedBefore;
+
     public GameObject attackTrigger;
     AILerp agent;
     IEnumerator cor;
@@ -55,7 +53,7 @@ public class MutantScriptTest : NetworkBehaviour
 
        
       
-        stoppedBefore = false;
+        
         attack = false;
         damaged = false;
         netAnim = GetComponent<NetworkAnimator>();
@@ -76,14 +74,16 @@ public class MutantScriptTest : NetworkBehaviour
 
         if (distance <= 2.5f)
         {
+            agent.speed = 0f;
             agent.canMove = false;
             transform.LookAt(target.transform);
-            stoppedBefore = true;
+            
             attack = true;
             
         }
         else
         {
+            agent.speed = 4f;
             m_animator.SetBool("Attack", false);
             agent.canMove = true;
             attack = false;
@@ -100,9 +100,9 @@ public class MutantScriptTest : NetworkBehaviour
             {
 
                 m_animator.SetBool("Attack", true);
-                Invoke("AttackUp", 0.6f);
+                Invoke("AttackUp", 0.8f);
 
-                yield return new WaitForSeconds(2.3f);
+                yield return new WaitForSeconds(1.6f);
 
             }
             else
@@ -135,7 +135,7 @@ public class MutantScriptTest : NetworkBehaviour
  
     public void Damage()
     {
-        m_animator.SetTrigger("Damage");
+        //m_animator.SetTrigger("Damage");
         netAnim.SetTrigger("Damage");
         damaged = true;
         attack = false;
@@ -161,7 +161,7 @@ public class MutantScriptTest : NetworkBehaviour
 
     public void Death()
     {
-        m_animator.SetTrigger("Death");
+        //m_animator.SetTrigger("Death");
         netAnim.SetTrigger("Death");
         attack = false;
         damaged = true;

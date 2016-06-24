@@ -5,8 +5,7 @@ using UnityEngine.Networking;
 using System.Collections.Generic;
 using UnityStandardAssets.Network;
 
-public class GameManager : NetworkBehaviour
-{
+public class GameManager : NetworkBehaviour {
     static public GameManager s_Instance;
 
     //this is static so tank can be added even withotu the scene loaded (i.e. from lobby)
@@ -33,6 +32,7 @@ public class GameManager : NetworkBehaviour
     [Header("UI")]
     public CanvasGroup m_FadingScreen;
     public CanvasGroup m_EndRoundScreen;
+    public GameObject messageCanvasObj;
 
     private int m_RoundNumber;                  // Which round the game is currently on.
     private WaitForSeconds m_StartWait;         // Used to have a delay whilst the round starts.
@@ -42,14 +42,12 @@ public class GameManager : NetworkBehaviour
     // Reference to the winner of the game.  Used to make an announcement of who won.
 
     private GameObject GameWinner;
-    void Awake()
-    {
+    void Awake () {
         s_Instance = this;
     }
 
     [ServerCallback]
-    private void Start()
-    {
+    private void Start () {
         // Create the delays so they only have to be made once.
         m_StartWait = new WaitForSeconds(m_StartDelay);
         m_EndWait = new WaitForSeconds(m_EndDelay);
@@ -57,6 +55,8 @@ public class GameManager : NetworkBehaviour
         // Once the tanks have been created and the camera is using them as targets, start the game.
         StartCoroutine(GameLoop());
     }
+
+
 
 
     /// <summary>
@@ -67,10 +67,8 @@ public class GameManager : NetworkBehaviour
     /// <param name="c">The color of the player, choosen in the lobby</param>
     /// <param name="name">The name of the Player, choosen in the lobby</param>
     /// <param name="localID">The localID. e.g. if 2 player are on the same machine this will be 1 & 2</param>
-    static public void AddPlayer(GameObject player, int playerNum, Color c, string name, int localID)
-    {
-        if (playerNum == 0)
-        {
+    static public void AddPlayer (GameObject player, int playerNum, Color c, string name, int localID) {
+        if (playerNum == 0) {
 
             StrategistManager tmp = new StrategistManager();
             tmp.m_Instance = player;
@@ -81,9 +79,7 @@ public class GameManager : NetworkBehaviour
             tmp.Setup();
             GameElements.setStrategist(player);
             m_Players.Add(tmp);
-        }
-        else if (playerNum == 1)
-        {
+        } else if (playerNum == 1) {
             GladiatorManager tmp = new GladiatorManager();
             tmp.m_Instance = player;
             tmp.m_PlayerNumber = playerNum;
@@ -98,13 +94,10 @@ public class GameManager : NetworkBehaviour
         }
     }
 
-    public void RemovePlayer(GameObject tank)
-    {
+    public void RemovePlayer (GameObject tank) {
         Manager toRemove = null;
-        foreach (var tmp in m_Players)
-        {
-            if (tmp.m_Instance == tank)
-            {
+        foreach (var tmp in m_Players) {
+            if (tmp.m_Instance == tank) {
                 toRemove = tmp;
                 break;
             }
@@ -115,8 +108,7 @@ public class GameManager : NetworkBehaviour
     }
 
     // This is called from start and will run each phase of the game one after another. ONLY ON SERVER (as Start is only called on server)
-    private IEnumerator GameLoop()
-    {
+    private IEnumerator GameLoop () {
 
         while (m_Players.Count < 2)
             yield return null;
@@ -134,20 +126,18 @@ public class GameManager : NetworkBehaviour
         yield return StartCoroutine(RoundEnding());
 
         // This code is not run until 'RoundEnding' has finished.  At which point, check if there is a winner of the game.
-        if (GameWinner != null)
-        {// If there is a game winner, wait for certain amount or all player confirmed to start a game again
+        if (GameWinner != null) {// If there is a game winner, wait for certain amount or all player confirmed to start a game again
             m_GameIsFinished = true;
-            float leftWaitTime = 15.0f;
+            float leftWaitTime = 5.0f;
             bool allAreReady = false;
-            int flooredWaitTime = 15;
+            int flooredWaitTime = 5;
+            messageCanvasObj.SetActive(true);
 
-            while (leftWaitTime > 0.0f && !allAreReady)
-            {
+            while (leftWaitTime > 0.0f && !allAreReady) {
                 yield return null;
 
                 allAreReady = true;
-                foreach (var tmp in m_Players)
-                {
+                foreach (var tmp in m_Players) {
                     allAreReady &= tmp.IsReady();
                 }
 
@@ -155,18 +145,17 @@ public class GameManager : NetworkBehaviour
 
                 int newFlooredWaitTime = Mathf.FloorToInt(leftWaitTime);
 
-                if (newFlooredWaitTime != flooredWaitTime)
-                {
+                if (newFlooredWaitTime != flooredWaitTime) {
                     flooredWaitTime = newFlooredWaitTime;
                     string message = EndMessage(flooredWaitTime);
                     RpcUpdateMessage(message);
                 }
             }
-
+            Debug.Log("menu da game manager - Game loop");
             LobbyManager.s_Singleton.ServerReturnToLobby();
-        }
-        else
-        {
+
+
+        } else {
             // If there isn't a winner yet, restart this coroutine so the loop continues.
             // Note that this coroutine doesn't yield.  This means that the current version of the GameLoop will end.
             StartCoroutine(GameLoop());
@@ -174,8 +163,7 @@ public class GameManager : NetworkBehaviour
     }
 
 
-    private IEnumerator RoundStarting()
-    {
+    private IEnumerator RoundStarting () {
         //we notify all clients that the round is starting
         RpcRoundStarting();
 
@@ -184,8 +172,7 @@ public class GameManager : NetworkBehaviour
     }
 
     [ClientRpc]
-    void RpcRoundStarting()
-    {
+    void RpcRoundStarting () {
 
         // As soon as the round starts reset the tanks and make sure they can't move.
         ResetAllPlayers();
@@ -196,21 +183,21 @@ public class GameManager : NetworkBehaviour
 
         // Increment the round number and display text showing the players what round it is.
         m_RoundNumber++;
-        m_MessageText.text = "ROUND " + m_RoundNumber;
+        //Do not show this because we have only one round
+        //m_MessageText.text = "ROUND " + m_RoundNumber;
 
 
         StartCoroutine(ClientRoundStartingFade());
     }
 
-    private IEnumerator ClientRoundStartingFade()
-    {
+    private IEnumerator ClientRoundStartingFade () {
         float elapsedTime = 0.0f;
         float wait = m_StartDelay - 0.5f;
 
         yield return null;
 
-        while (elapsedTime < wait)
-        {
+        messageCanvasObj.SetActive(true);
+        while (elapsedTime < wait) {
             if (m_RoundNumber == 1)
                 m_FadingScreen.alpha = 1.0f - (elapsedTime / wait);
             else
@@ -224,17 +211,17 @@ public class GameManager : NetworkBehaviour
 
             yield return null;
         }
+
+        messageCanvasObj.SetActive(false);
     }
 
-    private IEnumerator RoundPlaying()
-    {
+    private IEnumerator RoundPlaying () {
         GameElements.getStrategist().GetComponent<GameTimer>().enabled = true;
         //notify clients that the round is now started, they should allow player to move.
         RpcRoundPlaying();
 
         // While there is not one tank left...
-        while (!GameIsFinished())
-        {
+        while (!GameIsFinished()) {
             // ... return on the next frame.
             yield return null;
         }
@@ -243,10 +230,7 @@ public class GameManager : NetworkBehaviour
     }
 
     [ClientRpc]
-    void RpcRoundPlaying()
-    {
-        GameElements.GetSoundManager().SetBackgroundMusic("gameMusic");
-
+    void RpcRoundPlaying () {
         // As soon as the round begins playing let the players control the tanks.
         EnablePlayerControl();
 
@@ -254,8 +238,7 @@ public class GameManager : NetworkBehaviour
         m_MessageText.text = string.Empty;
     }
 
-    private IEnumerator RoundEnding()
-    {
+    private IEnumerator RoundEnding () {
 
 
         RpcUpdateMessage(EndMessage(0));
@@ -268,24 +251,20 @@ public class GameManager : NetworkBehaviour
     }
 
     [ClientRpc]
-    private void RpcRoundEnding()
-    {
+    private void RpcRoundEnding () {
         DisablePlayerControl();
         StartCoroutine(ClientRoundEndingFade());
     }
 
     [ClientRpc]
-    private void RpcUpdateMessage(string msg)
-    {
+    private void RpcUpdateMessage (string msg) {
         m_MessageText.text = msg;
     }
 
-    private IEnumerator ClientRoundEndingFade()
-    {
+    private IEnumerator ClientRoundEndingFade () {
         float elapsedTime = 0.0f;
         float wait = m_EndDelay;
-        while (elapsedTime < wait)
-        {
+        while (elapsedTime < wait) {
             m_EndRoundScreen.alpha = (elapsedTime / wait);
 
             elapsedTime += Time.deltaTime;
@@ -311,9 +290,12 @@ public class GameManager : NetworkBehaviour
         //return numPlayersLeft <= 1;
         return timeUp;
     }*/
+    public void setEndGame (bool setter) {
+        endGame = setter;
+        LobbyManager.s_Singleton.endGame = setter;
+    }
 
-    private bool GameIsFinished()
-    {
+    private bool GameIsFinished () {
 
         return endGame;
     }
@@ -324,11 +306,9 @@ public class GameManager : NetworkBehaviour
     // This function is to find out if there is a winner of the round.
     // This function is called with the assumption that 1 or fewer tanks are currently active.
 
-    private Manager GetRoundWinner()
-    {
+    private Manager GetRoundWinner () {
         // Go through all the tanks...
-        for (int i = 0; i < m_Players.Count; i++)
-        {
+        for (int i = 0; i < m_Players.Count; i++) {
             // ... and if one of them is active, it is the winner so return it.
             if (m_Players[i].m_PlayerRenderers.activeSelf)
                 return m_Players[i];
@@ -340,20 +320,17 @@ public class GameManager : NetworkBehaviour
 
 
     // This function is to find out if there is a winner of the game.
-    private GameObject GetGameWinner()
-    {
+    private GameObject GetGameWinner () {
         return GameWinner;
     }
 
-    public void SetGameWinner(GameObject obj)
-    {
+    public void SetGameWinner (GameObject obj) {
         GameWinner = obj;
     }
 
 
     // Returns a string of each player's score in their tank's color.
-    private string EndMessage(int waitTime)
-    {
+    private string EndMessage (int waitTime) {
         // By default, there is no winner of the round so it's a draw.
         string message = "DRAW!";
 
@@ -365,45 +342,36 @@ public class GameManager : NetworkBehaviour
         // After either the message of a draw or a winner, add some space before the leader board.
         message += "\n\n";
 
-
-
         if (GameWinner != null)
-            message += "\n\nReturn to lobby in " + waitTime;
+            message += "\nReturn to lobby in " + waitTime;
 
         return message;
     }
 
 
     // This function is used to turn all the tanks back on and reset their positions and properties.
-    private void ResetAllPlayers()
-    {
-        for (int i = 0; i < m_Players.Count; i++)
-        {
+    private void ResetAllPlayers () {
+        for (int i = 0; i < m_Players.Count; i++) {
             m_Players[i].m_SpawnPoint = m_SpawnPoint[m_Players[i].m_Setup.m_PlayerNumber];
             m_Players[i].Reset();
         }
     }
 
 
-    private void EnablePlayerControl()
-    {
-        for (int i = 0; i < m_Players.Count; i++)
-        {
+    private void EnablePlayerControl () {
+        for (int i = 0; i < m_Players.Count; i++) {
             m_Players[i].EnableControl();
         }
     }
 
 
-    private void DisablePlayerControl()
-    {
+    private void DisablePlayerControl () {
         GameObject[] Enemies = GameObject.FindGameObjectsWithTag("Enemy");
-        foreach(GameObject enemy in Enemies)
-        {
+        foreach (GameObject enemy in Enemies) {
             enemy.SetActive(false);
-        } 
+        }
 
-        for (int i = 0; i < m_Players.Count; i++)
-        {
+        for (int i = 0; i < m_Players.Count; i++) {
             m_Players[i].DisableControl();
         }
     }

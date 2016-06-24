@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.Networking;
-public class CrowdIA : NetworkBehaviour {
+public class CrowdIA : NetworkBehaviour
+{
 
     DecisionTree CrowdTree;
     public float helpFrequency = 3f;
@@ -29,7 +30,7 @@ public class CrowdIA : NetworkBehaviour {
     public GameObject grenadePrefab;
     public GameObject armorPrefab;
     public GameObject mitePrefab;
-    
+
     public bool debugMode;
 
     public GameObject[] arenaElements;
@@ -37,8 +38,10 @@ public class CrowdIA : NetworkBehaviour {
 
     public int count;
 
-    void Start() {
-        if (!isLocalPlayer) {
+    void Start()
+    {
+        if (!isLocalPlayer)
+        {
             return;
         }
 
@@ -67,7 +70,7 @@ public class CrowdIA : NetworkBehaviour {
 
         CrowdTree = new DecisionTree(kingMaker);
         StartCoroutine(Patrol());
-        //DebugLine();
+        
 
         arenaBorderL = arena.transform.position.x - arenaLR;
         arenaBorderR = arena.transform.position.x + arenaLR;
@@ -77,14 +80,15 @@ public class CrowdIA : NetworkBehaviour {
     }
 
     // Update is called once per frame
-    void Update() {
+    void Update()
+    {
         float maxLife = GameElements.getMaxLife();
         float currentLife = GameElements.getGladiatorLife();
         strategistProbability = currentLife / maxLife;   //this goes from 0 to 1
-        //DebugLine();
+        
         int monsterCount = GameElements.getEnemyCount();
         armorProbability = 1 - Mathf.Exp(-lambdaArmor * monsterCount);
-        
+
         medpackProbability = maxMedpackProbability - (currentLife * maxMedpackProbability) / maxLife;
 
         count = GameElements.getEnemyCount();
@@ -101,15 +105,17 @@ public class CrowdIA : NetworkBehaviour {
     *   the more the life is full the highest the probability to help the strategist
     *   Linear distribution
     */
-    object StrategistDice() {
+    object StrategistDice()
+    {
         float maxLife = GameElements.getMaxLife();
         float currentLife = GameElements.getGladiatorLife();
         strategistProbability = currentLife / maxLife;   //this goes from 0 to 1
         return Random.value <= strategistProbability ? "strategist" : "gladiator";
     }
 
-    //fixed probability
-    object ArmorDice() {
+    //Armor probability
+    object ArmorDice()
+    {
         if (GameElements.getArmorDropped() || GameElements.getGladiatorArmor() > 0)
             return false;
         int monsterCount = GameElements.getEnemyCount();
@@ -118,7 +124,8 @@ public class CrowdIA : NetworkBehaviour {
     }
 
     //it goes to a minimum of 0% to a maximum of maxMedpackProbability
-    object MedpackDice() {
+    object MedpackDice()
+    {
         if (GameElements.getMedDropped())
             return false;
         float maxLife = GameElements.getMaxLife();
@@ -128,15 +135,17 @@ public class CrowdIA : NetworkBehaviour {
     }
 
     //fixed probability
-    object WeaponDice() {
+    object WeaponDice()
+    {
         float halfMaxIntegrity = GameElements.getMaxIntegrity() * 0.5f;
         if (GameElements.getGladiator().GetComponent<GladiatorShooting>().grenadeTaken || GameElements.getWeaponDropped() || (GameElements.getIntegrity() > halfMaxIntegrity))
             return false;
         return Random.value < weaponProbability ? true : false;
     }
 
-    //not a real dice but...
-    object MiteDice() {
+    //fixed probability
+    object MiteDice()
+    {
         if (GameElements.getEnemyCount() <= monsterTrheshold)
             return Random.value < miteProbability ? true : false;
         return false;
@@ -148,7 +157,8 @@ public class CrowdIA : NetworkBehaviour {
     *
     */
 
-    void DropWeapon() {
+    void DropWeapon()
+    {
         GameElements.setWeaponDropped(true);
 
         if (Random.value <= .5f)
@@ -161,15 +171,19 @@ public class CrowdIA : NetworkBehaviour {
 
     }
 
-    void DropMite() {
-        gameObject.GetComponent<StrategistSpawner>().Spawn(mitePrefab, itemSpawnPoint());
+    void DropMite()
+    {
+        Vector3 correctSpawnPos = itemSpawnPoint();
+        correctSpawnPos.y = 0.2f;
+        gameObject.GetComponent<StrategistSpawner>().Spawn(mitePrefab, correctSpawnPos);
 
 
         DebugLine("MITE");
 
     }
 
-    void DropMedpack() {
+    void DropMedpack()
+    {
         gameObject.GetComponent<StrategistSpawner>().SetMedDropped();
         gameObject.GetComponent<StrategistSpawner>().Spawn(medPackPrefab, itemSpawnPoint());
 
@@ -177,7 +191,8 @@ public class CrowdIA : NetworkBehaviour {
 
     }
 
-    void DropArmor() {
+    void DropArmor()
+    {
         gameObject.GetComponent<StrategistSpawner>().SetArmorDropped();
         gameObject.GetComponent<StrategistSpawner>().Spawn(armorPrefab, itemSpawnPoint());
 
@@ -187,12 +202,16 @@ public class CrowdIA : NetworkBehaviour {
 
 
 
-    Vector3 itemSpawnPoint() {
-        while (true) {
+    Vector3 itemSpawnPoint()
+    {
+        while (true)
+        {
             bool isCorrect = true;
             Vector3 spawnPoint = RandomSpawnPoint();
-            foreach (GameObject elem in arenaElements) {
-                if (PointInOABB(spawnPoint, elem.GetComponent<BoxCollider>())) {
+            foreach (GameObject elem in arenaElements)
+            {
+                if (PointInOABB(spawnPoint, elem.GetComponent<BoxCollider>()))
+                {
                     isCorrect = false;
                     break;
                 }
@@ -202,14 +221,16 @@ public class CrowdIA : NetworkBehaviour {
 
     }
 
-    Vector3 RandomSpawnPoint() {
+    Vector3 RandomSpawnPoint()
+    {
         float spawnX = Random.Range(arenaBorderL, arenaBorderR);
         float spawnZ = Random.Range(arenaBorderU, arenaBorderD);
         Vector3 spawnPoint = new Vector3(spawnX, arena.transform.position.y + 1f, spawnZ);
         return spawnPoint;
     }
 
-    bool PointInOABB(Vector3 point, BoxCollider box) {
+    bool PointInOABB(Vector3 point, BoxCollider box)
+    {
         point = box.transform.InverseTransformPoint(point) - box.center;
 
         float halfX = (box.size.x * 0.5f);
@@ -223,7 +244,8 @@ public class CrowdIA : NetworkBehaviour {
             return false;
     }
 
-    void DebugLine() {
+    void DebugLine()
+    {
         arenaBorderL = arena.transform.position.x - arenaLR;
         arenaBorderR = arena.transform.position.x + arenaLR;
         arenaBorderD = arena.transform.position.z + arenaU;
@@ -238,14 +260,17 @@ public class CrowdIA : NetworkBehaviour {
         Debug.DrawLine(new Vector3(arenaX - 30f, arenaY, arenaBorderD), new Vector3(arenaX + 30f, arenaY, arenaBorderD), Color.magenta, 2f, false);
     }
 
-    IEnumerator Patrol() {
-        while (true) {
+    IEnumerator Patrol()
+    {
+        while (true)
+        {
             CrowdTree.Walk();
             yield return new WaitForSeconds(helpFrequency);
         }
     }
 
-    void DebugLine(string text) {
+    void DebugLine(string text)
+    {
         if (debugMode) Debug.Log(text);
     }
 

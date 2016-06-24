@@ -18,7 +18,6 @@ public class WormIA : MonoBehaviour {
     float timerAttack = 0f;
     bool collided = false;
     FSM myIa;
-    //EnemyHealth myHealth;
     Animator anim;
     // Use this for initialization
     void Start() {
@@ -83,7 +82,7 @@ public class WormIA : MonoBehaviour {
 
         myIa = new FSM(chasing);
         target = GameElements.getGladiator();
-        //StartCoroutine(Patrol());
+        
 
     }
 
@@ -107,7 +106,7 @@ public class WormIA : MonoBehaviour {
         else
             return false;
     
-        //return false;
+        
         }
 
     bool BeAggressive()
@@ -127,13 +126,9 @@ public class WormIA : MonoBehaviour {
         else
             return false;
     
-        //return true;
     }
 
     void BecomeAggressive() {
-        //TODO
-        //check if aggressive color is set
-        //eventually change it
         FindTarget();
     }
 

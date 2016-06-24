@@ -2,32 +2,27 @@
 using UnityEngine.UI;
 using UnityEngine.Networking;
 using System.Collections.Generic;
-using UnityStandardAssets.CrossPlatformInput;
 using System;
 
 public class GladiatorShooting : NetworkBehaviour
 {
-    public int m_PlayerNumber = 1;            // Used to identify the different players.
-    public Rigidbody m_Shell;                 // Prefab of the shell.
-    public Transform m_FireTransform;         // A child of the tank where the shells are spawned.
-    //public Slider m_AimSlider;                // A child of the tank that displays the current launch force.
-    //public AudioSource m_ShootingAudio;       // Reference to the audio source used to play the shooting audio. NB: different to the movement audio source.
-    //public AudioClip m_ChargingClip;          // Audio that plays when each shot is charging up.
-    //public AudioClip m_FireClip;              // Audio that plays when each shot is fired.
-    public float m_MinLaunchForce = 15f;      // The force given to the shell if the fire button is not held.
-
-
+    public ParticleSystem flare;
+    public int m_PlayerNumber = 1;            
+    public Rigidbody m_Shell;                
+    public Transform m_FireTransform;         
+    public Rigidbody Grenade;
+    public Transform grenadeTransform;
+    public float m_MinLaunchForce = 15f;
+    public GameObject grenadeModel;
     [SyncVar]
+    public bool grenadeTaken;
+    bool grenadeLaunching;
     public int m_localID;
     Animator m_animator;
-    
     [SyncVar]
-    private float m_CurrentLaunchForce;     // The force that will be given to the shell when the fire button is released.
-    //[SyncVar]
-    //private float m_ChargeSpeed;            // How fast the launch force increases, based on the max charge time.
-   
-
+    private float m_CurrentLaunchForce;     
     public bool basicAttack;
+    [SyncVar]
     public bool specialAttack;
     public Transform attackTransform;
     public Transform handPosition;
@@ -45,7 +40,7 @@ public class GladiatorShooting : NetworkBehaviour
     {
 
         // Set up the references.
-        //m_Rigidbody = GetComponent<Rigidbody>();
+      
         m_animator = GetComponent<Animator>();
         healthScript = GetComponent<GladiatorHealth>();
         movementScript = GetComponent<GladiatorMovement>();
@@ -55,6 +50,9 @@ public class GladiatorShooting : NetworkBehaviour
 
     private void Start()
     {
+        flare.gameObject.SetActive(false);
+        grenadeTaken = false;
+        grenadeLaunching = false;
         targets = new List<Transform>();
         basicAttack = false;
         specialAttack = false;
@@ -73,6 +71,11 @@ public class GladiatorShooting : NetworkBehaviour
             {
                 ThrowWeapon();
             }
+        }
+
+        if(grenadeTaken == true)
+        {
+            grenadeModel.SetActive(true);
         }
         
 
@@ -109,7 +112,7 @@ public class GladiatorShooting : NetworkBehaviour
             }
             else
             {
-                Debug.Log("Nessuna Arma da Fuoco");
+             
             }
         }
         if (command.Equals("attack"))
@@ -121,6 +124,10 @@ public class GladiatorShooting : NetworkBehaviour
         if (command.Equals("dodge"))
         {
             movementScript.Dodge();
+        }
+        if (command.Equals("grenade"))
+        {
+            GrenadeAttack();
         }
     }
 
@@ -149,25 +156,29 @@ public class GladiatorShooting : NetworkBehaviour
         {
             healthScript.SetArmor(16f);
         }
+        else if (id.Equals("grenade"))
+        {
+            grenadeTaken = true;
+        }
     }
 
     [Command]
     void CmdRemoveItem(GameObject obj)
     {
-        // this code is only executed on the server
-        RpcRemoveItem(obj); // invoke Rpc on all clients
+      
+        RpcRemoveItem(obj);
     }
 
     [ClientRpc]
     void RpcRemoveItem(GameObject obj)
     {
-        // this code is executed on all clients
+
         GameElements.itemSpawned.Remove(obj);
     }
 
     private void BasicAttack()
     {
-        if (!basicAttack && !damaged)
+        if (!basicAttack && !damaged && !specialAttack && !grenadeLaunching)
         {
             basicAttack = true;
             movementScript.setAttacking(true);
@@ -188,12 +199,28 @@ public class GladiatorShooting : NetworkBehaviour
             {
                 ToggleWeapon("hand");
             }
-            m_animator.SetTrigger("Attack");
+            CmdSetAnimTrigger("Attack");
             CmdAttack();
             Invoke("BasicAttackDown", 0.6f);
         }
-
+}
+    [Command]
+    public void CmdSetAnimTrigger(string triggerName)
+    {
+        if (!isServer)
+        {
+            m_animator.SetTrigger(triggerName);
+        }
+        RpcSetAnimTrigger(triggerName);
     }
+
+    [ClientRpc]
+    public void RpcSetAnimTrigger(string triggerName)
+    {
+        m_animator.SetTrigger(triggerName);
+    }
+
+
 
     private void BasicAttackDown()
     {
@@ -216,7 +243,7 @@ public class GladiatorShooting : NetworkBehaviour
         if (fireWeapon != null)
         {
 
-            if (!specialAttack && !damaged)
+            if (!specialAttack && !damaged && !basicAttack && !grenadeLaunching)
             {
                 movementScript.setAttacking(true);
                 if (targets.Count > 0)
@@ -233,18 +260,67 @@ public class GladiatorShooting : NetworkBehaviour
                             transform.LookAt(new Vector3(target.position.x, transform.position.y, target.position.z));
                         }
                     }
-                    //m_Rigidbody.velocity = Vector3.zero;
-                    //m_Rigidbody.isKinematic = true;
-                    specialAttack = true;
 
+                    specialAttack = true;
+                    CmdShoot(true);
                     m_animator.SetBool("Shoot", true);
                     Invoke("Fire", 0.3f);
                 }
             }
+    }
+    [Command]
+    void CmdShoot(bool shot)
+    {
+        RpcShoot(shot);
+    }
+    [ClientRpc]
+    void RpcShoot(bool shot)
+    {
+        specialAttack = shot;
+    }
+
+    void GrenadeAttack()
+    {
+        if (grenadeTaken == true)
+        {
+            if (!specialAttack && !damaged && !basicAttack && !grenadeLaunching)
+        {
+                grenadeLaunching = true;
+                movementScript.setAttacking(true);
+                if (targets.Count > 0)
+                {
+                    Transform target = FindNearestTarget();
+
+
+                    if (target.tag == "WurmCore")
+                    {
+                        transform.LookAt(new Vector3(target.position.x + 4.5f, transform.position.y, target.position.z));
+                    }
+                    else
+                    {
+                        transform.LookAt(new Vector3(target.position.x, transform.position.y, target.position.z));
+                    }
+                }
+                m_animator.SetBool("Grenade", true);
+                Invoke("LaunchGrenade", 0.8f);
+            }
+        }
+    }
+
+    void LaunchGrenade()
+    {
+        ThrowGranade();
+        CmdGrenade();
+        Invoke("LaunchBack", 0.1f);
+    }
+
+    void LaunchBack()
+    {
         
-
-
-
+        grenadeLaunching = false;
+        m_animator.SetBool("Grenade", false);
+        movementScript.setAttacking(false);
+        grenadeTaken = false;
     }
 
     public Transform FindNearestTarget()
@@ -270,6 +346,8 @@ public class GladiatorShooting : NetworkBehaviour
     {
         if (fireWeapon != null)
         {
+            flare.gameObject.SetActive(true);
+            flare.Play();
             CmdFire();
             Invoke("FireDown", 0.7f);
         }
@@ -280,14 +358,19 @@ public class GladiatorShooting : NetworkBehaviour
     {
         if (weapon == "hand")
         {
-            fireWeapon.transform.FindChild("Model").gameObject.SetActive(false);
-            handWeapon.transform.FindChild("Model").gameObject.SetActive(true);
+         
+                fireWeapon.transform.FindChild("Model").gameObject.SetActive(false);
+            
+                handWeapon.transform.FindChild("Model").gameObject.SetActive(true);
             CmdToggleWeapon("hand");
         }
         else if (weapon == "fire")
         {
-            fireWeapon.transform.FindChild("Model").gameObject.SetActive(true);
-            handWeapon.transform.FindChild("Model").gameObject.SetActive(false);
+        
+            
+                fireWeapon.transform.FindChild("Model").gameObject.SetActive(true);
+            
+                handWeapon.transform.FindChild("Model").gameObject.SetActive(false);
             CmdToggleWeapon("fire");
         }
     }
@@ -300,12 +383,16 @@ public class GladiatorShooting : NetworkBehaviour
         {
             if (weapon.Equals("hand"))
             {
-                fireWeapon.transform.FindChild("Model").gameObject.SetActive(false);
+              
+                    fireWeapon.transform.FindChild("Model").gameObject.SetActive(false);
+                
                 handWeapon.transform.FindChild("Model").gameObject.SetActive(true);
             }
             else if (weapon.Equals("fire"))
             {
-                fireWeapon.transform.FindChild("Model").gameObject.SetActive(true);
+                
+                    fireWeapon.transform.FindChild("Model").gameObject.SetActive(true);
+                
                 handWeapon.transform.FindChild("Model").gameObject.SetActive(false);
             }
         }
@@ -314,38 +401,41 @@ public class GladiatorShooting : NetworkBehaviour
     [Command]
     private void CmdFire()
     {
-        Debug.Log("Sparo");
-        // Create an instance of the shell and store a reference to it's rigidbody.
+        
         Rigidbody shellInstance =
              Instantiate(m_Shell, m_FireTransform.position, m_FireTransform.rotation) as Rigidbody;
-
-        // Create a velocity that is the tank's velocity and the launch force in the fire position's forward direction.
         Vector3 velocity = m_CurrentLaunchForce * m_FireTransform.forward;
-
-        // Set the shell's velocity to this velocity.
         shellInstance.velocity = velocity;
 
         NetworkServer.Spawn(shellInstance.gameObject);
         Destroy(shellInstance.gameObject, 2.0f);
 
+    }
 
 
+    [Command]
+    private void CmdGrenade()
+    {
+
+      
+        Rigidbody shellInstance =
+             Instantiate(Grenade, grenadeTransform.position, grenadeTransform.rotation) as Rigidbody;
+
+        Vector3 velocity = 6f * (grenadeTransform.forward + grenadeTransform.up);
+
+        shellInstance.velocity = velocity;
+
+        NetworkServer.Spawn(shellInstance.gameObject);
     }
 
     [Command]
     private void CmdAttack()
     {
-        Debug.Log("Sparo");
-        // Create an instance of the shell and store a reference to it's rigidbody.
         GameObject triggerInstance =
              Instantiate(meleePrefab, attackTransform.position, attackTransform.rotation) as GameObject;
 
-        
-
         NetworkServer.Spawn(triggerInstance.gameObject);
         Destroy(triggerInstance.gameObject, 0.2f);
-
-
 
     }
 
@@ -358,10 +448,11 @@ public class GladiatorShooting : NetworkBehaviour
         {
 
             specialAttack = false;
+            CmdShoot(false);
             m_animator.SetBool("Shoot", false);
             fireWeapon.GetComponent<FireWeapon>().integrity -= 1;
             movementScript.setAttacking(false);
-            //m_Rigidbody.isKinematic = false;
+
         }
     }
     private void ThrowWeapon()
@@ -378,9 +469,25 @@ public class GladiatorShooting : NetworkBehaviour
         Destroy(this.fireWeapon);
 
     }
+    private void ThrowGranade()
+    {
+        grenadeModel.SetActive(false);
+        grenadeTaken = false;
+        
+        CmdThrowGrenade();
+    }
+
+    [Command]
+    private void CmdThrowGrenade()
+    {
+
+        grenadeModel.SetActive(false);
+        grenadeTaken = false;
+
+    }
     public void DestroyEnemy(GameObject obj)
     {
-        //RemoveTarget(obj);
+
         CmdDestroyEnemy(obj);
     }
 
@@ -388,7 +495,6 @@ public class GladiatorShooting : NetworkBehaviour
     private void CmdDestroyEnemy(GameObject obj)
     {
         Destroy(obj);
-        //RemoveTarget(obj);
         RpcDecreaseEnemy();
 
     }
@@ -404,10 +510,10 @@ public class GladiatorShooting : NetworkBehaviour
 
     }
 
-    // This is used by the game manager to reset the tank.
+
     public void SetDefaults()
     {
         m_CurrentLaunchForce = m_MinLaunchForce;
-        //m_AimSlider.value = m_MinLaunchForce;
+      
     }
 }

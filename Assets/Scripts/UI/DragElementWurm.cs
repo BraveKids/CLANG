@@ -9,6 +9,7 @@ using UnityEngine.Networking;
 
 public class DragElementWurm : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointerDownHandler
 {
+    public GameObject summonParticle;
     public GameObject prefabObject;
     float pulsePrice;
     public GameObject dragObject;
@@ -21,6 +22,9 @@ public class DragElementWurm : MonoBehaviour, IDragHandler, IPointerUpHandler, I
     public float cooldownTimer;
     bool cooldown;
     public float timer;
+    public Text pulseCostText;
+    Vector3 worldPosition;
+    Vector3 worldCorrectPosition;
 
     public void Toggle()
     {
@@ -34,6 +38,7 @@ public class DragElementWurm : MonoBehaviour, IDragHandler, IPointerUpHandler, I
         strategistCamera = strategist.GetComponent<StrategistSpawner>().strategistCamera;
         strategistPulse = strategist.GetComponent<StrategistPulse>();
         pulsePrice = prefabObject.GetComponent<PulsePrice>().pulsePrice;
+        pulseCostText.text = string.Format("{0}", pulsePrice);
 
         //gameObject.GetComponent<RawImage>().texture = AssetPreview.GetAssetPreview(prefabObject);
     }
@@ -47,11 +52,11 @@ public class DragElementWurm : MonoBehaviour, IDragHandler, IPointerUpHandler, I
     {
         if (cooldown)
         {
-            GetComponent<RawImage>().color = Color.blue;
+            GetComponent<Image>().color = Color.blue;
             timer += Time.deltaTime;
             if (timer >= cooldownTimer)
             {
-                GetComponent<RawImage>().color = Color.white;
+                GetComponent<Image>().color = Color.white;
                 timer = 0.0f;
                 cooldown = false;
             }
@@ -75,12 +80,14 @@ public class DragElementWurm : MonoBehaviour, IDragHandler, IPointerUpHandler, I
             if (strategistPulse.GetPulse() >= pulsePrice)
             {
                 spawnPoint = ped.position;
-                Vector3 worldPosition = GetWorldPositionOnPlane(spawnPoint);
+                 worldPosition = GetWorldPositionOnPlane(spawnPoint);
                 if (Physics.Raycast(worldPosition, Vector3.up, 3.0f) != true)
                 {
                     strategistPulse.SpawnPrice(pulsePrice);
-                    Vector3 worldCorrectPosition = new Vector3(worldPosition.x - 4f, worldPosition.y-5.5f, worldPosition.z );
-                    strategist.GetComponent<StrategistSpawner>().Spawn(prefabObject, worldCorrectPosition);
+                    
+                    strategist.GetComponent<StrategistSpawner>().Spawn(summonParticle, worldPosition);
+                    Invoke("Summon", 0.8f);
+                    
                     cooldown = true;
                 }
                 else
@@ -90,6 +97,12 @@ public class DragElementWurm : MonoBehaviour, IDragHandler, IPointerUpHandler, I
             }
         }
         dragObject.transform.position = new Vector3(1000f, 1000f, 1000f);
+    }
+
+    void Summon()
+    {
+        worldCorrectPosition = new Vector3(worldPosition.x - 4f, worldPosition.y - 5.5f, worldPosition.z);
+        strategist.GetComponent<StrategistSpawner>().Spawn(prefabObject, worldCorrectPosition);
     }
     /*
     [Command]

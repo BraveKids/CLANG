@@ -15,14 +15,13 @@ public class AimConeScript : MonoBehaviour
 
     void OnTriggerEnter(Collider col)
     {
-        if (col.tag == "Enemy")
+        if (col.tag == "Enemy" || col.tag == "Tank")
         {
             gladiatorScript.AddTarget(col.gameObject.transform);
         }
         if(col.tag == "Wurm")
         {
             gladiatorScript.targets.Add(col.transform.parent.parent.parent);
-            //gladiatorScript.AddTarget(col.transform.parent.parent.parent.gameObject);
         }
     }
 

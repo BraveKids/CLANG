@@ -68,11 +68,12 @@ public class GameTimer : NetworkBehaviour
                     timer = 0;
                 }
             }
-            else if (timer == -2)
+            else if (timer == -2 && !GameManager.s_Instance.endGame)
             {
+                GameManager.s_Instance.messageCanvasObj.SetActive(true);
                 GameManager.s_Instance.winner = "GLADIATOR";
                 GameManager.s_Instance.SetGameWinner(GameElements.getGladiator());
-                GameManager.s_Instance.endGame = true;
+                GameManager.s_Instance.setEndGame(true);
             }
             else
             {
@@ -90,8 +91,10 @@ public class GameTimer : NetworkBehaviour
                 gameTime = serverTimer.gameTime;
                 timer = serverTimer.timer;
                 minPlayers = serverTimer.minPlayers;
-                timerCanvas.GetComponent<Text>().text = "" + (90-(int)timer);
-
+                if (timer <= 90f)
+                {
+                    timerCanvas.GetComponent<Text>().text = "" + (90 - (int)timer);
+                }
 
 
 

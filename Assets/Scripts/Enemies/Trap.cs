@@ -32,9 +32,15 @@ public class Trap : NetworkBehaviour
 
     }
 
-    public void makeDamage(GameObject player)
+    public void makeDamage(GameObject target)
     {
-        player.GetComponent<GladiatorHealth>().Damage(damage);
+        if (target.tag == "Gladiator")
+        {
+            target.GetComponent<GladiatorHealth>().Damage(damage);
+        }else if(target.tag == "Enemy" || target.tag == "Tank")
+        {
+            target.GetComponent<EnemyHealth>().Damage(damage);
+        }
         Invoke("Deactivate", 0.5f);
     }
 
@@ -50,7 +56,7 @@ public class Trap : NetworkBehaviour
 
     public void OnTriggerEnter(Collider col)
     {
-        if (col.gameObject.tag == "Gladiator")
+        if (col.gameObject.tag == "Gladiator" || col.gameObject.tag == "Enemy" || col.gameObject.tag == "Tank")
         {
             anim.SetBool("snap", true);
             makeDamage(col.gameObject);

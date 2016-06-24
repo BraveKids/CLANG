@@ -16,7 +16,8 @@ public class StrategistPulse : NetworkBehaviour {
     //public ParticleSystem m_ExplosionParticles;       // The particle system the will play when the tank is destroyed.
     public GameObject m_PlayerRenderers;
     public GameObject strategistCanvas;
-    public RectTransform pulseBar;
+    public Image pulseBar;
+    public Text pulseText;
     // References to all the gameobjects that need to be disabled when the tank is dead.
     //public GameObject m_HealthCanvas;
     //public GameObject m_AimCanvas;
@@ -44,7 +45,9 @@ public class StrategistPulse : NetworkBehaviour {
     {
         m_CurrentPulse = m_StartingPulse;
         strategistCanvas = GameObject.FindGameObjectWithTag("StrategistCanvas");
-        pulseBar = GameObject.FindGameObjectWithTag("Pulse").GetComponent<RectTransform>();
+        pulseBar = GameObject.FindGameObjectWithTag("Pulse").GetComponent<Image>();
+        pulseText = GameObject.Find("PulseText").GetComponent<Text>();
+
         SetHealthUI(m_CurrentPulse);
         StartCoroutine(addPulse());
     }
@@ -89,8 +92,10 @@ public class StrategistPulse : NetworkBehaviour {
 
     private void SetHealthUI(float currentPulse)
     {
-        float value = currentPulse / m_MaxPulse;
-        pulseBar.localScale = new Vector3(value, transform.localScale.y, transform.localScale.z);
+        //float value = currentPulse / m_MaxPulse;
+        //pulseBar.localScale = new Vector3(value, transform.localScale.y, transform.localScale.z);
+        pulseBar.fillAmount = GladiatorHealth.mapValueTo01(currentPulse, 0, m_MaxPulse);
+        pulseText.text = string.Format("{0}", currentPulse);
         // Set the slider's value appropriately.
         //m_Slider.value = m_CurrentHealth;
 
