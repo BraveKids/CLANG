@@ -20,6 +20,7 @@ public class SwarmAI : MonoBehaviour {
     public Vector3 centerPosition;
     public Vector3 velocity;
     public float swarmDamage;
+    public float speed;
     
     SphereCollider damageCollider;
 
@@ -28,11 +29,18 @@ public class SwarmAI : MonoBehaviour {
 
     EnemyHealth health;
     FSM SwarmFSM;
+    AILerp agent;
+
 
 
 
     // Use this for initialization
     void Start() {
+        agent = GetComponent<AILerp>();
+        //agent.target = target.transform;
+        //agent.canMove = true;
+        //agent.speed = speed;
+
         collided = false;
 
         FSMState chasing = new FSMState();
@@ -101,7 +109,11 @@ public class SwarmAI : MonoBehaviour {
   
         Debug.DrawLine(centerPosition, new Vector3(centerPosition.x, centerPosition.y + 5f, centerPosition.z), Color.red, 0, false);
 
-        SwarmFSM.Update();
+        transform.position = Vector3.MoveTowards(transform.position, new Vector3(target.transform.position.x,
+                                                                                transform.position.y,
+                                                                                target.transform.position.z)
+                                                                                , speed * Time.deltaTime);
+        //SwarmFSM.Update();
     }
 
     public List<GameObject> GetSwarm() {

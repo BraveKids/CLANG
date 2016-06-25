@@ -24,6 +24,7 @@ public class BeeAI : MonoBehaviour {
 
         //rigidbody.MoveRotation(rotation);
         rigidbody.MoveRotation(Quaternion.Lerp(transform.rotation, rotation, 5f * Time.deltaTime));
+        rigidbody.velocity = velocity;
     }
 
     IEnumerator NextVel() {
