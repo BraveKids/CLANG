@@ -9,10 +9,7 @@ Assets/AssetStoreTools*
 Assets/Scenes
 *.unity
 *.unity.meta
-*.wav
-*.wav.meta
-*.mp3
-*.mp3.meta
+
 *.mp4
 *.mp4.meta
 *.ogg

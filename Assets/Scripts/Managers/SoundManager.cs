@@ -41,6 +41,7 @@ namespace UnityStandardAssets.Network {
         public AudioClip spawningEnemies;
         public AudioClip button;
 
+        AudioSource ciao = new AudioSource();
 
 
 
@@ -81,7 +82,8 @@ namespace UnityStandardAssets.Network {
             effects.Add(cardAvaible.name, cardAvaible);
             effects.Add(pulseRecharge.name, pulseRecharge);
             effects.Add(spawningEnemies.name, spawningEnemies);
-            effects.Add(button.name, button);*/
+            */
+            effects.Add(button.name, button);
 
 
 
@@ -97,14 +99,17 @@ namespace UnityStandardAssets.Network {
         void Update () {
             float volume = PlayerPrefs.GetInt("Music", 1);
             SetVolume(volume);
-            /*if (Input.GetKeyDown("space"))
+           /* if (Input.GetKeyDown("space"))
                 SetBackgroundMusic("gameMusic");
             if (Input.GetKeyDown(KeyCode.P))
-                SetBackgroundMusic("menuMusic");
+               ciao= PlayLoopEffect("button");
             if (Input.GetKeyDown(KeyCode.E))
                 PlayEffect("cardAvaible");
             if (Input.GetKeyDown(KeyCode.R))
-                PlayEffect("audienceCheering", 4f);*/
+                PlayEffect("audienceCheering", 4f);
+            if (Input.GetKeyDown(KeyCode.S))
+                StopEffect(ciao);*/
+
 
         }
 
@@ -131,14 +136,14 @@ namespace UnityStandardAssets.Network {
 
         }
 
-        public void SetMusic (bool _music) {
+        /*public void SetMusic (bool _music) {
             if (audioSource.isPlaying == true && _music == false) {
                 audioSource.Pause();
             }
             if (audioSource.isPlaying == false && _music == true) {
                 audioSource.Play();
             }
-        }
+        }*/
 
         public void PlayEffect (string audioEffect, float waitTime) {
             StartCoroutine(PlayEffectIterator(audioEffect, waitTime));
@@ -166,19 +171,19 @@ namespace UnityStandardAssets.Network {
 
 
 
-        /*public AudioSource playLoopEffect(string audioEffect) {
-            AudioSource audio = new AudioSource();
+        public AudioSource PlayLoopEffect(string audioEffect) {
+            AudioSource audio = gameObject.AddComponent<AudioSource>();
             audio.loop = true;
             audio.clip = effects[audioEffect];
             audio.Play();
             return audio;
         }
 
-        public void stopEffect(AudioSource source) {
+        public void StopEffect(AudioSource source) {
             if (source != null) {
-                source.Stop();
+                Destroy(source);
             }
 
-        }*/
+        }
     }
 }
