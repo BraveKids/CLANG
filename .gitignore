@@ -28,7 +28,7 @@ Assets/Scenes
 *.exe
 FacebookSDK/
 GooglePlayGames/
-Plugins/
+
 PlayService*
 *_Data/
 
