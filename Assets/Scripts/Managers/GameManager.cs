@@ -131,7 +131,7 @@ public class GameManager : NetworkBehaviour {
             float leftWaitTime = 5.0f;
             bool allAreReady = false;
             int flooredWaitTime = 5;
-            messageCanvasObj.SetActive(true);
+            //messageCanvasObj.SetActive(true);
 
             while (leftWaitTime > 0.0f && !allAreReady) {
                 yield return null;
@@ -151,7 +151,7 @@ public class GameManager : NetworkBehaviour {
                     RpcUpdateMessage(message);
                 }
             }
-            Debug.Log("menu da game manager - Game loop");
+
             LobbyManager.s_Singleton.ServerReturnToLobby();
 
 
@@ -196,8 +196,8 @@ public class GameManager : NetworkBehaviour {
 
         yield return null;
 
-        messageCanvasObj.SetActive(true);
-        while (elapsedTime < wait) {
+        //messageCanvasObj.SetActive(true);
+        while (elapsedTime < wait || m_FadingScreen.alpha > 0f) {
             if (m_RoundNumber == 1)
                 m_FadingScreen.alpha = 1.0f - (elapsedTime / wait);
             else
@@ -212,7 +212,7 @@ public class GameManager : NetworkBehaviour {
             yield return null;
         }
 
-        messageCanvasObj.SetActive(false);
+        //messageCanvasObj.SetActive(false);
     }
 
     private IEnumerator RoundPlaying () {
@@ -296,7 +296,6 @@ public class GameManager : NetworkBehaviour {
     }
 
     private bool GameIsFinished () {
-
         return endGame;
     }
 
@@ -333,7 +332,6 @@ public class GameManager : NetworkBehaviour {
     private string EndMessage (int waitTime) {
         // By default, there is no winner of the round so it's a draw.
         string message = "DRAW!";
-
 
         // If there is a game winner set the message to say which player has won the game.
         if (GameWinner != null)

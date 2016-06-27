@@ -14,12 +14,12 @@ public class EnemyHealth : NetworkBehaviour
     [SyncVar(hook = "OnChangeHealth")]
     public float currentHealth;
     GladiatorShooting gladiatorScript;
-    MutantScriptTest mutantScript;
-    TankScript tankScript;
+    MutantAI mutantScript;
+    TankAI tankScript;
     void Start()
     {
-        mutantScript = GetComponent<MutantScriptTest>();
-        tankScript = GetComponent<TankScript>();
+        mutantScript = GetComponent<MutantAI>();
+        tankScript = GetComponent<TankAI>();
         gladiatorScript = GameElements.getGladiator().GetComponent<GladiatorShooting>();
         if (gameObject.tag == "WurmCore")
         {
@@ -38,44 +38,20 @@ public class EnemyHealth : NetworkBehaviour
     {
         if (mutantScript != null)
         {
-            mutantScript.Damage();
+            mutantScript.isDamaged = true;
         }
         else if (tankScript != null)
         {
-            tankScript.Damage();
+            tankScript.isDamaged = true;
         }
     
         float calculatedDamage = amount - m_Resistance * 0.3f;
 
         currentHealth -= calculatedDamage;
         DamageColor();
-        if (currentHealth <= 0 /*&& gameObject.tag != "Tank"*/)
-        {
-            if (mutantScript != null)
-            {
-                mutantScript.Death();
-                Invoke("Death", 2f);
-            }else if(tankScript != null)
-            {
-                tankScript.Death();
-                Invoke("Death", 3f);
-            }
-            else
-            {
-                Death();
-            }
-        }
+        
     }
 
-    void Death()
-    {
-        gladiatorScript.DestroyEnemy(gameObject);
-    }
-
-    void OnDestroy()
-    {
-        gladiatorScript.RemoveTarget(gameObject.transform);
-    }
 
     public float getCurrentHealth()
     {

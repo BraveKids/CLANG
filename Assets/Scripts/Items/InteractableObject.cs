@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 public class InteractableObject : MonoBehaviour
 {
+    GameObject popUpMessage;
+    public Text popUpMessageText;
     public GameObject itemAura;
     GameObject player;
     public string id;
@@ -16,12 +19,16 @@ public class InteractableObject : MonoBehaviour
 
     void Start()
     {
+        popUpMessage = GameObject.FindGameObjectWithTag("PopUpText");
+        if (popUpMessage != null) {
+            popUpMessageText = popUpMessage.GetComponent<Text>();
+        }
         itemAura.SetActive(true);
     }
 
     void OnTriggerEnter(Collider other)
     {
-        
+
         if (other.gameObject.tag == "Gladiator")
         {
             other.gameObject.GetComponent<GladiatorShooting>().PickUpObject(this.gameObject, id);
@@ -39,12 +46,12 @@ public class InteractableObject : MonoBehaviour
                 gameObject.transform.position = anchorPosHand.position;
                 GameElements.setWeaponDropped(false);
                 gameObject.GetComponent<Indicator>().enabled = false;
-               
+
             }
             else if (id == "weapon")
             {
                 gameObject.GetComponent<BoxCollider>().enabled = false;
-                
+
                 anchorPosHand = other.gameObject.GetComponent<GladiatorShooting>().handPosition;
                 anchorPosElbow = other.gameObject.GetComponent<GladiatorShooting>().elbowPosition;
 
@@ -63,7 +70,8 @@ public class InteractableObject : MonoBehaviour
 
                 gameObject.SetActive(false);
                 Destroy(gameObject);
-            }else if (id == "grenade")
+            }
+            else if (id == "grenade")
             {
                 GameElements.setWeaponDropped(false);
                 Destroy(gameObject);
@@ -73,6 +81,11 @@ public class InteractableObject : MonoBehaviour
             {
                 gameObject.SetActive(false);
                 Destroy(gameObject);
+            }
+            if (popUpMessageText != null)
+            {
+                popUpMessageText.text = "YOU PICKED UP: " + id.ToUpper();
+                popUpMessageText.GetComponent<Animator>().SetTrigger("IsOpen");
             }
         }
     }

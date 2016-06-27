@@ -16,6 +16,7 @@ public class DragElement : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoin
     Vector3 spawnPoint;
     GameObject strategist;
     StrategistPulse strategistPulse;
+    StrategistSpawner strategistSpawner;
     private Plane plane = new Plane(Vector3.up, Vector3.zero);
     Camera strategistCamera;
     public float cooldownTimer;
@@ -23,7 +24,13 @@ public class DragElement : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoin
     public float timer;
     public Text pulseCostText;
     Vector3 worldPosition;
-    public void Toggle() {
+    private Color startColor;
+    private Color notAvailableColor;
+    private Image elementImage;
+    public bool isWorldPositionCorrect = false;
+    public Text popUpMessageText;
+
+    public void Toggle () {
         enabled = !enabled;
     }
 
@@ -32,28 +39,32 @@ public class DragElement : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoin
         strategist = GameElements.getStrategist();
         strategistCamera = strategist.GetComponent<StrategistSpawner>().strategistCamera;
         strategistPulse = strategist.GetComponent<StrategistPulse>();
+        strategistSpawner = strategist.GetComponent<StrategistSpawner>();
         pulsePrice = prefabObject.GetComponent<PulsePrice>().pulsePrice;
         pulseCostText.text = string.Format("{0}", pulsePrice);
-        
-        //gameObject.GetComponent<RawImage>().texture = AssetPreview.GetAssetPreview(prefabObject);
+        elementImage = GetComponent<Image>();
+        startColor = elementImage.color;
+        notAvailableColor = elementImage.color;
+        notAvailableColor.a = 0.5f;
     }
 
     public void OnBeginDrag (PointerEventData eventData) {
         //dragObject = Instantiate(gameObject, eventData.position, Quaternion.identity) as GameObject;
     }
 
-    void Update() {
-        if (cooldown)
-        {
-            GetComponent<Image>().color = Color.blue;
+    void Update () {
+        if (cooldown) {
             timer += Time.deltaTime;
-            if(timer>= cooldownTimer)
-            {
-                GetComponent<Image>().color = Color.white;
+            elementImage.fillAmount += 1.0f / cooldownTimer * Time.deltaTime;
+            if (timer >= cooldownTimer) {
                 timer = 0.0f;
                 cooldown = false;
             }
         }
+        if (strategistPulse.GetPulse() < pulsePrice)
+            elementImage.color = notAvailableColor;
+        else
+            elementImage.color = startColor;
     }
 
     public virtual void OnDrag (PointerEventData ped) {
@@ -65,45 +76,37 @@ public class DragElement : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoin
     }
 
     public virtual void OnPointerUp (PointerEventData ped) {
-        if (!cooldown)
-        {
-            if (strategistPulse.GetPulse() >= pulsePrice)
-            {
+        if (!cooldown) {
+            if (strategistPulse.GetPulse() >= pulsePrice) {
                 spawnPoint = ped.position;
                 worldPosition = GetWorldPositionOnPlane(spawnPoint);
-                if (Physics.Raycast(worldPosition,Vector3.up,3.0f)!=true) { 
+                if (Physics.Raycast(worldPosition, Vector3.up, 3.0f) != true) {
                     strategistPulse.SpawnPrice(pulsePrice);
-                    strategist.GetComponent<StrategistSpawner>().Spawn(summonParticle, worldPosition);
+                    strategistSpawner.Spawn(summonParticle, worldPosition);
                     Invoke("Summon", 0.8f);
-                    
+                    elementImage.fillAmount = 0f;
                     cooldown = true;
                 }
-                else
-                {
-                    
-                }
+            } else {
+                popUpMessageText.text = "YOU NEED " + pulsePrice + " PULSE POINTS TO SPWN THIS CARD";
+                popUpMessageText.GetComponent<Animator>().SetTrigger("IsOpen");
             }
         }
         dragObject.transform.position = new Vector3(1000f, 1000f, 1000f);
     }
-    void Summon()
-    {
-        strategist.GetComponent<StrategistSpawner>().Spawn(prefabObject, worldPosition);
+    void Summon () {
+        if (!isWorldPositionCorrect)
+            strategistSpawner.Spawn(prefabObject, worldPosition);
+        else
+            strategistSpawner.Spawn(prefabObject, new Vector3(worldPosition.x - 4f, worldPosition.y - 5.5f, worldPosition.z));
     }
-    /*
-    [Command]
-    public void CmdSpawn(Vector3 position)
-    {
-        var enemy = (GameObject)Instantiate(prefabObject, GetWorldPositionOnPlane(position), Quaternion.identity);
-        NetworkServer.Spawn(enemy);
-    }
-    */
+
     public Vector3 GetWorldPositionOnPlane (Vector3 pointerPosition) {
         float distance;
-       
-        Ray ray = strategistCamera.ScreenPointToRay(pointerPosition); 
-        
-            //Camera.main.ScreenPointToRay(pointerPosition);
+
+        Ray ray = strategistCamera.ScreenPointToRay(pointerPosition);
+
+        //Camera.main.ScreenPointToRay(pointerPosition);
         if (plane.Raycast(ray, out distance)) {
             Vector3 hitPoint = ray.GetPoint(distance);
             //Just double check to ensure the y position is exactly zero
