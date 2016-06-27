@@ -106,13 +106,14 @@ public class SwarmAI : MonoBehaviour {
         //damageCollider.transform.position = centerPosition;
         Vector3 colliderPos = transform.InverseTransformPoint(centerPosition);
         damageCollider.center = colliderPos;
+        centerPosition = transform.position;
   
         Debug.DrawLine(centerPosition, new Vector3(centerPosition.x, centerPosition.y + 5f, centerPosition.z), Color.red, 0, false);
 
-        transform.position = Vector3.MoveTowards(transform.position, new Vector3(target.transform.position.x,
+        /*transform.position = Vector3.MoveTowards(transform.position, new Vector3(target.transform.position.x,
                                                                                 transform.position.y,
                                                                                 target.transform.position.z)
-                                                                                , speed * Time.deltaTime);
+                                                                                , speed * Time.deltaTime);*/
         //SwarmFSM.Update();
     }
 
