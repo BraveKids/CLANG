@@ -5,26 +5,30 @@ using System.Collections.Generic;
 public class SwarmAI : MonoBehaviour {
 
     public GameObject beePrefab;
+
     public float boxDimension = 2;
     public int swarmSize = 5;
 
-    public float maxVel = 3f;
-    private List<GameObject> swarm;
-    private Collider boxCollider;
+    public float maxVel = 3f;   //max speed of the bees
+    private List<GameObject> swarm;     //contains all the bees
+
     public float alignmentWeight = 1.5f;
     public float cohesionWeight = 2.5f;
     public float separationWeight = 2;
     public float followWeight = 5f;
-    public bool follow = true;
-    public GameObject target;
-    public Vector3 centerPosition;
+    public bool follow = true;  //follow the target
+
+    public GameObject target;       //the target to follow. This is going in input to the AILerp
+    public Vector3 centerPosition;  //center position of the swarm
     public Vector3 velocity;
+
     public float swarmDamage;
     public float speed;
     
     SphereCollider damageCollider;
 
-    public bool collided;
+    public bool isColliding;
+    public bool die;
     public bool debugMode;
 
     EnemyHealth health;
@@ -35,15 +39,16 @@ public class SwarmAI : MonoBehaviour {
 
 
 
+
     // Use this for initialization
     void Start() {
         agent = GetComponent<AILerp>();
-        //agent.target = target.transform;
-        //agent.canMove = true;
-        //agent.speed = speed;
+        agent.target = target.transform;
+        
+        originY = target.transform.position.y;
+        isColliding = false;
 
-        originY = transform.position.y;
-        collided = false;
+        //FSM 
 
         FSMState chasing = new FSMState();
         FSMState attacking = new FSMState();
@@ -52,24 +57,23 @@ public class SwarmAI : MonoBehaviour {
         chasing.AddTransition(new FSMTransition(Colliding, attacking));
         chasing.AddTransition(new FSMTransition(GoigToDie, dying));
 
+        attacking.AddStayAction(Attack);
 
         attacking.AddTransition(new FSMTransition(NotColliding, chasing));
         attacking.AddTransition(new FSMTransition(GoigToDie, dying));
-        attacking.AddStayAction(Attack);
+
+        dying.AddStayAction(Die);
 
         SwarmFSM = new FSM(chasing);
 
-        dying.AddStayAction(Die);
 
 
         centerPosition = Vector3.zero;
         velocity = Vector3.zero;
-        boxCollider = GetComponent<Collider>();
         swarm = new List<GameObject>();
-        //damageCollider = transform.GetChild(0).gameObject;
         damageCollider = GetComponent<SphereCollider>();
 
-
+        //Spawn all the bees
         for (var i = 0; i < swarmSize; i++) {
             float localX = (Random.Range(-1, 1)) * boxDimension / 2;   //generate random from -1 to 1, then multiply per boxdimension/2
             float localY = (Random.Range(-1, 1)) * boxDimension / 2;
@@ -79,27 +83,22 @@ public class SwarmAI : MonoBehaviour {
                 transform.position.x + localX, transform.position.y + localY, transform.position.z + localZ
             );
 
-            GameObject boid = Instantiate(beePrefab, position, transform.rotation) as GameObject;
+            GameObject boid = Instantiate(beePrefab, position, transform.rotation) as GameObject;            
 
-            //boid.transform.SetParent(transform);
-            //boid.transform.position= position;
-
-            swarm.Add(boid);
-            boid.GetComponent<BeeAI>().fakeParent = gameObject;
-
+            swarm.Add(boid);            
+            boid.GetComponent<BeeAI>().fakeParent = gameObject;     //add the swarm object ad fakeParent to the bees
             BeeAI beeAI = boid.GetComponent<BeeAI>();
            
         }
     }
 
-    void LateUpdate() {
-        transform.position = new Vector3(transform.position.x, originY, transform.position.z);
-    }
+    
 
-    // Update is called once per frame
     void Update() {
         centerPosition = Vector3.zero;
         velocity = Vector3.zero;
+
+        //Compute swarm center
         foreach (GameObject agent in swarm) {
             centerPosition += agent.transform.position;
             velocity += agent.transform.forward;
@@ -108,54 +107,55 @@ public class SwarmAI : MonoBehaviour {
         }
         centerPosition /= swarmSize;
         velocity /= swarmSize;
-        //position.Normalize();
-        centerPosition.y = transform.position.y;
-        //damageCollider.transform.position = centerPosition;
+
+        //we need the center to stay at certain height
+        centerPosition.y = transform.position.y;     
+             
+        //Collider match with center position 
         Vector3 colliderPos = transform.InverseTransformPoint(centerPosition);
         damageCollider.center = colliderPos;
-        centerPosition = transform.position;
-  
-        Debug.DrawLine(centerPosition, new Vector3(centerPosition.x, centerPosition.y + 5f, centerPosition.z), Color.red, 0, false);
 
-        /*transform.position = Vector3.MoveTowards(transform.position, new Vector3(target.transform.position.x,
-                                                                                transform.position.y,
-                                                                                target.transform.position.z)
-                                                                                , speed * Time.deltaTime);*/
-        //SwarmFSM.Update();
+        Debug.DrawLine(centerPosition, new Vector3(centerPosition.x, centerPosition.y + 5f, centerPosition.z), Color.red, 0, false);
+               
+        SwarmFSM.Update();
     }
 
+    void LateUpdate() {
+        transform.position = new Vector3(transform.position.x, originY, transform.position.z);
+
+    }
     public List<GameObject> GetSwarm() {
         return swarm;
     }
 
     bool Colliding() {
-        return collided;
+        return isColliding;
     }
 
     bool NotColliding() {
-        return !collided;
+        return !isColliding;
     }
 
     bool GoigToDie() {
-        return health.currentHealth <= 0;
+        //return health.currentHealth <= 0;
+        return die;
     }
 
     void Die() {
         DebugLine("Dying");
     }
     void Attack() {
-        DebugLine("Attack");
-        //TODO infliggi il danno al gladiatore
+        DebugLine("Attack"+Random.value);
     }
 
     void OnTriggerEnter(Collider col) {
         if (col.gameObject.tag == "Gladiator")
-            collided = true;
+            isColliding = true;
     }
     
     void OnTriggerExit(Collider col) {
         if (col.gameObject.tag == "Gladiator") {
-            collided = false;
+            isColliding = false;
         }
     }
 
