@@ -5,26 +5,28 @@ public class BeeAI : MonoBehaviour {
 
     SwarmAI swarm;
     Rigidbody rigidbody;
-   
+   public GameObject fakeParent;
     Vector3 velocity;
-
+   
     // Use this for initialization
     void Start() {
+
+        swarm = fakeParent.GetComponent<SwarmAI>();
         velocity = Vector3.zero;
         rigidbody = GetComponent<Rigidbody>();
-        swarm = GetComponentInParent<SwarmAI>();
         //transform.localPosition = transform.position;
         StartCoroutine(NextVel());
     }
 
     // Update is called once per frame
     void Update() {
-        //Invoke("NextVel", Random.Range(0f,5f));   
+        //Invoke("NextVel", Random.Range(0f,5f));  
+        //rigidbody.velocity = velocity;
+
         Quaternion rotation = Quaternion.LookRotation(new Vector3(velocity.x, 0f, velocity.z));
 
         //rigidbody.MoveRotation(rotation);
         rigidbody.MoveRotation(Quaternion.Lerp(transform.rotation, rotation, 5f * Time.deltaTime));
-        //rigidbody.velocity = velocity;
         Debug.DrawLine(transform.position, new Vector3(transform.position.x + velocity.x, transform.position.y + velocity.y, transform.position.z + velocity.z), Color.green, 0, false);
 
     }
@@ -34,7 +36,7 @@ public class BeeAI : MonoBehaviour {
             Vector3 alignment = Alignment() * swarm.alignmentWeight;
             Vector3 cohesion = Cohesion() * swarm.cohesionWeight;
             Vector3 separation = Separation() *swarm.separationWeight;
-            Vector3 chasee = swarm.target.transform.position - transform.position;
+            Vector3 chasee = swarm.gameObject.transform.position - transform.position;
             velocity = alignment * swarm.alignmentWeight + cohesion * swarm.cohesionWeight + separation * swarm.separationWeight;
             if (swarm.follow) velocity += (chasee*swarm.followWeight);
 
@@ -63,9 +65,12 @@ public class BeeAI : MonoBehaviour {
             rigidbody.velocity.Normalize();
             
 
+
             yield return new WaitForSeconds(Random.Range(0f, .5f));
         }
     }
+
+    
 
     Vector3 Alignment() {
         Vector3 alignment = Vector3.zero;

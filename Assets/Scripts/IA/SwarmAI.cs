@@ -30,6 +30,7 @@ public class SwarmAI : MonoBehaviour {
     EnemyHealth health;
     FSM SwarmFSM;
     AILerp agent;
+    float originY;
 
 
 
@@ -41,6 +42,7 @@ public class SwarmAI : MonoBehaviour {
         //agent.canMove = true;
         //agent.speed = speed;
 
+        originY = transform.position.y;
         collided = false;
 
         FSMState chasing = new FSMState();
@@ -79,14 +81,19 @@ public class SwarmAI : MonoBehaviour {
 
             GameObject boid = Instantiate(beePrefab, position, transform.rotation) as GameObject;
 
-            boid.transform.SetParent(transform);
+            //boid.transform.SetParent(transform);
             //boid.transform.position= position;
 
             swarm.Add(boid);
+            boid.GetComponent<BeeAI>().fakeParent = gameObject;
 
             BeeAI beeAI = boid.GetComponent<BeeAI>();
            
         }
+    }
+
+    void LateUpdate() {
+        transform.position = new Vector3(transform.position.x, originY, transform.position.z);
     }
 
     // Update is called once per frame
