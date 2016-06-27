@@ -13,6 +13,7 @@ public class GladiatorHealth : NetworkBehaviour
     public GameObject model;
     Color curColor;
     // The slider to represent how much health the tank currently has.
+    public Image healthBarSmall;
     public Image healthBar;                         // The image component of the slider.
     public Image armorBar;
     public Color m_FullHealthColor = Color.green;     // The color the health bar will be when on full health.
@@ -41,9 +42,11 @@ public class GladiatorHealth : NetworkBehaviour
         GameElements.getStrategist().GetComponent<CrowdIA>().enabled = true;
         if (isLocalPlayer)
         {
+            Destroy(healthBarSmall.gameObject);
             healthBar = GameObject.FindGameObjectWithTag("HealthBar").GetComponent<Image>();
             armorBar = GameObject.FindGameObjectWithTag("ArmorBar").GetComponent<Image>();
         }
+      
         movementScript = GetComponent<GladiatorMovement>();
         attackScript = GetComponent<GladiatorShooting>();
         anim = GetComponent<Animator>();
@@ -180,6 +183,10 @@ public class GladiatorHealth : NetworkBehaviour
         {
     
             healthBar.fillAmount = mapValueTo01(m_CurrentHealth, 0f, m_StartingHealth);
+        }
+        if(healthBarSmall != null)
+        {
+            healthBarSmall.fillAmount = mapValueTo01(m_CurrentHealth, 0f, m_StartingHealth);
         }
     }
 

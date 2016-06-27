@@ -16,7 +16,7 @@ public class SC_Billboard : MonoBehaviour {
 
 	void Awake () {
 		myTransform = this.transform;
-		target = Camera.main.transform;
+		target = GameElements.getCurrentCamera().transform;
 	}
 
 	void LateUpdate () {

@@ -53,6 +53,7 @@ public class StrategistSpawner : NetworkBehaviour {
             strategistCamera.GetComponent<StrategistCamera>().enabled = false;
             GameObject.Destroy(strategistCamera.gameObject);
         }
+       
 
     }
 

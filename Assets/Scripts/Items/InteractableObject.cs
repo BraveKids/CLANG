@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.Networking;
 public class InteractableObject : MonoBehaviour
 {
-
+    public GameObject itemAura;
     GameObject player;
     public string id;
     Transform anchorPosHand;
@@ -13,6 +13,11 @@ public class InteractableObject : MonoBehaviour
     // Use this for initialization
     AstarPath path;
 
+
+    void Start()
+    {
+        itemAura.SetActive(true);
+    }
 
     void OnTriggerEnter(Collider other)
     {
@@ -77,7 +82,7 @@ public class InteractableObject : MonoBehaviour
 
         if (taken)
         {
-            
+            itemAura.SetActive(false);
             //gameObject.transform.position = new Vector3(anchorPosHand.position.x, anchorPosHand.position.y, anchorPosHand.position.z);
             gameObject.transform.rotation = new Quaternion(Quaternion.LookRotation(anchorPosHand.position - anchorPosElbow.position).x,
                                                            Quaternion.LookRotation(anchorPosHand.position - anchorPosElbow.position).y,

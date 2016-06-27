@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 public class EnemyHealth : NetworkBehaviour
 {
+    public Image healthBar;
     public float m_Health;
     public float m_Resistance;
     public GameObject model;
@@ -122,13 +124,25 @@ public class EnemyHealth : NetworkBehaviour
         }
     }
 
-    
+
     void OnChangeHealth(float amount)
     {
         currentHealth = amount;
-        //healthBar.sizeDelta = new Vector2(currentHealth, healthBar.sizeDelta.y);
+        SetHealthUI();
     }
 
-   
+
+    private void SetHealthUI()
+    {
+        
+            healthBar.fillAmount = mapValueTo01(currentHealth, 0f, m_Health);
+        }
+
+    public static float mapValueTo01(float value, float min, float max)
+    {
+        return (value - min) * 1f / (max - min);
+    }
+
+
 
 }
