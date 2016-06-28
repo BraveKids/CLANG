@@ -33,13 +33,13 @@ public class TankAI : NetworkBehaviour
     // Use this for initialization
     void Start()
     {
+        agent.target = target.transform;
         netAnim = GetComponent<NetworkAnimator>();
         anim = GetComponent<Animator>();
         target = GameElements.getGladiator();
         gladShot = target.GetComponent<GladiatorShooting>();
         health = GetComponent<EnemyHealth>();
         agent = GetComponent<AILerp>();
-        agent.target = target.transform;
         FSMState chasing = new FSMState();
         FSMState shieldChasing = new FSMState();
         FSMState attacking = new FSMState();
@@ -161,7 +161,6 @@ public class TankAI : NetworkBehaviour
 
     bool PerkUp()
     {
-        anim.SetBool("Damaged", false);
         damageTimer += Time.deltaTime;
         if (damageTimer >= damageTime)
         {
@@ -174,7 +173,6 @@ public class TankAI : NetworkBehaviour
 
     void Dying()
     {
-        agent.target = null;
         agent.speed = 0f;
         agent.canMove = false;
         //TODO animazione dying e destroy del gameobject. Ricordati di mettere nell'OnDestroy l'eventuale rimozione dalla lista del player (se presente)
@@ -196,7 +194,6 @@ public class TankAI : NetworkBehaviour
 
     void Attacking()
     {
-        transform.LookAt(target.transform);
         anim.SetBool("Attack", true);
         agent.speed = 0f;
         agent.canMove = false;
@@ -233,12 +230,10 @@ public class TankAI : NetworkBehaviour
 
     void GetDamage()
     {
-        attackTrigger.GetComponent<BoxCollider>().enabled = false;
-        agent.speed = 0f;
-        agent.canMove = false;
+
         //anim.SetTrigger("Damage");
         anim.SetBool("Attack", false);
-        anim.SetBool("Damaged", true);
+        anim.SetBool("Run", false);
         netAnim.SetTrigger("Damage");
         isDamaged = false;
         DebugLine("damage");

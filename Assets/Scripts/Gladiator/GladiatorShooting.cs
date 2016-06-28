@@ -6,7 +6,8 @@ using System;
 
 public class GladiatorShooting : NetworkBehaviour
 {
-    public ParticleSystem flare;
+    public Transform flarePos;
+    public GameObject flarePrefab;
     public int m_PlayerNumber = 1;            
     public Rigidbody m_Shell;                
     public Transform m_FireTransform;         
@@ -50,7 +51,7 @@ public class GladiatorShooting : NetworkBehaviour
 
     private void Start()
     {
-        flare.gameObject.SetActive(false);
+        
         grenadeTaken = false;
         grenadeLaunching = false;
         targets = new List<Transform>();
@@ -346,8 +347,7 @@ public class GladiatorShooting : NetworkBehaviour
     {
         if (fireWeapon != null)
         {
-            flare.gameObject.SetActive(true);
-            flare.Play();
+       
             CmdFire();
             Invoke("FireDown", 0.7f);
         }
@@ -401,14 +401,16 @@ public class GladiatorShooting : NetworkBehaviour
     [Command]
     private void CmdFire()
     {
-        
+        GameObject flareInstance =
+                Instantiate(flarePrefab, flarePos.position, flarePos.rotation) as GameObject;
         Rigidbody shellInstance =
              Instantiate(m_Shell, m_FireTransform.position, m_FireTransform.rotation) as Rigidbody;
         Vector3 velocity = m_CurrentLaunchForce * m_FireTransform.forward;
         shellInstance.velocity = velocity;
-
+        NetworkServer.Spawn(flarePrefab);
         NetworkServer.Spawn(shellInstance.gameObject);
         Destroy(shellInstance.gameObject, 2.0f);
+        Destroy(flarePrefab, 1.0f);
 
     }
 

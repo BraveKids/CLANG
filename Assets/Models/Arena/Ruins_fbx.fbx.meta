@@ -1,0 +1,154 @@
+fileFormatVersion: 2
+guid: 96baf2067abb4464b913a4a8bda0cdff
+timeCreated: 1467128055
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: Buss
+    100002: Buss.2
+    100004: Grass
+    100006: Grass.14
+    100008: Grass.14.2
+    100010: Grass.14.3
+    100012: Oil truck
+    100014: Oil-truck
+    100016: Ruin1
+    100018: Ruin2
+    100020: Ruin3
+    100022: Ruin4
+    100024: //RootNode
+    100026: TrckGR
+    100028: TrckGR.2
+    100030: TrckGR.3
+    100032: Truck
+    100034: Truck.2
+    100036: water-tank
+    400000: Buss
+    400002: Buss.2
+    400004: Grass
+    400006: Grass.14
+    400008: Grass.14.2
+    400010: Grass.14.3
+    400012: Oil truck
+    400014: Oil-truck
+    400016: Ruin1
+    400018: Ruin2
+    400020: Ruin3
+    400022: Ruin4
+    400024: //RootNode
+    400026: TrckGR
+    400028: TrckGR.2
+    400030: TrckGR.3
+    400032: Truck
+    400034: Truck.2
+    400036: water-tank
+    2300000: Buss.2
+    2300002: Grass
+    2300004: Grass.14
+    2300006: Grass.14.2
+    2300008: Grass.14.3
+    2300010: Oil-truck
+    2300012: Ruin1
+    2300014: Ruin2
+    2300016: Ruin3
+    2300018: Ruin4
+    2300020: TrckGR
+    2300022: TrckGR.2
+    2300024: TrckGR.3
+    2300026: Truck.2
+    2300028: water-tank
+    3300000: Buss.2
+    3300002: Grass
+    3300004: Grass.14
+    3300006: Grass.14.2
+    3300008: Grass.14.3
+    3300010: Oil-truck
+    3300012: Ruin1
+    3300014: Ruin2
+    3300016: Ruin3
+    3300018: Ruin4
+    3300020: TrckGR
+    3300022: TrckGR.2
+    3300024: TrckGR.3
+    3300026: Truck.2
+    3300028: water-tank
+    4300000: Buss.2
+    4300002: Grass.14
+    4300004: Grass
+    4300006: TrckGR
+    4300008: Grass.14.2
+    4300010: TrckGR.2
+    4300012: Oil-truck
+    4300014: Truck.2
+    4300016: Grass.14.3
+    4300018: TrckGR.3
+    4300020: water-tank
+    4300022: Ruin4
+    4300024: Ruin3
+    4300026: Ruin2
+    4300028: Ruin1
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleRotations: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

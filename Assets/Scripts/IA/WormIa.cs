@@ -2,16 +2,16 @@
 using System.Collections;
 
 public class WormIA : MonoBehaviour {
-    public float normalSpeed;
     public GameObject[] wurmModel;
+    public float normalSpeed;
     public float boostSpeed;
     public GameObject dust;
     float timer = 0f;
+    public WurmAttack attackScript;
     public GameObject target;
     public float itemEatingProbability;
     public float bareTime = 5f;
     public WurmTrigger trigger;
-    public WurmAttack attackScript;
     public EnemyHealth myHealth;
     public float timeBeforeAttack = 1f;
     public float timeBeforChasing = 2f;
@@ -94,11 +94,9 @@ public class WormIA : MonoBehaviour {
 
     bool StayNormal() {
         timerChase += Time.deltaTime;
-        if (timerChase >= timeBeforChasing)         //Wait in hide before chasing again
+        if (timerChase >= timeBeforChasing)
         {
-            
             if (myHealth.getCurrentHealth() > myHealth.getMaxHealth() / 2)
-
             {
                 timerChase = 0f;
                 return true;
@@ -111,13 +109,12 @@ public class WormIA : MonoBehaviour {
     
         
         }
-    //Become aggressive if health is less the half healt
+
     bool BeAggressive()
     {
-
         
         timerChase += Time.deltaTime;
-        if (timerChase >= timeBeforChasing)         //Wait in hide before chasing again
+        if (timerChase >= timeBeforChasing)
         {
             if (myHealth.getCurrentHealth() <= myHealth.getMaxHealth() / 2)
             {
@@ -133,11 +130,11 @@ public class WormIA : MonoBehaviour {
     }
 
     void BecomeAggressive() {
-        FindTarget();
         foreach (GameObject model in wurmModel)
         {
             model.GetComponent<MeshRenderer>().material.color = Color.red;
         }
+        FindTarget();
     }
 
     bool LifeOver() {
@@ -222,23 +219,7 @@ public class WormIA : MonoBehaviour {
     }
 
     void Die() {
-        if (anim.GetBool("Attack") == false)
-        {
-            anim.SetBool("Attack", false);
-        }
-        Invoke("Destroy", 2f);
-        
-       
-    }
 
-    void OnDestroy()
-    {
-        target.GetComponent<GladiatorShooting>().RemoveTarget(gameObject.transform);
-    }
-
-    void Destroy()
-    {
-        target.GetComponent<GladiatorShooting>().DestroyEnemy(gameObject);
     }
 
 

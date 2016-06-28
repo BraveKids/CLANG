@@ -46,14 +46,14 @@ public class GladiatorHealth : NetworkBehaviour
             healthBar = GameObject.FindGameObjectWithTag("HealthBar").GetComponent<Image>();
             armorBar = GameObject.FindGameObjectWithTag("ArmorBar").GetComponent<Image>();
         }
-      
+
         movementScript = GetComponent<GladiatorMovement>();
         attackScript = GetComponent<GladiatorShooting>();
         anim = GetComponent<Animator>();
         netAnim = GetComponent<NetworkAnimator>();
     }
 
- 
+
     public void Recover(float amount)
     {
         if (m_CurrentHealth < m_StartingHealth)
@@ -94,7 +94,7 @@ public class GladiatorHealth : NetworkBehaviour
             Invoke("Vulnerable", 1.5f);
             attackScript.damaged = true;
             movementScript.setAttacking(true);
-          
+
             netAnim.SetTrigger("Damage");
             DamageColor();
             Invoke("NotDamaged", 0.5f);
@@ -123,10 +123,10 @@ public class GladiatorHealth : NetworkBehaviour
 
                 // Reduce current health by the amount of damage done.
                 m_CurrentHealth -= calculatedDamage;
-                
-                
+
+
             }
-            
+
             // If the current health is at or below zero and it has not yet been registered, call OnZeroHealth.
             if (m_CurrentHealth <= 0f)
             {
@@ -137,7 +137,7 @@ public class GladiatorHealth : NetworkBehaviour
 
                 Invoke("OnZeroHealth", 2f);
             }
-            
+
         }
     }
     void NotDamaged()
@@ -150,7 +150,7 @@ public class GladiatorHealth : NetworkBehaviour
     {
         invulnerable = false;
     }
-    
+
     private void DamageColor()
     {
 
@@ -158,12 +158,12 @@ public class GladiatorHealth : NetworkBehaviour
         Invoke("DamageColorBack", 0.5f);
 
     }
-    
+
     private void DamageColorBack()
     {
         model.GetComponent<SkinnedMeshRenderer>().material.color = curColor;
     }
-    
+
 
 
 
@@ -181,17 +181,18 @@ public class GladiatorHealth : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-    
+
             healthBar.fillAmount = mapValueTo01(m_CurrentHealth, 0f, m_StartingHealth);
         }
-        if(healthBarSmall != null)
+        if (healthBarSmall != null)
         {
             healthBarSmall.fillAmount = mapValueTo01(m_CurrentHealth, 0f, m_StartingHealth);
         }
     }
 
     // Maps a value from some arbitrary range to the 0 to 1 range
-    public static float mapValueTo01(float value, float min, float max) {
+    public static float mapValueTo01(float value, float min, float max)
+    {
         return (value - min) * 1f / (max - min);
     }
 
@@ -199,7 +200,7 @@ public class GladiatorHealth : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-        
+
             armorBar.fillAmount = mapValueTo01(m_Armor, 0, m_MaxArmor);
         }
     }
@@ -225,20 +226,19 @@ public class GladiatorHealth : NetworkBehaviour
     {
         // Set the flag so that this function is only called once.
         m_ZeroHealthHappened = true;
-        GameManager.s_Instance.messageCanvasObj.SetActive(true);
         GameManager.s_Instance.winner = "STRATEGIST";
         GameManager.s_Instance.SetGameWinner(GameElements.getStrategist());
         GameManager.s_Instance.setEndGame(true);
-        
+
         InternalOnZeroHealth();
-       
+
     }
 
     private void OnDestroy()
-    {        
+    {
         //GameObject.FindGameObjectWithTag("GameController").SetActive(false);
         m_ZeroHealthHappened = true;
-        GameManager.s_Instance.messageCanvasObj.SetActive(true);
+
         GameManager.s_Instance.winner = "STRATEGIST";
         GameManager.s_Instance.SetGameWinner(GameElements.getStrategist());
         GameManager.s_Instance.setEndGame(true);

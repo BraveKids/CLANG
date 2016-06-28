@@ -9,7 +9,11 @@ namespace UnityStandardAssets.Network {
         protected bool isDisplayed = true;
         public GameObject mainLogo;
 
+
         void Update () {
+            if (Input.GetKeyDown(KeyCode.Escape) && isInGame) {
+                ToggleVisibility(!isDisplayed);
+            }
             if (Input.GetKeyDown(KeyCode.Escape) && !isInGame) {
                 Application.Quit();
             }
@@ -21,6 +25,7 @@ namespace UnityStandardAssets.Network {
             foreach (Transform t in transform) {
                 t.gameObject.SetActive(isDisplayed);
             }
+
 
         }
     }

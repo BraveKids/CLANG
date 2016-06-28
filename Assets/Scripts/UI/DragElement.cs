@@ -7,7 +7,8 @@ using UnityEngine.Networking;
 //using UnityEditor;
 
 
-public class DragElement : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointerDownHandler {
+public class DragElement : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointerDownHandler
+{
     public GameObject summonParticle;
     public GameObject prefabObject;
     float pulsePrice;
@@ -30,11 +31,13 @@ public class DragElement : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoin
     public bool isWorldPositionCorrect = false;
     public Text popUpMessageText;
 
-    public void Toggle () {
+    public void Toggle()
+    {
         enabled = !enabled;
     }
 
-    void Start () {
+    void Start()
+    {
         cooldown = false;
         strategist = GameElements.getStrategist();
         strategistCamera = strategist.GetComponent<StrategistSpawner>().strategistCamera;
@@ -48,15 +51,19 @@ public class DragElement : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoin
         notAvailableColor.a = 0.5f;
     }
 
-    public void OnBeginDrag (PointerEventData eventData) {
+    public void OnBeginDrag(PointerEventData eventData)
+    {
         //dragObject = Instantiate(gameObject, eventData.position, Quaternion.identity) as GameObject;
     }
 
-    void Update () {
-        if (cooldown) {
+    void Update()
+    {
+        if (cooldown)
+        {
             timer += Time.deltaTime;
             elementImage.fillAmount += 1.0f / cooldownTimer * Time.deltaTime;
-            if (timer >= cooldownTimer) {
+            if (timer >= cooldownTimer)
+            {
                 timer = 0.0f;
                 cooldown = false;
             }
@@ -67,47 +74,58 @@ public class DragElement : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoin
             elementImage.color = startColor;
     }
 
-    public virtual void OnDrag (PointerEventData ped) {
+    public virtual void OnDrag(PointerEventData ped)
+    {
         dragObject.transform.position = GetWorldPositionOnPlane(ped.position);
     }
 
-    public virtual void OnPointerDown (PointerEventData ped) {
+    public virtual void OnPointerDown(PointerEventData ped)
+    {
         OnDrag(ped);
     }
 
-    public virtual void OnPointerUp (PointerEventData ped) {
-        if (!cooldown) {
-            if (strategistPulse.GetPulse() >= pulsePrice) {
+    public virtual void OnPointerUp(PointerEventData ped)
+    {
+        if (!cooldown)
+        {
+            if (strategistPulse.GetPulse() >= pulsePrice)
+            {
                 spawnPoint = ped.position;
                 worldPosition = GetWorldPositionOnPlane(spawnPoint);
-                if (Physics.Raycast(worldPosition, Vector3.up, 3.0f) != true) {
+                if (Physics.Raycast(worldPosition, Vector3.up, 3.0f) != true)
+                {
                     strategistPulse.SpawnPrice(pulsePrice);
                     strategistSpawner.Spawn(summonParticle, worldPosition);
                     Invoke("Summon", 0.8f);
                     elementImage.fillAmount = 0f;
                     cooldown = true;
                 }
-            } else {
+            }
+            else
+            {
                 popUpMessageText.text = "YOU NEED " + pulsePrice + " PULSE POINTS TO SPWN THIS CARD";
                 popUpMessageText.GetComponent<Animator>().SetTrigger("IsOpen");
             }
         }
         dragObject.transform.position = new Vector3(1000f, 1000f, 1000f);
     }
-    void Summon () {
+    void Summon()
+    {
         if (!isWorldPositionCorrect)
             strategistSpawner.Spawn(prefabObject, worldPosition);
         else
             strategistSpawner.Spawn(prefabObject, new Vector3(worldPosition.x - 4f, worldPosition.y - 5.5f, worldPosition.z));
     }
 
-    public Vector3 GetWorldPositionOnPlane (Vector3 pointerPosition) {
+    public Vector3 GetWorldPositionOnPlane(Vector3 pointerPosition)
+    {
         float distance;
 
         Ray ray = strategistCamera.ScreenPointToRay(pointerPosition);
 
         //Camera.main.ScreenPointToRay(pointerPosition);
-        if (plane.Raycast(ray, out distance)) {
+        if (plane.Raycast(ray, out distance))
+        {
             Vector3 hitPoint = ray.GetPoint(distance);
             //Just double check to ensure the y position is exactly zero
             hitPoint.y = heightFloat;

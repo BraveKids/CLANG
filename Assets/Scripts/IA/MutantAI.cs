@@ -2,7 +2,8 @@
 using System.Collections;
 using UnityEngine.Networking;
 
-public class MutantAI : MonoBehaviour {
+public class MutantAI : MonoBehaviour
+{
     public GameObject attackTrigger;
     FSM mutantFSM;
     GameObject target;
@@ -22,7 +23,8 @@ public class MutantAI : MonoBehaviour {
     float timer;
 
     // Use this for initialization
-    void Start() {
+    void Start()
+    {
         target = GameElements.getGladiator();
         health = GetComponent<EnemyHealth>();
         agent = GetComponent<AILerp>();
@@ -59,7 +61,8 @@ public class MutantAI : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update() {
+    void Update()
+    {
         mutantFSM.Update();
     }
 
@@ -67,7 +70,8 @@ public class MutantAI : MonoBehaviour {
 
 
 
-    bool GladiatorInRange() {
+    bool GladiatorInRange()
+    {
         distance = Vector3.Distance(transform.position, target.transform.position);
         if (distance <= 2f)
         {
@@ -76,23 +80,27 @@ public class MutantAI : MonoBehaviour {
         return false;
     }
 
-    bool GladiatorOutOfRange() {
+    bool GladiatorOutOfRange()
+    {
         return !GladiatorInRange();
     }
 
-    bool IsDamaged() {
+    bool IsDamaged()
+    {
         return isDamaged;
     }
 
-    bool GoigToDie() {
+    bool GoigToDie()
+    {
         if (health.getCurrentHealth() <= 0)
             return true;
         return false;
-        
+
 
     }
 
-    void Chasing() {
+    void Chasing()
+    {
         DebugLine("Chasing");
         anim.SetBool("Attack", false);
         agent.speed = 5f;
@@ -100,19 +108,22 @@ public class MutantAI : MonoBehaviour {
 
     }
 
-    void Attacking() {
+    void Attacking()
+    {
         transform.LookAt(target.transform);
         anim.SetBool("Attack", true);
         agent.speed = 0f;
         agent.canMove = false;
-        if (timer == 0) {
+        if (timer == 0)
+        {
 
             Invoke("AttackUp", 0.7f);
             DebugLine("Attack " + Random.value);
         }
 
         timer += Time.deltaTime;
-        if (timer >= attackTime) {
+        if (timer >= attackTime)
+        {
             ResetTimer();
         }
     }
@@ -129,7 +140,8 @@ public class MutantAI : MonoBehaviour {
         attackTrigger.GetComponent<BoxCollider>().enabled = false;
     }
 
-    void GetDamage() {
+    void GetDamage()
+    {
 
         agent.speed = 0f;
         agent.canMove = false;
@@ -140,13 +152,16 @@ public class MutantAI : MonoBehaviour {
         DebugLine("damage");
     }
 
-    void DebugLine(string text) {
+    void DebugLine(string text)
+    {
         if (debugMode) Debug.Log(text);
     }
 
-    bool PerkUp() {
+    bool PerkUp()
+    {
         damageTimer += Time.deltaTime;
-        if (damageTimer >= damageTime) {
+        if (damageTimer >= damageTime)
+        {
             damageTimer = 0;
 
             return true;
@@ -154,7 +169,8 @@ public class MutantAI : MonoBehaviour {
         return false;
     }
 
-    void Die() {
+    void Die()
+    {
         agent.speed = 0f;
         agent.canMove = false;
         //TODO animazione dying e destroy del gameobject. Ricordati di mettere nell'OnDestroy l'eventuale rimozione dalla lista del player (se presente)
@@ -165,7 +181,8 @@ public class MutantAI : MonoBehaviour {
 
     }
 
-    void ResetTimer() {
+    void ResetTimer()
+    {
         //agent.target = target.transform;
         timer = 0;
     }

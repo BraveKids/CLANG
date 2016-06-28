@@ -71,7 +71,6 @@ public class GladiatorMovement : NetworkBehaviour {
         }
         m_Rigidbody.freezeRotation = true;
         anim = GetComponent<Animator>();
-        
 
 
     }

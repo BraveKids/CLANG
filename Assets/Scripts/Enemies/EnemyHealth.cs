@@ -24,7 +24,7 @@ public class EnemyHealth : NetworkBehaviour
         if (gameObject.tag == "WurmCore")
         {
             curColor = wurmModel[0].GetComponent<MeshRenderer>().material.color;
-            
+
         }
         else
         {
@@ -44,12 +44,12 @@ public class EnemyHealth : NetworkBehaviour
         {
             tankScript.isDamaged = true;
         }
-    
+
         float calculatedDamage = amount - m_Resistance * 0.3f;
 
         currentHealth -= calculatedDamage;
         DamageColor();
-        
+
     }
 
 
@@ -62,7 +62,7 @@ public class EnemyHealth : NetworkBehaviour
     {
         return m_Health;
     }
-    
+
     private void DamageColor()
     {
         if (gameObject.tag == "WurmCore")
@@ -71,7 +71,7 @@ public class EnemyHealth : NetworkBehaviour
             {
                 model.GetComponent<MeshRenderer>().material.color = Color.red;
             }
-            
+
         }
         else
         {
@@ -79,7 +79,7 @@ public class EnemyHealth : NetworkBehaviour
 
         }
 
-       
+
         Invoke("DamageColorBack", 0.3f);
 
     }
@@ -92,7 +92,7 @@ public class EnemyHealth : NetworkBehaviour
             {
                 model.GetComponent<MeshRenderer>().material.color = curColor;
             }
-            
+
         }
         else
         {
@@ -110,9 +110,9 @@ public class EnemyHealth : NetworkBehaviour
 
     private void SetHealthUI()
     {
-        
-            healthBar.fillAmount = mapValueTo01(currentHealth, 0f, m_Health);
-        }
+
+        healthBar.fillAmount = mapValueTo01(currentHealth, 0f, m_Health);
+    }
 
     public static float mapValueTo01(float value, float min, float max)
     {

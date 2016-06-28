@@ -8,8 +8,7 @@ public class StrategistPulse : NetworkBehaviour {
 
     // The amount of health each tank starts with.
     public float m_MaxPulse = 10.0f;
-    public float pulseRegenerationTime = 3.0f;
-    //public Slider m_Slider;                           // The slider to represent how much health the tank currently has.
+        //public Slider m_Slider;                           // The slider to represent how much health the tank currently has.
     //public Image m_FillImage;                         // The image component of the slider.
     //public Color m_FullHealthColor = Color.green;     // The color the health bar will be when on full health.
     //public Color m_ZeroHealthColor = Color.red;       // The color the health bar will be when on no health.
@@ -28,96 +27,108 @@ public class StrategistPulse : NetworkBehaviour {
     public StrategistManager m_Manager;                   //Associated manager, to disable control when dying.
 
     [SyncVar(hook = "OnCurrentPulseChanged")]
-    public float m_CurrentPulse = 5.0f;                  // How much health the tank currently has.*
+    public float m_CurrentPulse = 10f;                  // How much health the tank currently has.*
     [SyncVar]
     private bool m_ZeroHealthHappened;              // Has the tank been reduced beyond zero health yet?
-                                                    //private BoxCollider m_Collider;
-                                                    // Used so that the tank doesn't collide with anything when it's dead.
+    //private BoxCollider m_Collider;
+    // Used so that the tank doesn't collide with anything when it's dead.
+ 
 
-
-    private void Awake () {
-
-
+    private void Awake()
+    {
+        
+        
         //m_Collider = GetComponent<BoxCollider>();
     }
 
-    private void Start () {
+    private void Start()
+    {
         m_CurrentPulse = m_StartingPulse;
         strategistCanvas = GameObject.FindGameObjectWithTag("StrategistCanvas");
         pulseBar = GameObject.FindGameObjectWithTag("Pulse").GetComponent<Image>();
         pulseText = GameObject.Find("PulseText").GetComponent<Text>();
 
-        //SetHealthUI(m_CurrentPulse);
+        SetHealthUI(m_CurrentPulse);
         StartCoroutine(addPulse());
     }
 
-
-    IEnumerator addPulse () {
-        while (true) { // loops forever...
-            if (m_CurrentPulse < m_MaxPulse) { // if health < 100...
+    
+    IEnumerator addPulse()
+    {
+        while (true)
+        { // loops forever...
+            if (m_CurrentPulse < m_MaxPulse)
+            { // if health < 100...
                 m_CurrentPulse += 1; // increase health and wait the specified time
-                SetPulseUI(m_CurrentPulse);
-                yield return new WaitForSeconds(pulseRegenerationTime);
-            } else { // if health >= 100, just yield 
+                SetHealthUI(m_CurrentPulse);
+                yield return new WaitForSeconds(3);
+            }
+            else
+            { // if health >= 100, just yield 
                 yield return null;
             }
         }
     }
-
+ 
     // This is called whenever the tank takes damage.
-    public void SpawnPrice (float amount) {
+    public void SpawnPrice(float amount)
+    {
         // Reduce current health by the amount of damage done.
         m_CurrentPulse -= amount;
-        SetPulseUI(m_CurrentPulse);
-
+        SetHealthUI(m_CurrentPulse);
+        
     }
 
-    public float GetPulse () {
+    public float GetPulse()
+    {
         return m_CurrentPulse;
     }
 
-    public void SetPulse (float amount) {
+    public void SetPulse(float amount)
+    {
         m_CurrentPulse = amount;
     }
 
 
-    private void SetPulseUI (float newPulse) {
-        StartCoroutine(FillPulseUI(newPulse));
+    private void SetHealthUI(float currentPulse)
+    {
+        //float value = currentPulse / m_MaxPulse;
+        //pulseBar.localScale = new Vector3(value, transform.localScale.y, transform.localScale.z);
+        pulseBar.fillAmount = GladiatorHealth.mapValueTo01(currentPulse, 0, m_MaxPulse);
+        pulseText.text = string.Format("{0}", currentPulse);
+        // Set the slider's value appropriately.
+        //m_Slider.value = m_CurrentHealth;
+
+        // Interpolate the color of the bar between the choosen colours based on the current percentage of the starting health.
+        //m_FillImage.color = Color.Lerp(m_ZeroHealthColor, m_FullHealthColor, m_CurrentHealth / m_StartingHealth);
     }
 
-    IEnumerator FillPulseUI(float newPulse) {
-        float actualFillAmount = pulseBar.fillAmount;
-        float mappedNewPulse = GladiatorHealth.mapValueTo01(newPulse, 0, m_MaxPulse);
-        pulseText.text = string.Format("{0}", newPulse);
-        for (float t = 0.0f; t < pulseRegenerationTime; t += Time.deltaTime) {
-            pulseBar.fillAmount = Mathf.Lerp(actualFillAmount, mappedNewPulse, t);
-            yield return null;
-        }
 
-        yield return null;
-    }
-
-    void OnCurrentPulseChanged (float value) {
+    void OnCurrentPulseChanged(float value)
+    {
         m_CurrentPulse = value;
         // Change the UI elements appropriately.
         //SetHealthUI();
 
     }
 
-    private void OnZeroHealth () {
+    private void OnZeroHealth()
+    {
         // Set the flag so that this function is only called once.
         m_ZeroHealthHappened = true;
 
         RpcOnZeroHealth();
     }
 
-    private void InternalOnZeroHealth () {
+    private void InternalOnZeroHealth()
+    {
         // Disable the collider and all the appropriate child gameobjects so the tank doesn't interact or show up when it's dead.
         SetPlayerActive(false);
     }
 
     [ClientRpc]
-    private void RpcOnZeroHealth () {
+    private void RpcOnZeroHealth()
+    {
         // Play the particle system of the tank exploding.
         //m_ExplosionParticles.Play();
 
@@ -127,8 +138,9 @@ public class StrategistPulse : NetworkBehaviour {
         InternalOnZeroHealth();
     }
 
-    private void SetPlayerActive (bool active) {
-        // m_Collider.enabled = active;
+    private void SetPlayerActive(bool active)
+    {
+       // m_Collider.enabled = active;
 
         m_PlayerRenderers.SetActive(active);
         //m_HealthCanvas.SetActive(active);
@@ -143,7 +155,8 @@ public class StrategistPulse : NetworkBehaviour {
     }
 
     // This function is called at the start of each round to make sure each tank is set up correctly.
-    public void SetDefaults () {
+    public void SetDefaults()
+    {
         m_CurrentPulse = m_StartingPulse;
         m_ZeroHealthHappened = false;
         SetPlayerActive(true);
