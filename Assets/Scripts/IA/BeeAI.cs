@@ -9,6 +9,7 @@ public class BeeAI : MonoBehaviour {
     //we also need this ad target. The fake parent will follow the real target with a*, we'll follow the fake parent with flocking
     public GameObject fakeParent;       
     Vector3 velocity;
+    
 
     // Use this for initialization
     void Start() {
@@ -16,13 +17,16 @@ public class BeeAI : MonoBehaviour {
         swarm = fakeParent.GetComponent<SwarmAI>();
         velocity = Vector3.zero;
         rigidbody = GetComponent<Rigidbody>();
+      
         StartCoroutine(NextVel());
+
     }
 
     void Update() {
         Quaternion rotation = Quaternion.LookRotation(velocity);
         rigidbody.MoveRotation(Quaternion.Lerp(transform.rotation, rotation, 5f * Time.deltaTime));
         Debug.DrawLine(transform.position, new Vector3(transform.position.x + velocity.x, transform.position.y + velocity.y, transform.position.z + velocity.z), Color.green, 0, false);
+        
     }
 
     //here we compute all the component of the flocking and update the velocity vector
@@ -31,9 +35,9 @@ public class BeeAI : MonoBehaviour {
             Vector3 alignment = Alignment() * swarm.alignmentWeight;
             Vector3 cohesion = Cohesion() * swarm.cohesionWeight;
             Vector3 separation = Separation() * swarm.separationWeight;
-            Vector3 chasee = swarm.gameObject.transform.position - transform.position;      //this is the "chase the target" component
-            velocity = alignment * swarm.alignmentWeight + cohesion * swarm.cohesionWeight + separation * swarm.separationWeight;
-            if (swarm.follow) velocity += (chasee * swarm.followWeight);
+            Vector3 chasee = swarm.beeTarget.transform.position - transform.position;      //this is the "chase the target" component
+            velocity = alignment * swarm.alignmentWeight + cohesion * swarm.cohesionWeight + separation * swarm.separationWeight+chasee*swarm.followWeight;
+            //if (swarm.follow) velocity += (chasee * swarm.followWeight);
 
             //limit max and min velocity
             if (velocity.x >= swarm.maxVel) velocity.x = swarm.maxVel;
@@ -104,6 +108,10 @@ public class BeeAI : MonoBehaviour {
 
         return separation;
     }
+
+    /*void OnDestroy() {
+        swarm.target.GetComponent<GladiatorShooting>().DestroyEnemy(gameObject);
+    }*/
 
 
 }

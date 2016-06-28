@@ -19,17 +19,18 @@ public class SwarmAI : MonoBehaviour {
     public bool follow = true;  //follow the target
 
     public GameObject target;       //the target to follow. This is going in input to the AILerp
+    public GameObject beeTarget;
     public Vector3 centerPosition;  //center position of the swarm
     public Vector3 velocity;
 
     public float swarmDamage;
-    public float speed;
-    
+
     SphereCollider damageCollider;
 
     public bool isColliding;
     public bool die;
     public bool debugMode;
+    public bool AStar = true;
 
     EnemyHealth health;
     FSM SwarmFSM;
@@ -43,8 +44,9 @@ public class SwarmAI : MonoBehaviour {
     // Use this for initialization
     void Start() {
         agent = GetComponent<AILerp>();
+        agent.speed = maxVel;
         agent.target = target.transform;
-        
+        beeTarget = gameObject;
         originY = target.transform.position.y;
         isColliding = false;
 
@@ -83,40 +85,56 @@ public class SwarmAI : MonoBehaviour {
                 transform.position.x + localX, transform.position.y + localY, transform.position.z + localZ
             );
 
-            GameObject boid = Instantiate(beePrefab, position, transform.rotation) as GameObject;            
+            GameObject boid = Instantiate(beePrefab, position, transform.rotation) as GameObject;
 
-            swarm.Add(boid);            
+            swarm.Add(boid);
             boid.GetComponent<BeeAI>().fakeParent = gameObject;     //add the swarm object ad fakeParent to the bees
             BeeAI beeAI = boid.GetComponent<BeeAI>();
-           
+
         }
     }
 
-    
+
 
     void Update() {
+
+        if (AStar) {
+            if ( beeTarget == target) {
+                beeTarget = gameObject; 
+                agent.canMove = true;
+            }
+        }
+        else {
+            if (beeTarget == gameObject) {
+                beeTarget = target;
+                agent.canMove = false;
+            }
+        }
+
         centerPosition = Vector3.zero;
         velocity = Vector3.zero;
+
 
         //Compute swarm center
         foreach (GameObject agent in swarm) {
             centerPosition += agent.transform.position;
             velocity += agent.transform.forward;
             BeeAI beeAI = agent.GetComponent<BeeAI>();
-  
+
         }
         centerPosition /= swarmSize;
         velocity /= swarmSize;
 
         //we need the center to stay at certain height
-        centerPosition.y = transform.position.y;     
-             
+        centerPosition.y = target.transform.position.y;
+
         //Collider match with center position 
         Vector3 colliderPos = transform.InverseTransformPoint(centerPosition);
         damageCollider.center = colliderPos;
 
         Debug.DrawLine(centerPosition, new Vector3(centerPosition.x, centerPosition.y + 5f, centerPosition.z), Color.red, 0, false);
-               
+        Debug.DrawLine(transform.position, new Vector3(transform.position.x, transform.position.y + 2f, transform.position.z), Color.cyan, 0, false);
+
         SwarmFSM.Update();
     }
 
@@ -143,16 +161,21 @@ public class SwarmAI : MonoBehaviour {
 
     void Die() {
         DebugLine("Dying");
+        foreach (GameObject agent in swarm) {
+            Destroy(agent);
+        }
+        Destroy(gameObject);
     }
     void Attack() {
-        DebugLine("Attack"+Random.value);
+        DebugLine("Attack" + Random.value);
     }
 
     void OnTriggerEnter(Collider col) {
+        Debug.Log("Collide");
         if (col.gameObject.tag == "Gladiator")
             isColliding = true;
     }
-    
+
     void OnTriggerExit(Collider col) {
         if (col.gameObject.tag == "Gladiator") {
             isColliding = false;
@@ -163,6 +186,15 @@ public class SwarmAI : MonoBehaviour {
         if (debugMode)
             Debug.Log(text);
     }
+
+    /*void OnDestoy() {
+        target.GetComponent<GladiatorShooting>().RemoveTarget(transform);
+    }*/
+
+    /*void Destroy() {
+        target.GetComponent<GladiatorShooting>().DestroyEnemy(gameObject);
+    }*/
+
 
 
 
