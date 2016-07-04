@@ -134,7 +134,7 @@ public class WormIA : MonoBehaviour {
         {
             model.GetComponent<MeshRenderer>().material.color = Color.red;
         }
-        FindTarget();
+        //FindTarget();
     }
 
     bool LifeOver() {

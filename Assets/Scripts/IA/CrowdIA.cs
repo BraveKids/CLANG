@@ -5,12 +5,16 @@ public class CrowdIA : NetworkBehaviour
 {
 
     DecisionTree CrowdTree;
-    public float helpFrequency = 3f;
-    public float maxMedpackProbability = 0.4f;
-    public float weaponProbability = 0.5f;
-    public int monsterTrheshold = 6;
-    public float miteProbability = 0.4f;
-    public float lambdaArmor = .1f;
+
+    //CrowdIA parameters
+    public float helpFrequency = 3f;            //how often the decision tree is navigated in seconds
+    public float maxMedpackProbability = 0.4f;  //max probability to drop a medpack after medpack node is reached
+    public float weaponProbability = 0.5f;      //probability to drop a weapon afte weapon node is reached
+    public int monsterTrheshold = 6;            //after how many monster active in the field the crowd won't help the strategist
+    public float miteProbability = 0.4f;        //probability to drop the mite after mite node is reached
+    public float lambdaArmor = .1f;             //greater values implies that the function may grow faster, and so the probabilityto drop an armor after the armor node is reached
+
+    //Arena limits
     public float arenaLR = 18f;
     public float arenaU = 5f;
     public float arenaD = 20f;
@@ -25,18 +29,17 @@ public class CrowdIA : NetworkBehaviour
     public float strategistProbability = 0f;
     public float medpackProbability = 0f;
 
+    //item prefabs
     public GameObject medPackPrefab;
     public GameObject gunPrefab;
     public GameObject grenadePrefab;
     public GameObject armorPrefab;
     public GameObject mitePrefab;
 
-    public bool debugMode;
+    public bool debugMode;              //if true print all the DebugLine  
+    public GameObject[] arenaElements;  //  cointains all the elements on the ground to prevent a spawn inside of them          
 
-    public GameObject[] arenaElements;
-    // Use this for initialization
-
-    public int count;
+    public int enemyCount;
 
     void Start()
     {
@@ -47,6 +50,8 @@ public class CrowdIA : NetworkBehaviour
 
         arena = GameObject.FindGameObjectWithTag("Arena");
         arenaElements = GameObject.FindGameObjectsWithTag("ArenaElements");
+
+        //Decision tree construction
         DTDecision kingMaker = new DTDecision(StrategistDice);
         DTDecision miteNode = new DTDecision(MiteDice);
         DTDecision weaponNode = new DTDecision(WeaponDice);
@@ -67,10 +72,8 @@ public class CrowdIA : NetworkBehaviour
         armorNode.AddNode(false, medpackNode);
         medpackNode.AddNode(true, medpackAction);
 
-
         CrowdTree = new DecisionTree(kingMaker);
-        StartCoroutine(Patrol());
-        
+        StartCoroutine(Patrol());        
 
         arenaBorderL = arena.transform.position.x - arenaLR;
         arenaBorderR = arena.transform.position.x + arenaLR;
@@ -87,24 +90,16 @@ public class CrowdIA : NetworkBehaviour
         strategistProbability = currentLife / maxLife;   //this goes from 0 to 1
         
         int monsterCount = GameElements.getEnemyCount();
-        armorProbability = 1 - Mathf.Exp(-lambdaArmor * monsterCount);
+        enemyCount = GameElements.getEnemyCount();
 
+
+        armorProbability = 1 - Mathf.Exp(-lambdaArmor * enemyCount);
         medpackProbability = maxMedpackProbability - (currentLife * maxMedpackProbability) / maxLife;
-
-        count = GameElements.getEnemyCount();
     }
+    
 
-
-
-
-
-
-
-
-    /*
-    *   the more the life is full the highest the probability to help the strategist
-    *   Linear distribution
-    */
+    
+    //the more the gladiator current HP the highest the probability to help the strategist    
     object StrategistDice()
     {
         float maxLife = GameElements.getMaxLife();
@@ -113,7 +108,7 @@ public class CrowdIA : NetworkBehaviour
         return Random.value <= strategistProbability ? "strategist" : "gladiator";
     }
 
-    //Armor probability
+    //the more the number of enemies and traps the highest the probability to drop an armor
     object ArmorDice()
     {
         if (GameElements.getArmorDropped() || GameElements.getGladiatorArmor() > 0)
