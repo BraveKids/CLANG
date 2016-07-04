@@ -6,7 +6,7 @@ public class BeeAI : MonoBehaviour {
     SwarmAI swarm;
     Rigidbody rigidbody;
     //we don't want to be child of the swarm because it rotate and we don't need it, but we do want to be connected with it
-    //we also need this ad target. The fake parent will follow the real target with a*, we'll follow the fake parent with flocking
+    //we also need this as target. The fake parent will follow the real target using a*, we'll follow the fake parent with flocking
     public GameObject fakeParent;       
     Vector3 velocity;
 
@@ -34,6 +34,8 @@ public class BeeAI : MonoBehaviour {
             Vector3 chasee = swarm.gameObject.transform.position - transform.position;      //this is the "chase the target" component
             velocity = alignment * swarm.alignmentWeight + cohesion * swarm.cohesionWeight + separation * swarm.separationWeight;
             if (swarm.follow) velocity += (chasee * swarm.followWeight);
+
+            //Since we want to reproduce an almost natural movement but we also want the swarm to be as one...
 
             //limit max and min velocity
             if (velocity.x >= swarm.maxVel) velocity.x = swarm.maxVel;
@@ -78,10 +80,8 @@ public class BeeAI : MonoBehaviour {
     }
 
     Vector3 Cohesion() {
-        Vector3 cohesion;
-       
+        Vector3 cohesion;       
         cohesion = new Vector3(swarm.centerPosition.x, swarm.centerPosition.y, swarm.centerPosition.z);
-
         cohesion -= transform.position;
         cohesion /= swarm.swarmSize;
         cohesion -= transform.position;
@@ -96,9 +96,7 @@ public class BeeAI : MonoBehaviour {
                 separation += boid.transform.position - transform.position;
             }
         }
-
         separation /= swarm.swarmSize;
-
         separation *= -1;
         separation.Normalize();
 

@@ -62,8 +62,7 @@ public class WormIA : MonoBehaviour {
         angryAttacking.AddTransition(new FSMTransition(LifeOver, dying));
         angryAttacking.AddExitAction(Hide);
 
-        //chasing
-      
+        //chasing      
         chasing.AddStayAction(Chase);
         chasing.AddTransition(new FSMTransition(CheckCollision, waiting));
 
@@ -220,6 +219,7 @@ public class WormIA : MonoBehaviour {
         Invoke("NotAttacked", 2f);
 
     }
+
     void NotAttacked()
     {
         attackScript.alreadyAttack = false;
@@ -231,8 +231,6 @@ public class WormIA : MonoBehaviour {
             anim.SetBool("Attack", false);
         }
         Invoke("Destroy", 2.0f);
-
-
     }
 
 

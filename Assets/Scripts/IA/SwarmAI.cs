@@ -12,6 +12,7 @@ public class SwarmAI : MonoBehaviour {
     public float maxVel = 3f;   //max speed of the bees
     private List<GameObject> swarm;     //contains all the bees
 
+    //Flocking parameters
     public float alignmentWeight = 1.5f;
     public float cohesionWeight = 2.5f;
     public float separationWeight = 2;
@@ -46,7 +47,8 @@ public class SwarmAI : MonoBehaviour {
         target = GameElements.getGladiator();
         agent.target = target.transform;
         
-        originY = target.transform.position.y;
+        originY = target.transform.position.y;      //we want to keep the swarm at a certain height 
+
         isColliding = false;
 
         //FSM 
@@ -63,7 +65,7 @@ public class SwarmAI : MonoBehaviour {
         attacking.AddTransition(new FSMTransition(NotColliding, chasing));
         attacking.AddTransition(new FSMTransition(GoigToDie, dying));
 
-        dying.AddStayAction(Die);
+        dying.AddEnterAction(Die);
 
         SwarmFSM = new FSM(chasing);
 
@@ -74,7 +76,7 @@ public class SwarmAI : MonoBehaviour {
         swarm = new List<GameObject>();
         damageCollider = GetComponent<SphereCollider>();
 
-        //Spawn all the bees
+        //Spawn all the bees inside a box
         for (var i = 0; i < swarmSize; i++) {
             float localX = (Random.Range(-1, 1)) * boxDimension / 2;   //generate random from -1 to 1, then multiply per boxdimension/2
             float localY = (Random.Range(-1, 1)) * boxDimension / 2;
@@ -139,8 +141,7 @@ public class SwarmAI : MonoBehaviour {
     }
 
     bool GoigToDie() {
-        //return health.currentHealth <= 0;
-        return die;
+        return health.currentHealth <= 0;
     }
 
     void Die() {
