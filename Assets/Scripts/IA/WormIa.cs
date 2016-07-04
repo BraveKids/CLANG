@@ -9,12 +9,12 @@ public class WormIA : MonoBehaviour {
     float timer = 0f;
     public WurmAttack attackScript;
     public GameObject target;
-    public float itemEatingProbability;
-    public float bareTime = 5f;
+    public float itemEatingProbability;     //probability to eat an item instead of the gladiator
+    public float bareTime = 5f;             //time from the attacking/angryAttacking state to the return to the hide state
     public WurmTrigger trigger;
     public EnemyHealth myHealth;
-    public float timeBeforeAttack = 1f;
-    public float timeBeforChasing = 2f;
+    public float timeBeforeAttack = 1f;     //time before attack after target is reached
+    public float timeBeforChasing = 2f;     //time before start chasing/angryChasing after in hide state
     float timerChase = 0f;
     float timerAttack = 0f;
     bool collided = false;
@@ -22,7 +22,6 @@ public class WormIA : MonoBehaviour {
     Animator anim;
 
 
-    // Use this for initialization
     void Start() {
 
         anim = GetComponent<Animator>();
@@ -81,17 +80,10 @@ public class WormIA : MonoBehaviour {
         //dying
         dying.AddEnterAction(Die);
 
-
-
-
-
         myIa = new FSM(chasing);
-        target = GameElements.getGladiator();
-        
-
+        target = GameElements.getGladiator();   
     }
 
-    // Update is called once per frame
     void Update() {
         myIa.Update();
     }
@@ -109,8 +101,7 @@ public class WormIA : MonoBehaviour {
                 return false;
         }
         else
-            return false;
-    
+            return false;   
         
         }
 
@@ -176,6 +167,7 @@ public class WormIA : MonoBehaviour {
                                                                                 target.transform.position.z)
                                                                                 , speed* Time.deltaTime);
     }
+
     bool GoToAttack() {
         timerAttack += Time.deltaTime;
         if (timerAttack >= timeBeforeAttack) {
