@@ -12,9 +12,11 @@ public class Trap : NetworkBehaviour
 
 
 
+
     // Use this for initialization
     void Start()
     {
+
         timeOfLife = 5.0f;
         anim = GetComponent<Animator>();
         anim.SetBool("snap", false);
@@ -58,6 +60,8 @@ public class Trap : NetworkBehaviour
     {
         if (col.gameObject.tag == "Gladiator" || col.gameObject.tag == "Enemy" || col.gameObject.tag == "Tank")
         {
+
+
             anim.SetBool("snap", true);
             makeDamage(col.gameObject);
 

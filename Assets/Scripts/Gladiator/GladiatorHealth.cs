@@ -2,9 +2,12 @@
 using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.Networking;
+using System;
 
 public class GladiatorHealth : NetworkBehaviour
 {
+    AudioSync audioSync;
+    SoundManager soundManager;
     public float m_StartingHealth = 32f;
     public float m_Resistance = 14f;
     // The amount of health each tank starts with.
@@ -36,6 +39,7 @@ public class GladiatorHealth : NetworkBehaviour
 
     void Start()
     {
+        
         invulnerable = false;
         curColor = model.GetComponent<SkinnedMeshRenderer>().material.color;
         m_Collider = GetComponent<BoxCollider>();
@@ -46,11 +50,12 @@ public class GladiatorHealth : NetworkBehaviour
             healthBar = GameObject.FindGameObjectWithTag("HealthBar").GetComponent<Image>();
             armorBar = GameObject.FindGameObjectWithTag("ArmorBar").GetComponent<Image>();
         }
-
+        soundManager = GameElements.getSoundManager().GetComponent<SoundManager>();
         movementScript = GetComponent<GladiatorMovement>();
         attackScript = GetComponent<GladiatorShooting>();
         anim = GetComponent<Animator>();
         netAnim = GetComponent<NetworkAnimator>();
+        audioSync = GetComponent<AudioSync>();
     }
 
 
@@ -130,6 +135,8 @@ public class GladiatorHealth : NetworkBehaviour
             // If the current health is at or below zero and it has not yet been registered, call OnZeroHealth.
             if (m_CurrentHealth <= 0f)
             {
+                audioSync.PlaySound(2);
+                //PlaySound("Death");
                 movementScript.setAttacking(true);
                 attackScript.damaged = true;
 
@@ -308,4 +315,24 @@ public class GladiatorHealth : NetworkBehaviour
     {
         return m_MaxArmor;
     }
+
+
+
+    void PlaySound(string name)
+    {
+        CmdPlaySound(name);
+    }
+
+    [Command]
+    void CmdPlaySound(string name)
+    {
+        RpcPlaySound(name);
+    }
+
+    [ClientRpc]
+    void RpcPlaySound(string name)
+    {
+        soundManager.PlayEffect(name);
+    }
+
 }

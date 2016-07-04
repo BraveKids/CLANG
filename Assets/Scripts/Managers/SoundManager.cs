@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
-namespace UnityStandardAssets.Network {
+
 
     [RequireComponent(typeof(AudioSource))]
     public class SoundManager : MonoBehaviour {
@@ -20,7 +20,7 @@ namespace UnityStandardAssets.Network {
         public AudioClip gameMusic;
 
         //effect
-        public AudioClip Attack;
+        /*public AudioClip Attack;
         public AudioClip CollectObject;
         public AudioClip Death;
         public AudioClip Defend;
@@ -39,9 +39,8 @@ namespace UnityStandardAssets.Network {
         public AudioClip cardAvaible;
         public AudioClip pulseRecharge;
         public AudioClip spawningEnemies;
-        public AudioClip button;
+        public AudioClip button;*/
 
-        AudioSource ciao = new AudioSource();
 
 
 
@@ -56,19 +55,19 @@ namespace UnityStandardAssets.Network {
         void Start () {
             audioSource = GetComponent<AudioSource>();
 
-            musics = new Dictionary<string, AudioClip>();
+            /*musics = new Dictionary<string, AudioClip>();
             //musics.Add(menuMusic.name, menuMusic);
             //musics.Add(gameMusic.name, gameMusic);
 
 
 
             effects = new Dictionary<string, AudioClip>();
-            /*effects.Add(Attack.name, Attack);
+            effects.Add(Attack.name, Attack);
             effects.Add(CollectObject.name, CollectObject);
             effects.Add(Death.name, Death);
-            effects.Add(Defend.name, Defend);
-            effects.Add(DropObject.name, DropObject);
-            effects.Add(emptyGun.name, emptyGun);
+            //effects.Add(Defend.name, Defend);
+            //effects.Add(DropObject.name, DropObject);
+            //effects.Add(emptyGun.name, emptyGun);
             effects.Add(Grenade.name, Grenade);
             effects.Add(gun.name, gun);
             effects.Add(Running.name, Running);
@@ -76,14 +75,14 @@ namespace UnityStandardAssets.Network {
             effects.Add(draggingWorm.name, draggingWorm);
             effects.Add(growlingWorm.name, growlingWorm);
             effects.Add(Mutant.name, Mutant);
-            effects.Add(Swarm.name, Swarm);
+            //effects.Add(Swarm.name, Swarm);
             effects.Add(Tank.name, Tank);
             effects.Add(audienceCheering.name, audienceCheering);
-            effects.Add(cardAvaible.name, cardAvaible);
-            effects.Add(pulseRecharge.name, pulseRecharge);
+            //effects.Add(cardAvaible.name, cardAvaible);
+            //effects.Add(pulseRecharge.name, pulseRecharge);
             effects.Add(spawningEnemies.name, spawningEnemies);
-            */
-            //effects.Add(button.name, button);
+            
+            //effects.Add(button.name, button);*/
 
 
 
@@ -186,4 +185,3 @@ namespace UnityStandardAssets.Network {
 
         }
     }
-}

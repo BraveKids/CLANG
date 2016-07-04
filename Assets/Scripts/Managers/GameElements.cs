@@ -11,7 +11,7 @@ using System.Collections;
 
 public class GameElements : NetworkBehaviour
 {
-
+    static GameObject soundManager;
     static GameObject currentCamera;
     static GameObject menuCanvas;
     static GameObject gladiatorCanvas;
@@ -50,7 +50,7 @@ public class GameElements : NetworkBehaviour
         //strategistCanvas = GameObject.FindGameObjectWithTag("StrategistCanvas");
         //Debug.Log(strategistCanvas);
         virtualJoystick = gladiatorCanvas.transform.FindChild("VirtualJoypad/TapArea/BackgroundImage").gameObject;
-
+        soundManager = GameObject.FindGameObjectWithTag("SoundManager");
 
     }
 
@@ -89,6 +89,11 @@ public class GameElements : NetworkBehaviour
     public static GameObject getGladiatorCanvas()
     {
         return gladiatorCanvas;
+    }
+
+    public static GameObject getSoundManager()
+    {
+        return soundManager;
     }
 
     public static GameObject getStrategistCanvas()

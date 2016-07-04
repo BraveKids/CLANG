@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
+using System;
 
 public class StrategistSpawner : NetworkBehaviour {
-
+    AudioSync audioSync;
     public Camera strategistCamera;
     public int m_PlayerNumber = 1;            // Used to identify the different players.
     //public Rigidbody m_Shell;                 // Prefab of the shell.
@@ -41,9 +42,11 @@ public class StrategistSpawner : NetworkBehaviour {
     }
     public override void OnStartLocalPlayer()
     {
+
         GameObject.FindGameObjectWithTag("Canvas").transform.FindChild("StrategistCanvas").gameObject.SetActive(true);
         //GetComponent<GameTimer>().enabled = true;
         GetComponent<StrategistPulse>().enabled = true;
+
     }
 
 
@@ -53,12 +56,11 @@ public class StrategistSpawner : NetworkBehaviour {
             strategistCamera.GetComponent<StrategistCamera>().enabled = false;
             GameObject.Destroy(strategistCamera.gameObject);
         }
-
+        audioSync = GetComponent<AudioSync>();
     }
 
     public void Spawn(GameObject spawnObj, Vector3 position)
     {
-        
         // Set the fired flag so only Fire is only called once.
         m_Fired = true;
         CmdSpawn(spawnObj, position);
@@ -121,6 +123,12 @@ public class StrategistSpawner : NetworkBehaviour {
             return;
         }
 	}
+
+  
+
+
+
+
 
 
     public void SetDefaults()

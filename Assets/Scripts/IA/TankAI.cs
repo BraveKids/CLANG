@@ -30,16 +30,19 @@ public class TankAI : NetworkBehaviour
     float shieldTimer = 0f;
 
 
+
     // Use this for initialization
     void Start()
     {
-        agent.target = target.transform;
+
+        
         netAnim = GetComponent<NetworkAnimator>();
         anim = GetComponent<Animator>();
         target = GameElements.getGladiator();
         gladShot = target.GetComponent<GladiatorShooting>();
         health = GetComponent<EnemyHealth>();
         agent = GetComponent<AILerp>();
+        agent.target = target.transform;
         FSMState chasing = new FSMState();
         FSMState shieldChasing = new FSMState();
         FSMState attacking = new FSMState();
@@ -231,7 +234,10 @@ public class TankAI : NetworkBehaviour
     void GetDamage()
     {
 
+        attackTrigger.GetComponent<BoxCollider>().enabled = false;
         //anim.SetTrigger("Damage");
+        agent.speed = 0f;
+        agent.canMove = false;
         anim.SetBool("Attack", false);
         anim.SetBool("Run", false);
         netAnim.SetTrigger("Damage");

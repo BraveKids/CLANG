@@ -6,6 +6,7 @@ using System;
 
 public class GladiatorShooting : NetworkBehaviour
 {
+    AudioSync audioSync;
     public Transform flarePos;
     public GameObject flarePrefab;
     public int m_PlayerNumber = 1;            
@@ -35,6 +36,7 @@ public class GladiatorShooting : NetworkBehaviour
     GladiatorHealth healthScript;
     GladiatorMovement movementScript;
     public bool damaged;
+    Text popUpText;
 
 
     private void Awake()
@@ -51,7 +53,12 @@ public class GladiatorShooting : NetworkBehaviour
 
     private void Start()
     {
-        
+        if (isLocalPlayer)
+        {
+            popUpText = GameObject.FindGameObjectWithTag("PopUpText").GetComponent<Text>();
+         
+        }
+        audioSync = GetComponent<AudioSync>();
         grenadeTaken = false;
         grenadeLaunching = false;
         targets = new List<Transform>();
@@ -134,6 +141,7 @@ public class GladiatorShooting : NetworkBehaviour
 
     public void PickUpObject(GameObject obj, string id)
     {
+        audioSync.PlaySound(1);
         CmdRemoveItem(obj);
         if (id.Equals("fireweapon"))
         {
@@ -145,7 +153,7 @@ public class GladiatorShooting : NetworkBehaviour
             if (handWeapon != null)
             {
                 ToggleWeapon("fire");
-                
+
                 m_Shell = fireWeapon.GetComponent<FireWeapon>().bulletPrefab.GetComponent<Rigidbody>();
             }
         }
@@ -161,8 +169,13 @@ public class GladiatorShooting : NetworkBehaviour
         {
             grenadeTaken = true;
         }
-    }
+        if (isLocalPlayer)
+        {
+            popUpText.text = "YOU PICKED UP " + id.ToUpper();
+            popUpText.GetComponent<Animator>().SetTrigger("IsOpen");
+        }
 
+    }
     [Command]
     void CmdRemoveItem(GameObject obj)
     {
@@ -181,6 +194,7 @@ public class GladiatorShooting : NetworkBehaviour
     {
         if (!basicAttack && !damaged && !specialAttack && !grenadeLaunching)
         {
+            
             basicAttack = true;
             movementScript.setAttacking(true);
             if (targets.Count > 0)
@@ -201,6 +215,7 @@ public class GladiatorShooting : NetworkBehaviour
                 ToggleWeapon("hand");
             }
             CmdSetAnimTrigger("Attack");
+            audioSync.PlaySound(0);
             CmdAttack();
             Invoke("BasicAttackDown", 0.6f);
         }
@@ -347,7 +362,7 @@ public class GladiatorShooting : NetworkBehaviour
     {
         if (fireWeapon != null)
         {
-       
+            audioSync.PlaySound(3);
             CmdFire();
             Invoke("FireDown", 0.7f);
         }
@@ -410,7 +425,7 @@ public class GladiatorShooting : NetworkBehaviour
         NetworkServer.Spawn(flarePrefab);
         NetworkServer.Spawn(shellInstance.gameObject);
         Destroy(shellInstance.gameObject, 2.0f);
-        Destroy(flarePrefab, 1.0f);
+        Destroy(flareInstance, 1.0f);
 
     }
 
@@ -511,6 +526,10 @@ public class GladiatorShooting : NetworkBehaviour
         }
 
     }
+
+
+
+
 
 
     public void SetDefaults()

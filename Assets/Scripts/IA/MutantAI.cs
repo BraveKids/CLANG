@@ -4,6 +4,7 @@ using UnityEngine.Networking;
 
 public class MutantAI : MonoBehaviour
 {
+
     public GameObject attackTrigger;
     FSM mutantFSM;
     GameObject target;
@@ -25,6 +26,7 @@ public class MutantAI : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+
         target = GameElements.getGladiator();
         health = GetComponent<EnemyHealth>();
         agent = GetComponent<AILerp>();
@@ -143,6 +145,7 @@ public class MutantAI : MonoBehaviour
     void GetDamage()
     {
 
+        attackTrigger.GetComponent<BoxCollider>().enabled = false;
         agent.speed = 0f;
         agent.canMove = false;
         anim.SetBool("Attack", false);

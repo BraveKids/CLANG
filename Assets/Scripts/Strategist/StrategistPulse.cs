@@ -5,10 +5,11 @@ using System.Collections;
 
 public class StrategistPulse : NetworkBehaviour {
     public float m_StartingPulse = 5.0f;
-
+    AudioSync audioSync;
     // The amount of health each tank starts with.
     public float m_MaxPulse = 10.0f;
-        //public Slider m_Slider;                           // The slider to represent how much health the tank currently has.
+    public float pulseRegenerationTime = 2.0f;
+    //public Slider m_Slider;                           // The slider to represent how much health the tank currently has.
     //public Image m_FillImage;                         // The image component of the slider.
     //public Color m_FullHealthColor = Color.green;     // The color the health bar will be when on full health.
     //public Color m_ZeroHealthColor = Color.red;       // The color the health bar will be when on no health.
@@ -43,12 +44,12 @@ public class StrategistPulse : NetworkBehaviour {
 
     private void Start()
     {
+        audioSync = GetComponent<AudioSync>();
         m_CurrentPulse = m_StartingPulse;
         strategistCanvas = GameObject.FindGameObjectWithTag("StrategistCanvas");
         pulseBar = GameObject.FindGameObjectWithTag("Pulse").GetComponent<Image>();
         pulseText = GameObject.Find("PulseText").GetComponent<Text>();
 
-        SetHealthUI(m_CurrentPulse);
         StartCoroutine(addPulse());
     }
 
@@ -58,13 +59,13 @@ public class StrategistPulse : NetworkBehaviour {
         while (true)
         { // loops forever...
             if (m_CurrentPulse < m_MaxPulse)
-            { // if health < 100...
-                m_CurrentPulse += 1; // increase health and wait the specified time
-                SetHealthUI(m_CurrentPulse);
-                yield return new WaitForSeconds(3);
+            { 
+                m_CurrentPulse += 1; 
+                SetPulseUI(m_CurrentPulse);
+                yield return new WaitForSeconds(pulseRegenerationTime);
             }
             else
-            { // if health >= 100, just yield 
+            { 
                 yield return null;
             }
         }
@@ -75,7 +76,7 @@ public class StrategistPulse : NetworkBehaviour {
     {
         // Reduce current health by the amount of damage done.
         m_CurrentPulse -= amount;
-        SetHealthUI(m_CurrentPulse);
+        SetPulseUI(m_CurrentPulse);
         
     }
 
@@ -89,19 +90,26 @@ public class StrategistPulse : NetworkBehaviour {
         m_CurrentPulse = amount;
     }
 
-
-    private void SetHealthUI(float currentPulse)
+    private void SetPulseUI(float newPulse)
     {
-        //float value = currentPulse / m_MaxPulse;
-        //pulseBar.localScale = new Vector3(value, transform.localScale.y, transform.localScale.z);
-        pulseBar.fillAmount = GladiatorHealth.mapValueTo01(currentPulse, 0, m_MaxPulse);
-        pulseText.text = string.Format("{0}", currentPulse);
-        // Set the slider's value appropriately.
-        //m_Slider.value = m_CurrentHealth;
-
-        // Interpolate the color of the bar between the choosen colours based on the current percentage of the starting health.
-        //m_FillImage.color = Color.Lerp(m_ZeroHealthColor, m_FullHealthColor, m_CurrentHealth / m_StartingHealth);
+        StartCoroutine(FillPulseUI(newPulse));
     }
+
+    IEnumerator FillPulseUI(float newPulse)
+    {
+        float actualFillAmount = pulseBar.fillAmount;
+        float mappedNewPulse = GladiatorHealth.mapValueTo01(newPulse, 0, m_MaxPulse);
+        pulseText.text = string.Format("{0}", newPulse);
+        for (float t = 0.0f; t < pulseRegenerationTime; t += Time.deltaTime)
+        {
+            pulseBar.fillAmount = Mathf.Lerp(actualFillAmount, mappedNewPulse, t);
+            yield return null;
+        }
+
+        yield return null;
+    }
+
+
 
 
     void OnCurrentPulseChanged(float value)
