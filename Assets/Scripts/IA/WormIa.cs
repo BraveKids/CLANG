@@ -226,9 +226,20 @@ public class WormIA : MonoBehaviour {
     }
 
     void Die() {
-        Destroy(gameObject);
+        if(anim.GetBool("Attack") == true)
+        {
+            anim.SetBool("Attack", false);
+        }
+        Invoke("Destroy", 2.0f);
+
+
     }
 
+
+    void Destroy()
+    {
+        GameElements.getGladiator().GetComponent<GladiatorShooting>().DestroyEnemy(this.gameObject);
+    }
 
 
 }
