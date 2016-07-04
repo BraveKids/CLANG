@@ -54,7 +54,7 @@ public class WormIA : MonoBehaviour {
         angryChasing.AddTransition(new FSMTransition(CheckCollision, angryWaiting));
 
         //angryWaiting
-        angryWaiting.AddTransition(new FSMTransition(GoToAttack, angryAttacking));
+        angryWaiting.AddTransition(new FSMTransition(GoToAttackFaster, angryAttacking));
 
         //angryAttacking
         angryAttacking.AddEnterAction(Attack);
@@ -138,8 +138,6 @@ public class WormIA : MonoBehaviour {
         {
             model.GetComponent<MeshRenderer>().material.color = Color.red;
         }
-
-        FindTarget();
     }
 
     bool LifeOver() {
@@ -147,12 +145,12 @@ public class WormIA : MonoBehaviour {
     }
 
     void FindTarget() {
-        /*if (Random.value <= itemEatingProbability && GameElements.itemSpawned.Count > 0) {
+        if (Random.value <= itemEatingProbability && GameElements.itemSpawned.Count > 0) {
             target = ChooseItem();
         }
-        else {*/
+        else {
             target = GameElements.getGladiator();
-        //}
+        }
     }
 
     GameObject ChooseItem() {
@@ -181,6 +179,15 @@ public class WormIA : MonoBehaviour {
     bool GoToAttack() {
         timerAttack += Time.deltaTime;
         if (timerAttack >= timeBeforeAttack) {
+            timerAttack = 0f;
+            return true;
+        }
+        return false;
+    }
+
+    bool GoToAttackFaster() {
+        timerAttack += Time.deltaTime;
+        if (timerAttack >= timeBeforeAttack*0.75f) {
             timerAttack = 0f;
             return true;
         }
@@ -232,6 +239,8 @@ public class WormIA : MonoBehaviour {
             anim.SetBool("Attack", false);
         }
         Invoke("Destroy", 2.0f);
+
+
     }
 
 
