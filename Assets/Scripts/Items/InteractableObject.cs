@@ -24,7 +24,7 @@ public class InteractableObject : MonoBehaviour
             if (id == "fireweapon")
             {
 
-
+                transform.FindChild("ItemAura").gameObject.SetActive(false);
                 gameObject.GetComponent<BoxCollider>().enabled = false;
                 //gameObject.transform.SetParent(other.transform);
                 anchorPosHand = other.gameObject.GetComponent<GladiatorShooting>().handPosition;

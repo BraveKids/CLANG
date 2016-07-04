@@ -11,35 +11,39 @@ public class TankAI : NetworkBehaviour
     public float distance;
     FSM tankFSM;
     AILerp agent;
+
     //variabili di debug
     public bool gladiatorInRange;
     public bool shooting;
     public bool die;
-    public float damageTime;
+
+    public float damageTime;        //time between receive damage and turn back to chasing
     float damageTimer = 0f;
-    //tempo tra l'inizio di un attacco e l'inizio di un altro
-    public float attackTime = 3f;
-    public bool isDamaged;
-    public float normalSpeed;
-    public float shieldSpeed;
+    public float attackTime = 3f;   //time from one attack to another
+    public bool isDamaged;          //true if tank has been hit
+    public float normalSpeed;       //normal chasing speed
+    public float shieldSpeed;       //shield chasing speed->slower
+
     public bool debugMode;
     float timer;
     GameObject target;
     EnemyHealth health;
-    public float afterShield;
+    public float afterShield;       //time between the moment i raise the shield and the moment I put it down if I don't get shot anymore
     float shieldTimer = 0f;
+
 
 
     // Use this for initialization
     void Start()
-    {
-        agent.target = target.transform;
+    {       
         netAnim = GetComponent<NetworkAnimator>();
         anim = GetComponent<Animator>();
         target = GameElements.getGladiator();
         gladShot = target.GetComponent<GladiatorShooting>();
         health = GetComponent<EnemyHealth>();
         agent = GetComponent<AILerp>();
+        agent.target = target.transform;
+
         FSMState chasing = new FSMState();
         FSMState shieldChasing = new FSMState();
         FSMState attacking = new FSMState();
@@ -47,8 +51,8 @@ public class TankAI : NetworkBehaviour
         FSMState damaged = new FSMState();
 
         //chasing
-        chasing.AddStayAction(Chasing);
         chasing.AddEnterAction(ResetTimer);
+        chasing.AddStayAction(Chasing);
         chasing.AddTransition(new FSMTransition(GladiatorShootingMe, shieldChasing));
         chasing.AddTransition(new FSMTransition(GladiatorInRange, attacking));
         chasing.AddTransition(new FSMTransition(GoigToDie, dying));
@@ -76,10 +80,8 @@ public class TankAI : NetworkBehaviour
         dying.AddEnterAction(Dying);
 
         tankFSM = new FSM(chasing);
-
     }
 
-    // Update is called once per frame
     void Update()
     {
 
@@ -93,7 +95,6 @@ public class TankAI : NetworkBehaviour
         {
             return true;
         }
-        //TOTO controlla se il gladiatore è nel raggio d'azione del tank
         return false;
     }
 
@@ -109,7 +110,6 @@ public class TankAI : NetworkBehaviour
             shieldTimer = 0f;
             return true;
         }
-        //TODO controlla se il gladiatore sta sparando. Come? Il gladiatore sta sparando e il tank è nel cono visivo
         return false;
     }
 
@@ -150,13 +150,11 @@ public class TankAI : NetworkBehaviour
     }
 
     void Chase(float speed, bool charge)
-    {
-        
+    {        
         anim.SetBool("Run", charge);
         anim.SetBool("Attack", false);
         agent.canMove = true;
         agent.speed = speed;
-
     }
 
     bool PerkUp()
@@ -175,7 +173,6 @@ public class TankAI : NetworkBehaviour
     {
         agent.speed = 0f;
         agent.canMove = false;
-        //TODO animazione dying e destroy del gameobject. Ricordati di mettere nell'OnDestroy l'eventuale rimozione dalla lista del player (se presente)
         DebugLine("Dead");
         anim.SetTrigger("Death");
         netAnim.SetTrigger("Death");
@@ -231,7 +228,9 @@ public class TankAI : NetworkBehaviour
     void GetDamage()
     {
 
-        //anim.SetTrigger("Damage");
+        attackTrigger.GetComponent<BoxCollider>().enabled = false;
+        agent.speed = 0f;
+        agent.canMove = false;
         anim.SetBool("Attack", false);
         anim.SetBool("Run", false);
         netAnim.SetTrigger("Damage");

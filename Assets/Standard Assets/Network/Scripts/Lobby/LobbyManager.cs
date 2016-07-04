@@ -150,6 +150,8 @@ namespace UnityStandardAssets.Network
                 backButton.gameObject.SetActive(false);
                 SetServerInfo("Offline", "None");
                 isMatchmaking = false;
+                background.enabled = true;
+                topPanel.isInGame = false;
             }
 
             if (newPanel == creditsPanel) {

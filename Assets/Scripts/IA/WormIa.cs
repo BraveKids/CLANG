@@ -20,8 +20,11 @@ public class WormIA : MonoBehaviour {
     bool collided = false;
     FSM myIa;
     Animator anim;
+
+
     // Use this for initialization
     void Start() {
+
         anim = GetComponent<Animator>();
         myHealth = gameObject.GetComponent<EnemyHealth>();
         FSMState off = new FSMState();
@@ -51,7 +54,7 @@ public class WormIA : MonoBehaviour {
         angryChasing.AddTransition(new FSMTransition(CheckCollision, angryWaiting));
 
         //angryWaiting
-        angryWaiting.AddTransition(new FSMTransition(GoToAttack, angryAttacking));
+        angryWaiting.AddTransition(new FSMTransition(GoToAttackFaster, angryAttacking));
 
         //angryAttacking
         angryAttacking.AddEnterAction(Attack);
@@ -61,6 +64,7 @@ public class WormIA : MonoBehaviour {
         angryAttacking.AddExitAction(Hide);
 
         //chasing
+      
         chasing.AddStayAction(Chase);
         chasing.AddTransition(new FSMTransition(CheckCollision, waiting));
 
@@ -134,7 +138,6 @@ public class WormIA : MonoBehaviour {
         {
             model.GetComponent<MeshRenderer>().material.color = Color.red;
         }
-        //FindTarget();
     }
 
     bool LifeOver() {
@@ -161,11 +164,13 @@ public class WormIA : MonoBehaviour {
     }
 
     void Chase() {
+        
         Movement(normalSpeed);
     }
 
     void Movement(float speed)
     {
+        
         transform.position = Vector3.MoveTowards(transform.position, new Vector3(target.transform.position.x-4f,
                                                                                 transform.position.y,
                                                                                 target.transform.position.z)
@@ -174,6 +179,15 @@ public class WormIA : MonoBehaviour {
     bool GoToAttack() {
         timerAttack += Time.deltaTime;
         if (timerAttack >= timeBeforeAttack) {
+            timerAttack = 0f;
+            return true;
+        }
+        return false;
+    }
+
+    bool GoToAttackFaster() {
+        timerAttack += Time.deltaTime;
+        if (timerAttack >= timeBeforeAttack*0.75f) {
             timerAttack = 0f;
             return true;
         }
@@ -189,6 +203,7 @@ public class WormIA : MonoBehaviour {
     }
 
     void Attack() {
+
         attackScript.alreadyAttack = false;
         anim.SetBool("Attack", true);
         dust.SetActive(false);
@@ -219,7 +234,7 @@ public class WormIA : MonoBehaviour {
     }
 
     void Die() {
-
+        Destroy(gameObject);
     }
 
 

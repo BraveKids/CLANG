@@ -33,7 +33,6 @@ public class GladiatorMovement : NetworkBehaviour {
     private float v;
     public Camera gladiatorCamera;
     private bool isMoving;
-
     private float distToGround;
     public bool attacking = false;
     Transform buttons;
@@ -45,6 +44,7 @@ public class GladiatorMovement : NetworkBehaviour {
 
 
     public override void OnStartLocalPlayer () {
+
         gladiatorCamera.gameObject.GetComponent<GladiatorCamera>().enabled = true;
         cameraTransform = gladiatorCamera.transform;
         GameObject.FindGameObjectWithTag("Canvas").transform.FindChild("GladiatorCanvas").gameObject.SetActive(true);
@@ -57,7 +57,7 @@ public class GladiatorMovement : NetworkBehaviour {
         speedFloat = Animator.StringToHash("Speed");
         groundedBool = Animator.StringToHash("Grounded");
         distToGround = GetComponent<Collider>().bounds.extents.y;
-        joystickScript = GameObject.FindGameObjectWithTag("VirtualJoystick").GetComponent<VirtualJoystick>(); ;
+        joystickScript = GameObject.FindGameObjectWithTag("VirtualJoystick").GetComponent<VirtualJoystick>();
     }
 
 
@@ -97,6 +97,7 @@ public class GladiatorMovement : NetworkBehaviour {
         anim.SetFloat(vFloat, v);
         anim.SetBool(groundedBool, IsGrounded());
         MovementManagement(h, v);
+    
 
 
     }
@@ -133,7 +134,7 @@ public class GladiatorMovement : NetworkBehaviour {
 
 
     void MovementManagement (float horizontal, float vertical) {
-
+        
         if (!isAttacking && !dash) {
             Rotating(horizontal, vertical);
             if (isMoving) {
