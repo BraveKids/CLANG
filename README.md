@@ -6,7 +6,7 @@
 
 <i class="icon-info"></i> :information_source: **Description**
 -------------
-**C.L.A.N.G.** proposes is a 3D battle arena game with a unique and singular style, obtained by mixing the genre action with the strategic, pointing to entertain consumers through two different gaming experiences, facilitated by an easy and intuitive control system.
+**C.L.A.N.G.** is a mobile 3D battle arena game with a unique and singular style, obtained by mixing the genre action with the strategic, pointing to entertain consumers through two different gaming experiences, facilitated by an easy and intuitive control system.
 
 ![Screenshot n°1](https://raw.githubusercontent.com/BraveKids/CLANG/master/Screenshots/Screenshot_20160629-180006.png)
 
