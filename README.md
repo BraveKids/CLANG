@@ -59,6 +59,8 @@ Each fighter has a unique style: their outfits are the result of the scarce reso
 <i class="icon-user"></i> :space_invader: **Brave Kids team**
 -------------------
 
+![Brave Kids logo](https://raw.githubusercontent.com/BraveKids/CLANG/master/Documents/Resources/logo.jpg)
+
 <table>
   <tbody>
     <tr>
