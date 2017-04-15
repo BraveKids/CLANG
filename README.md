@@ -1,7 +1,7 @@
 **C.L.A.N.G.**
 ===================
 
-![Main logo](http://oi64.tinypic.com/o0ujxl.jpg)
+![Main logo](https://f68.imgup.net/logoCLANG2a96.png)
 ----------
 
 <i class="icon-info"></i> :information_source: **Description**
