@@ -30,7 +30,7 @@ Each fighter has a unique style: their outfits are the result of the scarce reso
 <i class="icon-video"></i> :movie_camera: **Trailer**
 -------------
 
-[![Click here to see C.L.A.N.G. trailer](http://img.youtube.com/vi/Dln3aXFeQRQ/0.jpg)](https://www.youtube.com/watch?v=Dln3aXFeQRQ)
+[![Click here to see C.L.A.N.G. trailer](https://goo.gl/jius2v)
 
 > **Note:**
 
@@ -42,7 +42,7 @@ Each fighter has a unique style: their outfits are the result of the scarce reso
 
 #### <i class="icon-download"></i> **Android version**
 
-[<i class="icon-provider-gdrive"></i> Download from Google Drive](https://drive.google.com/file/d/0B5-Cur26ADP5RHJzdTlJTm5nVms/view?usp=sharing)
+[<i class="icon-provider-gdrive"></i> Download from Google Drive](https://goo.gl/nJsGge)
 
 #### <i class="icon-download"></i> **Game Design Document**
 
