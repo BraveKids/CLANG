@@ -1,7 +1,7 @@
 **C.L.A.N.G.**
 ===================
 
-![Main logo](https://raw.githubusercontent.com/BraveKids/CLANG/master/Documents/Resources/main_logo.png)
+![Main logo](http://oi64.tinypic.com/o0ujxl.jpg)
 ----------
 
 <i class="icon-info"></i> :information_source: **Description**
@@ -30,7 +30,7 @@ Each fighter has a unique style: their outfits are the result of the scarce reso
 <i class="icon-video"></i> :movie_camera: **Trailer**
 -------------
 
-[![Click here to see C.L.A.N.G. trailer](https://goo.gl/jius2v)
+[![Click here to see C.L.A.N.G. trailer](http://img.youtube.com/vi/Dln3aXFeQRQ/0.jpg)](https://goo.gl/jius2v)
 
 > **Note:**
 
